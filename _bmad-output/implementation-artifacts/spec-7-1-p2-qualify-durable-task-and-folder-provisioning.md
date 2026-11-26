@@ -688,9 +688,231 @@ Use a fresh evidence directory for a repeat run. The two Debug builds each repor
 
 | Retained artifact | SHA-256 |
 | --- | --- |
+| `native/focused.xml` | `7d4df803442b2ae3254b9083ba7b26c9fa2457d6fa635cb17054a40623b21b1c` |
+| `native/admission.xml` | `9713486f62dce76edb26ef264d1e5d63645e109853094591c0820db0c9c23bf2` |
+| `native/execution-before-restart.xml` | `bdc94441d678a7346ea53abb6f7e6880abef1c61c19d8ad6edf6a9c64706714d` |
+| `native/execution-after-restart.xml` | `61707e7b9ce771c617b276d2f06d8437da48b5a3c819d829d46de327d170a49d` |
 | `native/runtime-lookup-receipt.json` | `f54feff8eb9070e848a2cefda407c239d7a905b4e8c1f6390b2c55403fa5b173` |
 | `native/crash-recovery-receipt.json` | `c8f3f49943a66986841f9f8f21f41e148de99098435c59f19c301b1eb159aedc` |
 | `native/runtime-topology.json` | `be81868cb5a14a685d5abcf600f8f6f0ed8e4a6e9ea675fc1b83271a94896a55` |
 | `sha256.txt` | `12a986573218dacedb34e0da2f80371cd6c9f420fe8a03910f0c2b68ef9e6018` |
 
 The 26-file manifest covers the exact source tuple, replay scripts, build logs, native XML and receipts. The owner-selected G-1 runtime and retained-store rollback remain required for package acceptance.
+
+### Joint EventStore and Platform G-1 runtime decision
+
+**Decision requested (2026-11-26)** — Approve the following inputs together for the isolated runtime and retained-store qualification. EventStore owns the task contract and persisted transitions. Platform owns the topology, worker operation and recovery rehearsal.
+
+**Approvals carried forward.** On 2026-11-25 the EventStore and Platform owners authorized their respective implementation and isolated qualification scopes. Both selected committed admission lookup for original-actor binding. On 2026-11-26 the user selected numbered `DurableTaskExecution` steps. Keep the accepted signed `POST /internal/durable-tasks/v1/steps/lookup`, host-owned owner grants, current owner-side actor reauthorization, and step-key deduplication. The records distinguish these approvals from runtime selection and capability acceptance. [EventStore G-1 decision](../../references/Hexalith.EventStore/docs/architecture/g1-durable-task-scope-decision.md) · [Platform G-1 decision](../../references/Hexalith.Platform/docs/implementation/g1-durable-task-scope-decision.md)
+
+| Choice | Proposed input |
+| --- | --- |
+| Runtime artifact | Use the landed replay source tuple and source-mode Debug build of the EventStore DomainService runtime at `df6a96ab2a5bae24fe5951eee5429bda223cc675`. Extend the owner-local `Hexalith.EventStore.DurableTaskLookupHost` and Platform runner at `80a60039b46ea6bdccd9eeac5091551bc59643fa` with the qualification changes below. Before starting the exercise, retain the exact owner source diffs or commits and hash the complete host output executed by both replicas and the recovery process. The landed lookup-only assembly is the control. |
+| Provider and topology | Use two independently restartable task hosts and Dapr sidecars on a private network, with one retained `g1-task-state` Dapr `state.redis/v1` keyspace using `keyPrefix: name`. Select single-primary Redis 7.4.12 with AOF, `appendfsync always`, `noeviction` and a retained volume. Use strong reads and first-write/ETag compare-and-swap. The selected provider envelope covers a single primary with durable storage in one failure domain. |
+| Runtime versions | Reuse the landed digest pins for .NET SDK 11.0.100, .NET and ASP.NET Core 11.0.0, Dapr 1.19.2, Redis 7.4.12 Alpine and the Python probe. See the [runtime image pins](#authenticated-lookup-through-dapr-service-invocation-2026-11-26). Record the effective images and configuration hashes before and after recovery. |
+| Authenticated routes | Under `/internal/durable-tasks/v1`, add `POST /confirmation-artifacts/issue`, `POST /admissions`, `GET /tasks/{taskId}` and `POST /tasks/{taskId}/cancel`. Apply EventStore host security. Issue only for a verified interactive Preview with current authority and session/surface binding. Require separate admission, status and cancellation grants. For delegated calls, require the Dapr channel and per-operation signed workload assertions with exact Tenant, domain and original-actor binding. Reauthorize the actor and registered operation against current authority. Preserve the 15-minute opaque artifact and consume it only in the admission CAS. An admitted retry returns the original location after reauthorization. Status denial and absence return the same empty 404. Cancellation uses its own current authorization and the persisted irreversible boundary, with 409 and safe status on conflict. The existing owner step lookup keeps its own scheme and operation. |
+| Durable scheduling | Use a Platform worker on each replica. Before the admission CAS, EventStore must confirm durable registration of the reserved task ID in a versioned, fixed set of 16 same-store directory shards and retain the canonical fixture intent under its exact scope and digest. A registration or intent write that cannot be verified blocks admission. Poll the known shards every second and resolve each candidate through the existing task-ID index and committed admission. Ignore uncommitted or losing reservations. The same-store directory allows rediscovery after a lost admission response or complete host restart without passing a task ID to the replacement. Lease CAS chooses one executor. |
+| Clock and retry bounds | Use UTC from a common reference, at most 250 ms pairwise skew, and a monotonic timeout for owner calls. Suppress claims and effect dispatch when clock health cannot establish the bound. Use a 15-second nonrenewing lease and wait through persisted expiry plus 250 ms before takeover. Start owner work only if the lease has at least the 10-second step deadline plus the skew margin left. Persist a budget of three charged attempts total per pending step and a 30-second automatic retry window starting at the first attempt. Charge timeouts as dependency failures and check authoritative owner status before any reissue. Exhaustion ends automatic execution in `NeedsAttention`. Under an operator recovery fence, a matching owner receipt can be recovered when an automatic reissue is barred. Check recovery to a committed outcome or truthful `NeedsAttention` within five minutes. |
+| Retention | Retain the admission and task-ID index, intent, discovery entries, checkpoint, consumed-artifact binding and owner receipts throughout the rehearsal with no TTL or eviction. Keep nonterminal bindings for their full lifetime. For terminal tasks, keep the idempotency record and referenced outcome for at least 30 days from completion or the longer result obligation. Keep durable audit metadata at least 365 days or the longer applicable event-history obligation. Preserve the original expiry on unused confirmations. [Projects architecture, AD-5, AD-26–28](../planning-artifacts/architecture/architecture-projects-2026-07-15/ARCHITECTURE-SPINE.md) |
+| Retained-store target | Use fenced forward recovery with a fresh instance of the same hashed candidate in recovery mode, attached to the original Redis volume and keyspace. The earlier lifecycle revision `388b0ad679d7f9404e10669dd1238381157259c9` predates the persisted attempt charge, so a downgrade can lose it on rewrite. Keep legacy named `DurableTaskRecovery` rows unchanged and verify their refusal by the numbered lookup. |
+
+After approval, qualification will use task-only and confirmation-required admissions and a synthetic owner. Close confirmation issuance, new admission and cancellation on both replicas and drain requests. Interrupt worker A after the owner commits with the response withheld. Stop its host and sidecar and withdraw its access to the fixture store and owner. Restart on the original store with admissions closed, discover the task from persisted state and let worker B acquire a higher fence before resuming the step. Probe the old lease against the task store and the signed owner lookup after takeover. Verify the original task ID, scope and digest, the preexisting checkpoint and receipt prefix, recovery of the withheld receipt by lookup, and exactly one persisted owner effect. Verify the stale attempt leaves task and owner bytes and ETags unchanged, then recheck the committed terminal outcome on both replicas before reopening admissions. Exercise dependency outage and retry exhaustion, clock edges, and cancellation on either side of the irreversible boundary. Retain commands, artifact identities, native XML, persisted row and receipt digests, and the two dated owner decisions.
+
+**Joint input decision (2026-11-26)** — The requesting user approved the full proposal above on behalf of both the EventStore Owner and Platform Owner in this session. This records approval of the inputs and the isolated owner-local changes. The qualification result and combined capability acceptance have separate evidence.
+
+#### Approved G-1 execution slice
+
+Execute this section against the landed fixture baseline. The slice ends when the G-1 native results and joint decision are recorded here. The package-level tasks for G-2 release and enrollment, Projects activation binding, capability pin and combined acceptance stay open.
+
+1. In disposable copies of the exact source tuple, extend EventStore `tests/Hexalith.EventStore.DurableTaskLookupHost/` and the owner-local `src/Hexalith.EventStore.DomainService/DurableTasks/` seams needed by the approved routes, durable registration and timed execution. Keep the existing task-state contract and authenticated numbered lookup. Use a synthetic authority and owner with an atomic persisted effect and receipt. Preserve the committed native crash assertion source byte for byte.
+2. Extend Platform `eng/durable-task-qualification/` to run the approved provider and topology. Provide a replay command to build the candidate and run both replicas, then stop admissions, fence worker A and recover using the same artifact and retained volume. Inject a lost owner response and verify durable discovery without handing the replacement a task ID. Keep native readback and authenticated wire receipts for all decisive comparisons.
+3. Use `run-with-temp` for disposable sources, builds and store fixture files. Keep the exact candidate patches, clean-checkout replay script, binary and topology hashes, native results and manifest outside the scratch directory in a dedicated local evidence bundle. Record the commands, key results and owner decision in this spec. The selected source and fixture changes belong to their owner paths. No staging, commit, push or tracker change is needed for this slice.
+
+**Status.** The approved G-1 runtime and retained-store rehearsal passed. The [joint input decision](#joint-eventstore-and-platform-g-1-runtime-decision) remains the 2026-11-26 approval from the requesting user on behalf of the EventStore Owner and Platform Owner.
+
+### G-1 retained-store qualification (2026-11-26)
+
+The clean replay used the [landed source tuple](#g-2-requalification-on-the-landed-corrections-2026-11-26). EventStore `df6a96ab2a5bae24fe5951eee5429bda223cc675` supplied the landed lookup-only control and the base for the EventStore candidate. Platform `80a60039b46ea6bdccd9eeac5091551bc59643fa` supplied the base runner. The retained EventStore overlay adds the authenticated admission, Preview confirmation, status and cancellation routes and the opt-in execution timing and receipt-only fencing. The Platform overlay supplies the directory worker and Docker rehearsal. The runtime used the [pinned images](#authenticated-lookup-through-dapr-service-invocation-2026-11-26), including .NET SDK `11.0.100`, .NET and ASP.NET Core `11.0.0`, Dapr `1.19.2`, Redis `7.4.12` and probe Python `3.12.13`. The replicas ran the same hashed candidate against a single retained primary with AOF, `appendfsync always`, `noeviction` and one `g1-task-state` keyspace.
+
+```bash
+bundle="$HOME/.local/state/hexalith-projects/7-1-p2-g1-approved-vySfbsep"
+run-with-temp bash "$bundle/replay.sh" "$PWD" "$bundle" "$bundle/verified-final"
+python3 "$bundle/verify-rehearsal.py" "$bundle/verified-final"
+(cd "$bundle" && sha256sum --check sha256.txt)
+```
+
+Run from the Projects root and use a fresh results directory for a repeat. All three Debug builds completed with zero warnings and errors. There were 90 focused xUnit tests, six native admission and crash tests, two native control restart tests and five retained-runtime scenario groups, with zero failures or skips. The committed crash assertion source retained SHA-256 `aa929c75be5142940ad9a70e2e5b70e05dccbf8fb5103dca33eaa705afc74a96`. The active Projects authority index returned `[6, 7, 8]`, and the guard passed 60 tests and 442 subtests.
+
+| Case | Verified result |
+| --- | --- |
+| Admission and scheduling | Equal signed requests on both replicas returned the original task and location. The Preview artifact retained its 15-minute expiry and was consumed with first admission. Wrong-session evidence, changed intent and revoked authority could not create another task. A lost registration acknowledgement left an indexed reservation and intent which both workers ignored. Status denial and absence returned empty 404. |
+| Clock, retries and cancellation | Unhealthy clocks suppressed claims or effect dispatch. A nonrenewing 15-second lease required the 250 ms takeover margin and enough time for the 10-second owner deadline. Dependency outage stopped after three charges, and the timed dependency stopped at the 30-second retry window. A partial effect and revoked access to a committed receipt remained in `NeedsAttention`. An operator fence recovered that receipt by lookup after authority returned. Cancellation before the irreversible boundary succeeded. Cancellation after it returned 409 with committed progress. |
+| Fenced forward recovery | Both original hosts and task sidecars were withdrawn with mutations closed. Redis restarted on the original volume. The same candidate discovered task `01M8C2RV3F9SDZHKWGCD2FDE07` through the fixed 16-shard directory and committed its terminal status in 17.36 seconds after teardown began. Fence 2 recovered `receipt-abd96f178cdb0770fd4447f76d00ff108c5ed645e08367d9c2769ed5cbb9d765` with execution disabled. The old fence 1 returned empty 404, and stale completion and the stale store CAS returned 409. |
+| Retained state | The task ID, original scope, request digest and committed first receipt survived takeover. The checkpoint advanced from 1 to 2 when the replacement appended the recovered receipt. The second owner row stayed at ETag `1` with one effect, and its SHA-256 remained `f63ed8103bde3113f2811510252b0f60afe9acd0d1151cbfab819ed9a9b7a702`. The terminal task and owner bytes and ETags matched before and after the stale probes. Both replicas read the same terminal result before reopening. The named recovery row stayed byte-identical and the numbered lookup refused it before and after restart. Seven admission, index, intent, directory, confirmation and owner keys reported no TTL. |
+
+| Retained artifact | SHA-256 |
+| --- | --- |
+| `source/eventstore.patch` | `85825f71a757e914e11c7f2efbe08e44441faebd7f1f84973756fe13ac399c4b` |
+| `source/platform.patch` | `84e61b0ea9c95f543deaf0ed7393bd5223ac0b7b685c19ff3090c38fd0e2581a` |
+| `source/revisions.txt` | `52e55837763348a394696230d4a929a5b476110d49b68eea54033863c5c94712` |
+| `replay.sh` | `cb142afcd232e7a86771ea163ba50e18d2426d21bed4421ca3904d906205df72` |
+| `verified-final/control-binaries.sha256` | `b8a13e35dc2032307606e66a7b46c021f2d35d93383c4637666a2343e19b4ac5` |
+| `verified-final/candidate-binaries.sha256` | `601f0d0a50cc40d1c7aca9240c49cadca222cd5b2dab2c37fa2ec2819ccd277a` |
+| `verified-final/focused.xml` | `b1b2486cf0df8e8dab3dcb9749f96164e3d9d8e03cf56008ccc6b68de8d379bc` |
+| `verified-final/control/admission.xml` | `5dca740baf3d70edd8d35038c127bdb6f8e4d4ec072acd75e481768e7bd21b8a` |
+| `verified-final/control/execution-before-restart.xml` | `755c6c80885e297732472da866eb8f14d6f4a4196062ebb4f305279f02aae50a` |
+| `verified-final/control/execution-after-restart.xml` | `1766f72803d1774dd121c4e2396dd5ab9a51fb156dd924bc4d374adf95ee228d` |
+| `verified-final/runtime/retained-runtime.xml` | `1fbd2ad53d865d8a0e475580e9393ad4ee2a46acb95886f2a2879ee6fc3bdc9f` |
+| `verified-final/runtime/native-state.json` | `297e54ee60b5f47f0af930f3f14e4d2e831eb7c2ab018dd4478dbb0ae53da842` |
+| `verified-final/runtime/wire.json` | `3429e5da20cdf8782d91be8044c4ad1fa5820dde5d0ad23b09aa872fbc9e8dcc` |
+| `verified-final/runtime/topology.json` | `0725cfa91dfcc3852eb1ad6d69882e74b8051aff25c8de1712cf505bc61803f5` |
+| `verified-final/runtime/configuration.json` | `4cca5dd8a776465ec020428e1e3e0ada1185048a4401795881ed47a1866b80c9` |
+| `sha256.txt` | `2f013dfe4c8f44527881dba78a10699a48f3f2456bcf58f4ffaeb28c71685f3f` |
+
+**7.1-P2 remains open.** The G-2 release and workload enrollment, Projects activation operation and digest binding, combined capability pin, and five role acceptances are still required.
+
+### Joint G-2 release and workload enrollment decision (2026-11-26)
+
+**Owner decision (2026-11-26).** The requesting user approved the exact Folders release and isolated enrollment below on behalf of the Folders, Platform/realm and EventStore owners. The authorization requires successful exact-source CI and verification of the repository-signed archives before use. Folders owns the release, create and receipt contract. Platform and the realm owner own the workload enrollment and deployment. EventStore owns the G-1 host grant and gateway boundary. The approval below is for those inputs. The five role acceptances for 7.1-P2 follow the Projects activation binding and combined verification.
+
+**Approvals carried forward.** The Folders owner approved implementation and isolated qualification on 2026-11-25, including the committed G-1 original-actor lookup, non-unique display names, create-only semantics, and forward recovery on retained state. The EventStore and Platform owners approved numbered execution, the runtime inputs and retained-store rehearsal recorded above. Both the landed G-2 baseline and the approved G-1 bundle passed their retained evidence verifiers and SHA-256 manifests. Keep version zero, the owner-derived target, current actor checks, the sole-manager ACL without inherited Tenant read, and `NeedsAttention` with the Folder and receipt retained. [Folders owner decision](../../references/Hexalith.Folders/docs/governance/g2-folder-provisioning-scope-decision.md) · [Landed G-2 replay](#g-2-requalification-on-the-landed-corrections-2026-11-26) · [G-1 qualification](#g-1-retained-store-qualification-2026-11-26)
+
+**Proposed release.** Publish the ordinary Folders `v2.2.0` release from `8c5452c09970420e48deb67918317d6c0dda9f13`. Its parent is the replayed Folders `c00bad4d364dc25800cf9dc41220c1eba512fed9`. The four changed files update the PD10 conformance inventory, generator and tests. The runtime, package inventory, release workflow and root dependency revisions match the landed baseline. The original commit failed exact-source CI because its PD10 inventory omitted provisioning compile inputs. The release workflow requires the approved SHA to be current main with a successful push CI and its protected production reviewer approval. Semantic-release computes `2.2.0` from the provisioning feature after `v2.1.0`. NuGet's six package version indexes were checked and `2.2.0` was absent. If the SHA, tag or package set changes, return to the owners with the new coordinates. [Failed baseline CI](https://github.com/Hexalith/Hexalith.Folders/actions/runs/45826937192) · [Exact-source CI](https://github.com/Hexalith/Hexalith.Folders/actions/runs/45836266998) · [Folders release procedure](../../references/Hexalith.Folders/docs/operations/release-packages.md)
+
+| Artifact set | Exact coordinates or SHA-256 |
+| --- | --- |
+| Landed Contracts baseline | `Hexalith.Folders.Contracts/2.2.0-g2.c00bad4d`, `0b31746e415d4dc0805d7f302d922d9049dcbc7f730d88f808d733053ee735d3` |
+| Landed Extensions baseline | `Hexalith.Folders.EventStoreExtensions/2.2.0-g2.c00bad4d`, `46786efe8ff55f5152cef312d4839b514e08d7250409347675ca74a834dd9eaa` |
+| Proposed NuGet.org release | `Hexalith.Folders.EventStoreExtensions`, `Hexalith.Folders.Contracts`, `Hexalith.Folders`, `Hexalith.Folders.Client`, `Hexalith.Folders.Aspire` and `Hexalith.Folders.Testing`, all `2.2.0`. GitHub release `v2.2.0` carries the matching six package and six symbol archives. |
+| Release verification before enrollment | Prove the release run and tag resolve to the approved SHA, confirm each package ID, version and repository commit, verify NuGet.org repository signatures, match package payloads against GitHub release assets, and record archive and payload hashes. Restore the bindings from those hashed archives. The prepublication build and the NuGet.org repository-signed archives have distinct byte identities. |
+
+**Proposed enrollment.** Use the released packages in an owner-enrolled isolated G-2 qualification deployment. Select the replay Tenant `tenant-a`, admission `fixture.activate-project@1`, private Dapr app IDs `projects-fixture`, `eventstore` and `folders`, and the numbered G-1 lookup from EventStore `df6a96ab2a5bae24fe5951eee5429bda223cc675` with the approved retained-store envelope. Use the Platform `80a60039b46ea6bdccd9eeac5091551bc59643fa` workload-binding provider in a dedicated disposable Keycloak 26.6.4 realm, pinned to image index digest `sha256:0aae0de7fca85525f727d3354df17896092de8bb26ae4c12d89c77e5df8cbce4` and Linux amd64 digest `sha256:22c8cf9e79af88d320499c93994bb2c319ca255092d8ae7c7a45dd46d68192e2`. The Platform provider JAR built with 23 passing tests and has SHA-256 `6e6dcc45ffa350b7f015bf6a51c639d7b603ae115d11d9bd760546bf6836f582`. Use distinct confidential client credentials, TLS, the realm's pinned RS256 signer, and a private Dapr network with channel tokens and exact route ACLs. The signer, grant and catalog readbacks must be bound to the run. Any persistent/shared enrollment requires the owner-nominated target and an independently approved protected manifest. [Platform enrollment contract](../../references/Hexalith.Platform/docs/security/workload-binding-enrollment.md)
+
+| Authenticated caller → receiver | Audience and permitted operation | Binding enforced at the receiver |
+| --- | --- | --- |
+| `projects-fixture` → EventStore gateway | `eventstore`, `eventstore:command-submit`, `POST /api/v1/commands/workload` | Signed `tenant-a` and `folders`. The effective gateway policy limits this caller to the internal `Hexalith.Folders.Commands.ProvisionFolder` command, its owner-derived aggregate, and expected version 0. Verify other command types are refused. |
+| `eventstore` → Folders owner | `folders`, `domain-service:process`, `POST /process` | Existing authenticated callback identity, committed catalog, exact command envelope, and gateway-verified `projects-fixture` origin. The callback uses its own credential. |
+| `projects-fixture` → Folders owner | `folders`, `folders:provisioning-lookup`, `POST /internal/folders/v1/provisioning/lookup` | Signed `tenant-a` and `folders`. The owner derives the target from the same committed canonical step and verifies current original-actor authority before disclosing the receipt. |
+| `folders` → G-1 host | `eventstore`, `eventstore:durable-task-step-lookup`, `POST /internal/durable-tasks/v1/steps/lookup` | Signed `tenant-a` and `folders`. Register the host grant `(folders, fixture.activate-project@1, 1, folders)` with `FolderProvisioningContract.DeriveFolderId(committed.TenantId, canonicalStepKey)`. G-1 matches `<taskId>/step/1`, the committed operation, digest and Tenant, the derived target, and the positive current fence. The original actor comes from the committed admission. |
+| `folders` → EventStore gateway | `eventstore`, `eventstore:stream-read`, `POST /api/v1/streams/read/workload` | Signed `tenant-a` and `folders` plus the separate enrolled Folders RSA bound-stream proof over the exact stream and read window. Require native proof for the receipt and an explicit `missing-stream` decision before first creation. |
+
+Set `Folders:Provisioning:WorkerWorkload=projects-fixture` and `Folders:Provisioning:DurableTaskAppId=eventstore` with the exact Folders and G-1 receiver audiences and callers above. Hash the issuer/receiver and committed route-catalog evidence, including both lookup routes and the native stream-read grant. The target is the `fld-p-` identity derived from the Tenant and canonical step. The v1 request digest is lowercase SHA-256 over UTF-8 `hexalith.folders.provision-folder.v1\n` followed by the trimmed display name. The fixture operation and digest are qualification inputs. Projects will supply its activation operation and digest binding in the next slice.
+
+**Released-package replay after approval.** Extend the landed packaged replay to restore the verified `EventStoreExtensions`, `Contracts` and Folders domain packages and prove the loaded assemblies match. Folders Server is a source-built host at the release revision, and the EventStore runtime and G-1 inputs remain independently pinned. Use the enrolled issuer and receiver policies for the signed operations. Assert current original-actor Tenant and Organization create/read/manage authority before create and current Tenant and explicit Folder read/manage authority before receipt disclosure. Include authority revocation, wrong workload, audience, Tenant, target, admission step or digest, and stale-fence refusals. Withhold the first response after commit, replace the application and sidecars, and restart Redis on its retained store. In the compatible forward-recovery configuration, freeze mutations, prove the old fence yields empty 404, recover the same Folder ID and receipt under the new fence, and verify one create event, two explicit grants for the original actor, zero repeat executions and unchanged Folder history and native proof. Retain the exact commands, source and runtime coordinates, package and enrollment hashes, signed-policy observations, and before/after native XML and JSON hashes.
+
+The approved deployment target is the private qualification environment and its single fixture Tenant. The shared production identity configuration is governed separately.
+
+**7.1-P2 remains open.** The Projects activation binding and combined acceptance follow this release and enrollment slice.
+
+#### Release-source amendment (2026-11-26)
+
+After the owner approved `8c5452c09970420e48deb67918317d6c0dda9f13`, Folders main advanced to its direct child `a13852ad170744ed4806a5acc881524d6f9b102c` and the branch concurrency policy cancelled the approved source's CI. The release workflow requires the current green main. The replacement source changes the Story 12.2 operational status read model and shifts Folders' development EventStore gitlink from `943be126d81fc82761c27d856c3c8d85cbeb2c99` to `8a3536ba56733eeba61b8e831547ca4ab113a0a1`. It leaves the G-2 provisioning handlers, Contracts, Extensions, and release/package-mode inputs intact. The independently approved EventStore replay runtime stays at `df6a96ab2a5bae24fe5951eee5429bda223cc675`. The requesting user approved this amendment on 2026-11-26. The approved release is the same six NuGet packages as `v2.2.0` from `a13852ad170744ed4806a5acc881524d6f9b102c` after its exact-source CI passes. The recorded isolated enrollment and archive verification rule carry forward. [Cancelled CI](https://github.com/Hexalith/Hexalith.Folders/actions/runs/45836266998) · [Replacement revision](https://github.com/Hexalith/Hexalith.Folders/commit/a13852ad170744ed4806a5acc881524d6f9b102c) · [Replacement CI](https://github.com/Hexalith/Hexalith.Folders/actions/runs/45841087928)
+
+The superseded `8c5452c0` release dry run from the Projects root ran the exact manifest gate and built four independent package consumers. The Release build passed with zero warnings and errors. The result at `dry-run-result.json` has SHA-256 `3174e71dae54c837351a51d4e1f00b78217ab25bcee19aa6d8e9dadecb1d7ed4`. Its six unpublished packages and symbol archives are recorded in `package-sha256.txt`, SHA-256 `6a5a6895855fe98d2f621bc4364058800f337d87768d914d053071ec69fe55d4`.
+
+```bash
+bundle="$HOME/.local/state/hexalith-projects/7-1-p2-g2-release-preflight-K4IQMXIk"
+run-with-temp bash "$bundle/dry-run.sh" ../folders "$bundle"
+(cd "$bundle/packages" && sha256sum --check ../package-sha256.txt)
+```
+
+**Amended source CI finding.** On the exact `a13852ad` checkout, running `python3 scripts/generate-pd10-v2-conformance-set.py --repository-root "$PWD" --output "$TMPDIR/regenerated.yaml"` succeeded, then `diff -u` against the committed PD10 conformance manifest exited 1. The Story 12.2 code and test changed after their manifest hashes were recorded. The generated refresh changes only the two entries and their aggregate digest. Regeneration of the refreshed candidate matched byte for byte. The blocked-source probe is `a13852ad/pd10-generator-diff.log` in the release bundle. The proposed single-file manifest patch at `a13852ad/pd10-manifest-refresh.patch` has SHA-256 `22960e6b94ece87b04a842810eb6e78999ad33cf9d609f22fc5aac9ea40bd6b5`. The resulting manifest SHA-256 is `6a34fe126f7347eb5b5d1556be556ca5c4582f7dcf60a2924bcc683567c2e2e5`. The requesting user approved landing this single-file refresh and publishing its exact green commit on 2026-11-26. The refresh was committed and pushed as `d3ae49af6a56334a5a3506a56821db45bfaae421`, with parent `a13852ad170744ed4806a5acc881524d6f9b102c`. Regeneration matched byte for byte and commitlint reported zero errors or warnings. That full SHA is the approved Folders `v2.2.0` release source. [Manifest refresh](https://github.com/Hexalith/Hexalith.Folders/commit/d3ae49af6a56334a5a3506a56821db45bfaae421) · [Release-source CI](https://github.com/Hexalith/Hexalith.Folders/actions/runs/45842112112)
+
+**Documentation-only selection rule.** GitHub cancelled CI for `d3ae49af` after Folders main moved to its child `20025f09cea1c8623c9738607bef6457e6cfa34c`. The only changes were `_bmad-output/implementation-artifacts/deferred-work.md`, `evidence/story-12-2-sm4-transport-20261126.json` and `spec-12-2-durable-projections-and-task-completion-pipeline.md` under that directory. The files are outside the release inputs and PD10 candidate inventory. The current tip regenerated its committed manifest byte for byte. On 2026-11-26 the requesting user approved this exact tip or a successor limited to the same three files. The selected SHA must be recorded and its own push CI must pass before release. The current selection is `20025f09cea1c8623c9738607bef6457e6cfa34c`. [Cancelled refresh CI](https://github.com/Hexalith/Hexalith.Folders/actions/runs/45842112112) · [Selected release-source CI](https://github.com/Hexalith/Hexalith.Folders/actions/runs/45843329303)
+
+**Current release selection.** Folders main advanced to `2791d7a82825238da15a1bfb77c544079a7f7d09`. This commit changes only Folders' development `references/Hexalith.EventStore` gitlink, to `4e143993a91e446b116a838f87cf0bcafba70215`. The release builds against centrally pinned NuGet packages and the replay keeps its separately approved EventStore source `df6a96ab2a5bae24fe5951eee5429bda223cc675`. The manifest regenerated byte for byte at the new tip. On 2026-11-26 the requesting user approved adding that gitlink to the release-source selection rule. The selected `v2.2.0` source is `2791d7a82825238da15a1bfb77c544079a7f7d09` and its exact push CI must pass. [Cancelled documentation-only CI](https://github.com/Hexalith/Hexalith.Folders/actions/runs/45843329303) · [Selected release-source CI](https://github.com/Hexalith/Hexalith.Folders/actions/runs/45844094422)
+
+#### Approved G-2 enrollment implementation
+
+Prepare the isolated replay harness in `~/.local/state/hexalith-projects/7-1-p2-g2-release-preflight-K4IQMXIk/replay/`. Use the landed bundle at `~/.local/state/hexalith-projects/7-1-p2-g2-reviewed-4VVV9gV0/landed/` as its baseline and the exact approved release source identified above for Folders Server. The release coordinator handles GitHub and NuGet publication and supplies verified archives, provenance and hashes in the adjacent `published/` directory. This implementation slice is the replay harness. Leave the surrounding spec and owner repositories as read-only inputs. Use the workspace's `run-with-temp` wrapper for all disposable checkouts, build inputs, OIDC private material and test outputs. Keep reusable launcher code, sanitized native results and the evidence manifest in the replay directory.
+
+- Adapt the landed `replay-deployment.sh`, `harness/` and `verify-results.py` to accept the signed archive directory and manifest for the six stable packages and record the three loaded Folder package DLLs, the exact EventStore and Folders runtime revisions, and the topology and installed route-catalog hashes. A prepublication package smoke test can use a separate results directory with the dry-run artifacts in the adjacent `packages/` directory. Distinguish those observations from the released-package run.
+- Use the pinned and tested Platform provider JAR from the adjacent directory. Install the exact five per-call enrollments in a disposable owner realm, use the SDK workload issuer, verify issuer/TLS, signer and grant metadata, and configure the respective gateway, G-1 and Folders authentication schemes. Trust and credentials are private to this job. Constrain the worker to provisioning and its receipt lookup. Publish sanitized enrollment readback and package/runtime SHA-256 checks alongside the native evidence. Keep synthetic Tenant, actor and Organization data owned by the fixture.
+- Exercise the full before/after replay matrix against the retained store and preserve the evidence file names and schema or supply an updated verifier. Verify revoked original-actor authority for create and lookup, explicit ACL read/manage, empty 404 for stale fences, matched Folder ID and receipt across restart, and one create event. Record exact commands and key evidence hashes in the handoff. Run with the final published artifacts when available. Release and enrollment approval do not close 7.1-P2 or include the Projects activation binding and combined acceptance.
+
+#### Prepublication signed enrollment rehearsal
+
+The `a13852ad` Release dry run passed with six package/symbol pairs and four independent consumers. The report and archive manifest in `a13852ad/` have SHA-256 `1927b00f84af6d41bb833e6b18dd33d5041f441c9f0c3332fec2e7369a9f44d4` and `2610454c14d185467127dda6e2dd09db88bee5ae536741ddc86fcad44d3b4e54`. The isolated replay used those local archives and loaded the exact Folders, Contracts and EventStoreExtensions package assemblies. The two native tests and independent verifier passed with zero skips. The verified realm issued all five grants over TLS and Dapr enforced the route ACLs with peer mTLS.
+
+```bash
+bundle="$HOME/.local/state/hexalith-projects/7-1-p2-g2-release-preflight-K4IQMXIk"
+run-with-temp bash "$bundle/replay/replay-deployment.sh" "$PWD" ../folders smoke \
+  "$bundle/a13852ad/packages" "$bundle/replay/smoke-verified" a13852ad170744ed4806a5acc881524d6f9b102c
+python3 -B "$bundle/replay/verify-results.py" "$bundle/replay/smoke-verified"
+(cd "$bundle/replay/smoke-verified" && sha256sum --check sha256.txt)
+```
+
+Use a fresh result directory when replaying. The actor lost authority during both signed creation and receipt lookup controls. The signed successful lookup reported current version 3, `read_metadata` and `manage_folder_access` for the admitted actor and a current Tenant revision. Revoked requests returned 404. The committed Folder `fld-p-7b3176b6813b79cbc2492f833dd40c28429afde5` and receipt `prov-7b3176b6813b79cbc2492f833dd40c28429afde5` were recovered across the Redis restart under fence 2. Fence 1 returned empty 404 at both lookup routes. The same history held one create event and two explicit grants for the original actor. The replacement executed the effect zero times. The native stream proof and incumbent history matched across restart, and cleanup observed zero owned containers, networks or volumes.
+
+| Retained prepublication result | SHA-256 |
+| --- | --- |
+| `enrollment.json` | `4c44da618f734163602fb8ba637cb3c97baf244a176bc4f64e115f47e276eb17` |
+| `native/before-restart.xml` | `843457709588392acf13d075f10427a6c8b9d1356a03843efca864071b200efc` |
+| `native/after-restart.xml` | `d97882b0873fa2c72c2f9aa344dc9f6c27d9c6112aee50c7dac33be6a8eaa62a` |
+| `native/before-restart.json` | `202029858e8d8b0da0c2f13fc660d5d499be1a2c78174fa2a2957ba0b22242a4` |
+| `native/after-restart.json` | `3b1f0ed1fadc14e2a2c8c017eefae1954a661cf248b5407ab789a2557f8256cb` |
+| `native/topology.json` | `92e8b08b6eb6d8b10c14f7a808ba657f0b6794405cc816d51d6421ac797ac0c4` |
+| `sha256.txt` | `d2f77c0d9cad85743d95daf9d4dd1e5bbc5f6b468994855a953bb3ab01293b75` |
+
+#### Protected Folders publication
+
+The exact `2791d7a82825238da15a1bfb77c544079a7f7d09` push CI and contract-spine checks passed. The coordinator rechecked the live main, exact source CI and release-run inventory, then dispatched `gh workflow run release.yml --ref main -R Hexalith/Hexalith.Folders`. The Release run recorded the approved source SHA. [Push CI](https://github.com/Hexalith/Hexalith.Folders/actions/runs/45844094422) · [Contract spine](https://github.com/Hexalith/Hexalith.Folders/actions/runs/45844093834) · [Release run](https://github.com/Hexalith/Hexalith.Folders/actions/runs/45848307610)
+
+The protected production review approved deployment `8089266765`. The Release workflow succeeded, recorded six NuGet.org package uploads and six symbol uploads, and created GitHub release `v2.2.0`. All 12 GitHub assets matched their API SHA-256 digests. The GitHub archive manifest at `2791d7a8/github-release-archives.sha256` has SHA-256 `6e20e2f8ae883e7d48f2353b2f14be1c0783097b4369abd3fb7eae9f37ceaa04`. [Folders v2.2.0](https://github.com/Hexalith/Hexalith.Folders/releases/tag/v2.2.0)
+
+NuGet.org served all six repository-signed archives. The package verifier resolved tag `v2.2.0` and every NuGet repository manifest to `2791d7a82825238da15a1bfb77c544079a7f7d09`. The six `dotnet nuget verify --all` checks passed, and the signed archives' repository payloads matched their corresponding GitHub release assets. The 18-archive manifest `published/published-archives.sha256` has SHA-256 `86c56309fcaaa0e165299afa594a1842ac8107bb83a69ec759b6e2fddd3ba2f0`. The entry-level comparison `published/published-package-payloads.json` has SHA-256 `40d7999d91b4829943e2c829b09be96d2bf9a0c78a37f8b72eff98eb2ecb6997` and the signature result `published/nuget-signatures.log` has SHA-256 `bc429fdbde216479361854f31630fee5b26e63c344b7aa1f57a680af5870f155`.
+
+| NuGet.org package | Version | Repository-signed archive SHA-256 |
+| --- | --- | --- |
+| `Hexalith.Folders` | `2.2.0` | `5888de77ad30433788817e6f39f45a7aaa02929db3f2c0acdfa360f2f21408fb` |
+| `Hexalith.Folders.Aspire` | `2.2.0` | `631a14e2b9e905f61a49ae4ba3e1f2c18cde3f27e4f053cefe735adb1c2dd48d` |
+| `Hexalith.Folders.Client` | `2.2.0` | `012e3da5fa9f2099ecaed0ef222750f2512710ae65325604bd1e66c6e5fdfaf3` |
+| `Hexalith.Folders.Contracts` | `2.2.0` | `15163c8ad222591fff337a726ac62555af7aba1506e032b37ff7a762cd4c622f` |
+| `Hexalith.Folders.EventStoreExtensions` | `2.2.0` | `28d60b95a73bb069d485dfa6b14531707e5b5a49fc4c0ce45db726eb4848c554` |
+| `Hexalith.Folders.Testing` | `2.2.0` | `5dcb8746cf113aa440718209b2ced2b90ec9ae148b9fd9cc2cf6f625e47f5ea3` |
+
+```bash
+bundle="$HOME/.local/state/hexalith-projects/7-1-p2-g2-release-preflight-K4IQMXIk"
+run-with-temp bash "$bundle/2791d7a8/verify-publication.sh" 45848307610 "$bundle/published"
+(cd "$bundle/published" && sha256sum --check published-archives.sha256)
+```
+
+#### Released-package enrollment and retained recovery (2026-11-26)
+
+The approved isolated deployment enrolled the three callers and five grants in the table above. The installed revision-1 grant IDs were `g2-worker-provision`, `g2-worker-lookup`, `g2-folders-step`, `g2-folders-stream`, `g2-gateway-process`. The SDK obtained and verified RS256 assertions over TLS against signer SPKI SHA-256 `1a09f5a365923b604194f61007fe731e40860dc271b1be9b9ca1bc92ce0d5148`. The independent Folder bound-stream key had SPKI SHA-256 `425e922e37f801a1cf67fb74f6b9f649d166668e4a17ced4dc9637eae142ffe9`. Both phases independently read back the same grants, signer and catalog root `3be80240ab45101ae4b1a2a63aff4829bcc0582fcc3b14ea9949b176698cb456`. The exact route ACLs, issuer and receiver policy checks refused workload, audience, Tenant, operation, step, target and digest mismatches. Dapr enforced peer mTLS and distinct receiver channel tokens.
+
+The host built cleanly from Folders `2791d7a82825238da15a1bfb77c544079a7f7d09`. The retained runtime dependencies identify the independently pinned EventStore source and the three NuGet-supplied Folders assemblies. The loaded DLLs matched these entries in the repository-signed `2.2.0` archives.
+
+| Loaded assembly | SHA-256 |
+| --- | --- |
+| `Hexalith.Folders.dll` | `8b6ae8536da0b16727799fce97296a404ba1751aff48881860e15df0d23b5f25` |
+| `Hexalith.Folders.Contracts.dll` | `7d21be2349df4c4359635048eca25e7a061812a7ab16be8b7b9fc7e2392e5049` |
+| `Hexalith.Folders.EventStoreExtensions.dll` | `9988b3810469cec8a62ca1c16087ea29cdeab852376f790700fbd7d86ee06100` |
+
+```bash
+bundle="$HOME/.local/state/hexalith-projects/7-1-p2-g2-release-preflight-K4IQMXIk"
+run-with-temp bash "$bundle/replay/replay-deployment.sh" "$PWD" ../folders released \
+  "$bundle/published" "$bundle/replay/released" 2791d7a82825238da15a1bfb77c544079a7f7d09
+python3 -B "$bundle/replay/verify-results.py" "$bundle/replay/released"
+(cd "$bundle/replay/released" && sha256sum --check sha256.txt)
+```
+
+The two native xUnit phases passed with zero skips. The signed revoked-actor create returned 404 and the Folder stream remained absent. Receipt lookup with revoked authority returned empty 404. Authorized receipt lookup reported current owner version 3 and verified the original actor's current `read_metadata` and `manage_folder_access` authority and Tenant revision. The ACL contained exactly those two explicit grants for the original actor.
+
+The first worker lost its reply after the Folder committed. Task `01M8C8A8C6ZKFD35ETAF8KE087` retained its pending step with zero task receipts. After Redis restarted on its original AOF volume and the apps and sidecars were replaced, fence 1 returned empty 404 from both G-1 and Folders. Fence 2 recovered the same Folder `fld-p-77ca1d12efb95b7acf5f31b5801e6549ee9cb285` and receipt `prov-77ca1d12efb95b7acf5f31b5801e6549ee9cb285` and appended the receipt once. It executed provisioning zero times. The frozen mutation received 503. The Folder history retained one `FolderCreated` and two `FolderAccessGranted` events. Its SHA-256 stayed `e5a97bb9e26337b5740bdc5e246119e6c3d69c03812df8e8811f79057751dc61` and the native stream digest stayed `cd6eb3006483bf01c239e264430d5e8e502391ee372d69e9ab010d90b6204883`. The incumbent history and effective access also matched. Cleanup verified that the disposable authority and runtime resources were removed.
+
+| Retained released-package result | SHA-256 |
+| --- | --- |
+| `enrollment.json` | `753db42b0760b5dc16c39de5e8b4faf744df45637c504e2d2ab0824a786681c3` |
+| `runtime-assemblies.sha256` | `86bd8749b28ab8565423515c274694c8db4128d6595bbf3f48a570c25230bc1b` |
+| `native/before-restart.xml` | `2fd6588e156ed41a02fea8bf3514c41159820808b68056b7f686ec964dad2234` |
+| `native/after-restart.xml` | `23a16cea87554f46c3f770772ddbfa5bc786a985fd00445bc519a989c945564b` |
+| `native/before-restart.json` | `381e8dbc4c27bf3c516d75bca31acccb62a1720f645664ceabd08863982aba10` |
+| `native/after-restart.json` | `c52ef5c461f62815050cd2ec609cde4164df65aab130719044253c87b6df970b` |
+| `native/before-restart-wire.json` | `de187992261dc46f535828de290c2f51531ee88e36c8bec7ea09e2a7fe0fab99` |
+| `native/after-restart-wire.json` | `6613e71b850c206337b0811461af26682f0d50c900856288aa1505bfc02d7c77` |
+| `native/topology.json` | `535c0e65726837a8606191027d9584e9fdfe69cd785b93be4451c65921cba9f0` |
+| `native/cleanup.json` | `b9cc6cbe2a29e1919d229db4ac9052d5683cc482ecc0442a422296a97d75d4cb` |
+| `sha256.txt` | `33f8444f565365a1c5bd90ff1d137dd4a5285139f41a20d46703b3b158b466c3` |
+
+The independent verifier passed and all 41 manifest entries verified. The approved G-2 release and isolated workload enrollment are complete. **7.1-P2 remains open** for the Projects activation operation and digest binding, the combined capability pin, and the five role acceptances.
