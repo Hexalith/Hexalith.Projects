@@ -1,0 +1,15 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <IsPackable>true</IsPackable>
+    <CentralPackageTransitivePinningEnabled>false</CentralPackageTransitivePinningEnabled>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="../Hexalith.Projects.Contracts/Hexalith.Projects.Contracts.csproj" />
+    <!-- EventStore supplies the SDK when loading the extension. Keep its runtime dependencies private. -->
+    <ProjectReference Include="$(HexalithEventStoreRoot)/src/Hexalith.EventStore.DomainService/Hexalith.EventStore.DomainService.csproj"
+                      Condition="'$(UseHexalithProjectReferences)' == 'true'" PrivateAssets="all" />
+    <PackageReference Include="Hexalith.EventStore.DomainService"
+                      Condition="'$(UseHexalithProjectReferences)' != 'true'" PrivateAssets="all" />
+    <None Include="../../module/hexalith.module-manifest.v2.json" Pack="true" PackagePath="build/hexalith.module-manifest.v2.json" />
+  </ItemGroup>
+</Project>

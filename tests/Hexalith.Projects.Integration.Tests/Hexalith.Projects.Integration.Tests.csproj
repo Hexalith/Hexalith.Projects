@@ -25,13 +25,8 @@
   </ItemGroup>
   <!-- Package-mode structural tests compile the same pinned Platform helper without
        adding its unpublished source dependencies to any product project. -->
-  <PropertyGroup Condition="'$(UseHexalithProjectReferences)' != 'true'">
-    <HexalithPlatformRoot Condition="'$(HexalithPlatformRoot)' == '' and Exists('$(MSBuildThisFileDirectory)../../references/Hexalith.Platform/DaprSelfHostedMtls.cs')">$(MSBuildThisFileDirectory)../../references/Hexalith.Platform</HexalithPlatformRoot>
-    <HexalithPlatformRoot Condition="'$(HexalithPlatformRoot)' == '' and Exists('$(MSBuildThisFileDirectory)../../../Hexalith.Platform/DaprSelfHostedMtls.cs')">$(MSBuildThisFileDirectory)../../../Hexalith.Platform</HexalithPlatformRoot>
-  </PropertyGroup>
+  <Import Project="../../src/PlatformMtlsHelpers.targets" Condition="'$(UseHexalithProjectReferences)' != 'true'" />
   <ItemGroup Condition="'$(UseHexalithProjectReferences)' != 'true'">
-    <Compile Include="$(HexalithPlatformRoot)/DaprSelfHostedMtls.cs" Link="Platform/DaprSelfHostedMtls.cs" />
-    <Compile Include="$(HexalithPlatformRoot)/DaprSelfHostedMtlsSubscriber.cs" Link="Platform/DaprSelfHostedMtlsSubscriber.cs" />
     <PackageDownload Include="Hexalith.Builds.Module.Cli" Version="[$(HexalithBuildsModuleCliVersion)]" />
     <Reference Include="Hexalith.Builds.Tooling">
       <HintPath>$(NuGetPackageRoot)/hexalith.builds.module.cli/$(HexalithBuildsModuleCliVersion)/tools/net11.0/any/Hexalith.Builds.Tooling.dll</HintPath>

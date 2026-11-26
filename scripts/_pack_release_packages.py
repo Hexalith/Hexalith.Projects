@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Create the exact five Projects release candidates from package-only inputs."""
+"""Create the exact Projects release candidates from package-only inputs."""
 
 from __future__ import annotations
 

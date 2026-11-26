@@ -6,12 +6,11 @@ using Hexalith.EventStore.Contracts.Projections;
 using Hexalith.EventStore.Contracts.Routing;
 using Hexalith.Projects.Contracts.Commands;
 using Hexalith.Projects.Contracts.Queries;
-using Hexalith.Projects.Server.Projections.ConversationStartSetup;
-using Hexalith.Projects.Server.Projections.ProjectReads;
+using Hexalith.Projects.Server;
 
-[assembly: RouteCatalogDeclarationSource(typeof(Hexalith.Projects.Server.ProjectsRuntimeCatalogDeclarations))]
+[assembly: RouteCatalogDeclarationSource(typeof(Hexalith.Projects.Contracts.Routing.ProjectsRuntimeCatalogDeclarations))]
 
-namespace Hexalith.Projects.Server;
+namespace Hexalith.Projects.Contracts.Routing;
 
 /// <summary>Declares the installed bespoke processor, all computed queries, named projections and retained legacy callback.</summary>
 public static class ProjectsRuntimeCatalogDeclarations
@@ -19,27 +18,27 @@ public static class ProjectsRuntimeCatalogDeclarations
     /// <summary>Gets the exact twelve processor payload bindings and complete typed intent policies.</summary>
     public static IReadOnlyList<CommandIntentDeclaration> Commands { get; } =
     [
-        Command<CreateProjectPayload>("create-project", ProjectsServerModule.CreateProjectCommandType),
-        Command<UpdateProjectSetupPayload>("update-project-setup", ProjectsServerModule.UpdateProjectSetupCommandType),
-        Command<ArchiveProjectPayload>("archive-project", ProjectsServerModule.ArchiveProjectCommandType),
-        Command<RestoreProjectPayload>("restore-project", ProjectsServerModule.RestoreProjectCommandType),
-        Command<SetProjectFolderPayload>("set-project-folder", ProjectsServerModule.SetProjectFolderCommandType),
-        Command<LinkFileReferencePayload>("link-file-reference", ProjectsServerModule.LinkFileReferenceCommandType),
-        Command<UnlinkFileReferencePayload>("unlink-file-reference", ProjectsServerModule.UnlinkFileReferenceCommandType),
-        Command<LinkMemoryPayload>("link-memory", ProjectsServerModule.LinkMemoryCommandType),
-        Command<UnlinkMemoryPayload>("unlink-memory", ProjectsServerModule.UnlinkMemoryCommandType),
-        Command<ConfirmProjectResolutionPayload>("confirm-project-resolution", ProjectsServerModule.ConfirmProjectResolutionCommandType),
-        Command<GrantProjectChatBotAuthority>("grant-chatbot-authority", ProjectsServerModule.GrantProjectChatBotAuthorityCommandType),
-        Command<RevokeProjectChatBotAuthority>("revoke-chatbot-authority", ProjectsServerModule.RevokeProjectChatBotAuthorityCommandType),
+        Command<CreateProjectPayload>("create-project", ProjectsRouteIdentity.CreateProjectCommandType),
+        Command<UpdateProjectSetupPayload>("update-project-setup", ProjectsRouteIdentity.UpdateProjectSetupCommandType),
+        Command<ArchiveProjectPayload>("archive-project", ProjectsRouteIdentity.ArchiveProjectCommandType),
+        Command<RestoreProjectPayload>("restore-project", ProjectsRouteIdentity.RestoreProjectCommandType),
+        Command<SetProjectFolderPayload>("set-project-folder", ProjectsRouteIdentity.SetProjectFolderCommandType),
+        Command<LinkFileReferencePayload>("link-file-reference", ProjectsRouteIdentity.LinkFileReferenceCommandType),
+        Command<UnlinkFileReferencePayload>("unlink-file-reference", ProjectsRouteIdentity.UnlinkFileReferenceCommandType),
+        Command<LinkMemoryPayload>("link-memory", ProjectsRouteIdentity.LinkMemoryCommandType),
+        Command<UnlinkMemoryPayload>("unlink-memory", ProjectsRouteIdentity.UnlinkMemoryCommandType),
+        Command<ConfirmProjectResolutionPayload>("confirm-project-resolution", ProjectsRouteIdentity.ConfirmProjectResolutionCommandType),
+        Command<GrantProjectChatBotAuthority>("grant-chatbot-authority", ProjectsRouteIdentity.GrantProjectChatBotAuthorityCommandType),
+        Command<RevokeProjectChatBotAuthority>("revoke-chatbot-authority", ProjectsRouteIdentity.RevokeProjectChatBotAuthorityCommandType),
     ];
 
     /// <summary>Gets all installed query and projection declarations beside the actual processor inventory.</summary>
     public static IReadOnlyList<RouteContractDeclaration> Routes { get; } =
     [
         .. Commands.Select(command => command.Route),
-        Query<GetConversationStartSetupQuery>("conversation-start-setup", ProjectsServerModule.GetConversationStartSetupQueryType),
-        Query<GetProjectContextQuery>("get-project-context", ProjectsServerModule.GetProjectContextQueryType),
-        Query<ExplainContextSelectionQuery>("explain-context-selection", ProjectsServerModule.ExplainContextSelectionQueryType),
+        Query<GetConversationStartSetupQuery>("conversation-start-setup", ProjectsRouteIdentity.GetConversationStartSetupQueryType),
+        Query<GetProjectContextQuery>("get-project-context", ProjectsRouteIdentity.GetProjectContextQueryType),
+        Query<ExplainContextSelectionQuery>("explain-context-selection", ProjectsRouteIdentity.ExplainContextSelectionQueryType),
         Query<ResolveProjectChatBotAuthority>("chatbot-authority", ResolveProjectChatBotAuthority.QueryType),
         Query<ListProjectsQuery>("list-projects", ListProjectsQuery.QueryType),
         Query<GetProjectAuditQuery>("get-project-audit", GetProjectAuditQuery.QueryType),
@@ -47,8 +46,8 @@ public static class ProjectsRuntimeCatalogDeclarations
         Query<GetProjectQuery>("get-project", GetProjectQuery.QueryType),
         Query<ResolveProjectFromConversationQuery>("resolve-from-conversation", ResolveProjectFromConversationQuery.QueryType),
         Query<ResolveProjectFromAttachmentsQuery>("resolve-from-attachments", ResolveProjectFromAttachmentsQuery.QueryType),
-        Projection<ConversationStartSetupProjectionHandler>("conversation-start-setup", ["conversation-start-setup"]),
-        Projection<ProjectReadProjectionHandler>("project-reads", ["project-reads"]),
+        Projection("conversation-start-setup", "Hexalith.Projects.Server.Projections.ConversationStartSetup.ConversationStartSetupProjectionHandler", ["conversation-start-setup"]),
+        Projection("project-reads", "Hexalith.Projects.Server.Projections.ProjectReads.ProjectReadProjectionHandler", ["project-reads"]),
         LegacyProjection(),
     ];
 
@@ -58,20 +57,19 @@ public static class ProjectsRuntimeCatalogDeclarations
         {
             "command" => "process",
             "query" => "query",
-            _ => route.ProjectionType == ProjectsServerModule.ProjectionType ? "project" : "project/v2",
+            _ => route.ProjectionType == ProjectsRouteIdentity.ProjectionType ? "project" : "project/v2",
         }, StringComparer.Ordinal);
 
     /// <summary>Gets the actual typed operation schemas; owner queries and projection protocols remain internal.</summary>
     public static IReadOnlyList<RouteOperationContract> Operations => Routes.Select(route =>
     {
         Type request = route.Kind == "projection"
-            ? route.ProjectionType == ProjectsServerModule.ProjectionType ? typeof(ProjectionRequest) : typeof(ProjectionDispatchRequest)
-            : typeof(ProjectsRuntimeCatalogDeclarations).Assembly.GetType(route.Execution!.HandlerType)
-                ?? typeof(ListProjectsQuery).Assembly.GetType(route.Execution!.HandlerType, throwOnError: true)!;
+            ? route.ProjectionType == ProjectsRouteIdentity.ProjectionType ? typeof(ProjectionRequest) : typeof(ProjectionDispatchRequest)
+            : typeof(ProjectsRuntimeCatalogDeclarations).Assembly.GetType(route.Execution!.HandlerType, throwOnError: true)!;
         Type response = route.Kind switch
         {
             "command" => typeof(SubmitCommandResponse),
-            "projection" => route.ProjectionType == ProjectsServerModule.ProjectionType ? typeof(ProjectionResponse) : typeof(ProjectionDispatchResponse),
+            "projection" => route.ProjectionType == ProjectsRouteIdentity.ProjectionType ? typeof(ProjectionResponse) : typeof(ProjectionDispatchResponse),
             _ => QueryResultType(route.MessageType!),
         };
         bool ownerOnly = route.Kind == "projection" || route.MessageType == ResolveProjectChatBotAuthority.QueryType;
@@ -81,18 +79,18 @@ public static class ProjectsRuntimeCatalogDeclarations
 
     private static string CommandEligibility(string type) => type switch
     {
-        ProjectsServerModule.ArchiveProjectCommandType or ProjectsServerModule.RestoreProjectCommandType
-            or ProjectsServerModule.SetProjectFolderCommandType or ProjectsServerModule.UnlinkFileReferenceCommandType
-            or ProjectsServerModule.UnlinkMemoryCommandType or ProjectsServerModule.ConfirmProjectResolutionCommandType
-            or ProjectsServerModule.GrantProjectChatBotAuthorityCommandType or ProjectsServerModule.RevokeProjectChatBotAuthorityCommandType
+        ProjectsRouteIdentity.ArchiveProjectCommandType or ProjectsRouteIdentity.RestoreProjectCommandType
+            or ProjectsRouteIdentity.SetProjectFolderCommandType or ProjectsRouteIdentity.UnlinkFileReferenceCommandType
+            or ProjectsRouteIdentity.UnlinkMemoryCommandType or ProjectsRouteIdentity.ConfirmProjectResolutionCommandType
+            or ProjectsRouteIdentity.GrantProjectChatBotAuthorityCommandType or ProjectsRouteIdentity.RevokeProjectChatBotAuthorityCommandType
             => "confirmation-required",
-        ProjectsServerModule.CreateProjectCommandType or ProjectsServerModule.UpdateProjectSetupCommandType
-            or ProjectsServerModule.LinkFileReferenceCommandType or ProjectsServerModule.LinkMemoryCommandType => "UI-only",
+        ProjectsRouteIdentity.CreateProjectCommandType or ProjectsRouteIdentity.UpdateProjectSetupCommandType
+            or ProjectsRouteIdentity.LinkFileReferenceCommandType or ProjectsRouteIdentity.LinkMemoryCommandType => "UI-only",
         _ => throw new InvalidOperationException("An installed command has no approved private-catalog surface classification."),
     };
 
     private static CommandIntentDeclaration Command<T>(string id, string discriminator) => new(
-        new("projects-" + id, "command", ProjectsServerModule.DomainName, discriminator, null, "v1", 1,
+        new("projects-" + id, "command", ProjectsRouteIdentity.DomainName, discriminator, null, "v1", 1,
             "workload", EventStoreOperationIdentifiers.DomainServiceProcess, null, [],
             new(typeof(T).FullName!, "exact", [discriminator], "domain-service", null, [])),
         "hexalith:projects:" + id + ":intent-v1", "projects:" + id, "projects:" + id + ":policy-v1",
@@ -101,20 +99,21 @@ public static class ProjectsRuntimeCatalogDeclarations
         IdempotencyReplayRetentionTier.Mutation, true);
 
     private static RouteContractDeclaration Query<T>(string id, string discriminator) => new("projects-" + id,
-        "query", ProjectsServerModule.DomainName, discriminator, null, "v1", null, "workload",
+        "query", ProjectsRouteIdentity.DomainName, discriminator, null, "v1", null, "workload",
         EventStoreOperationIdentifiers.DomainServiceQuery, null, [],
         new(typeof(T).FullName!, "exact", [discriminator], "domain-service", "computed", [], RequiresDelegatedContext: discriminator == ResolveProjectChatBotAuthority.QueryType));
 
-    private static RouteContractDeclaration Projection<T>(string name, string[] outputs) => new("projects-projection-" + name,
-        "projection", ProjectsServerModule.DomainName, null, name, "v1", null, "workload",
+    // The catalog records the receiver names without loading the Projects server.
+    private static RouteContractDeclaration Projection(string name, string handlerType, string[] outputs) => new("projects-projection-" + name,
+        "projection", ProjectsRouteIdentity.DomainName, null, name, "v1", null, "workload",
         EventStoreOperationIdentifiers.DomainServiceProject, null, [],
-        new(typeof(T).FullName!, "exact", [name], "domain-service", null, outputs));
+        new(handlerType, "exact", [name], "domain-service", null, outputs));
 
     private static RouteContractDeclaration LegacyProjection() => new("projects-projection-project", "projection",
-        ProjectsServerModule.DomainName, null, ProjectsServerModule.ProjectionType, "v1", null, "workload",
+        ProjectsRouteIdentity.DomainName, null, ProjectsRouteIdentity.ProjectionType, "v1", null, "workload",
         EventStoreOperationIdentifiers.DomainServiceProject, null, [],
-        new(typeof(ProjectProjectionHandler).FullName!, "exact", [ProjectsServerModule.ProjectionType], "domain-service", null,
-            [ProjectsServerModule.ProjectionType]));
+        new("Hexalith.Projects.Server.ProjectProjectionHandler", "exact", [ProjectsRouteIdentity.ProjectionType], "domain-service", null,
+            [ProjectsRouteIdentity.ProjectionType]));
 
     private static Type QueryResultType(string type)
     {

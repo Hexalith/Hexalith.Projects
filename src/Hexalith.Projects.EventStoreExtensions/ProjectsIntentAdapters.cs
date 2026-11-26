@@ -2,10 +2,13 @@ using System.Text.Json;
 
 using Hexalith.EventStore.DomainService;
 using Hexalith.Projects.Contracts.Commands;
+using Hexalith.Projects.Contracts.Routing;
+using Hexalith.Projects.Server;
 
-[assembly: RouteCatalogAdapterSource(typeof(Hexalith.Projects.Server.ProjectsIntentAdapters))]
+[assembly: EventStoreExtension("projects", 1)]
+[assembly: RouteCatalogAdapterSource(typeof(Hexalith.Projects.EventStoreExtensions.ProjectsIntentAdapters))]
 
-namespace Hexalith.Projects.Server;
+namespace Hexalith.Projects.EventStoreExtensions;
 
 /// <summary>Binds the actual processor payloads through the standard SDK intent adapter.</summary>
 public static class ProjectsIntentAdapters

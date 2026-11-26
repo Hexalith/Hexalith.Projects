@@ -75,19 +75,29 @@ Publishing**, and add a GitHub Actions policy with these exact identity values:
 | Workflow file | `release.yml` (file name only) |
 | Environment | `production` |
 
-Grant publication of new versions only for these five exact package ID
+Grant publication of new versions only for these six exact package ID
 patterns. Add an exact scope entry for each ID; do not use `*`,
 `Hexalith.*`, or `Hexalith.Projects.*`:
 
 - `Hexalith.Projects.Contracts`
+- `Hexalith.Projects.EventStoreExtensions`
 - `Hexalith.Projects`
 - `Hexalith.Projects.Client`
 - `Hexalith.Projects.Testing`
 - `Hexalith.Projects.ServiceDefaults`
 
-Do not grant a new-package scope. A future package must first be added to
-`tools/release-packages.json`, the independent count gate, this policy, and the
-runbook in one reviewed change.
+Keep publication frozen until the maintainer authorizes the first publication
+of `Hexalith.Projects.EventStoreExtensions`. For that release, grant temporary
+permission to create the new package using the exact pattern
+`Hexalith.Projects.EventStoreExtensions`. Keep the other IDs scoped to publishing
+new versions. Semantic Release pushes the extension first and stops if creation
+is refused. As soon as the first package exists, including after a partial
+release, remove its creation permission and retain only the exact-ID scope for
+publishing new versions. Remove the temporary creation permission if the attempt
+ends before creating the package, too.
+
+A future package must first be added to `tools/release-packages.json`, the
+independent count gate, this policy, and the runbook in one reviewed change.
 
 ## Resolve and record the release version
 
@@ -126,7 +136,7 @@ printf '%s\n' "$RELEASE_VERSION" >"$EVIDENCE_DIR/release-version.txt"
    finish successfully without requesting an OIDC credential.
 3. Wait until a reviewed, releasable Conventional Commit exists on a new eligible
    `main` tip. Complete the dry-run/version record above and confirm the intended
-   version is absent for all five package IDs.
+   version is absent for all six package IDs.
 4. Prove no older Release is queued, waiting, pending, requested, or running.
    Preserve the query result, require an empty array, and only then enable:
 
@@ -143,7 +153,7 @@ printf '%s\n' "$RELEASE_VERSION" >"$EVIDENCE_DIR/release-version.txt"
    tests, and successful isolated-resource cleanup before publication.
 6. In the job log, confirm source revalidation succeeded before `NuGet/login`,
    the login step succeeded without displaying its output, and Semantic Release
-   published exactly five packages. Never print, copy, download, or persist the
+   published exactly six packages. Never print, copy, download, or persist the
    temporary key.
 7. After the run reaches a terminal state, immediately refreeze, including after
    failure:
@@ -154,7 +164,7 @@ printf '%s\n' "$RELEASE_VERSION" >"$EVIDENCE_DIR/release-version.txt"
 
 8. Verify the completed manual release from the reviewed source checkout.
    Set `RELEASE_RUN_ID` to the successful dispatch run ID. The verifier checks
-   the successful publishing attempt and tag commit, downloads the exact five
+   the successful publishing attempt and tag commit, downloads the exact six
    release assets from both registries, validates their package manifest and source
    metadata, compares every payload entry, and checks the NuGet signatures
    with `dotnet nuget verify --all`.
@@ -186,7 +196,7 @@ printf '%s\n' "$RELEASE_VERSION" >"$EVIDENCE_DIR/release-version.txt"
 
 Commit or attach the complete `$EVIDENCE_DIR` through the repository's normal
 reviewed evidence process. It contains the workflow run URL/SHA, predicted and
-published version, five public packages from each registry, manifest/signature results,
+published version, six public packages from each registry, manifest/signature results,
 GitHub release metadata, active-run exclusion, and dry-run record. Also record
 the final repository variable value `false` and the policy activation status in
 `$EVIDENCE_DIR/operator-checks.md`.
@@ -207,7 +217,7 @@ the final repository variable value `false` and the policy activation status in
 - **Temporary policy inactive:** restart its activation window in NuGet.org,
   reconfirm every identity and scope, and perform one reviewed enabled release
   before the window expires.
-- **Failure after publication begins:** preserve the run log and query all five
+- **Failure after publication begins:** preserve the run log and query all six
   NuGet destinations plus the GitHub tag/release. Do not blind-rerun an occupied
   immutable version. Use a separately reviewed partial-publication recovery
   plan based on the observed official state.
@@ -231,7 +241,7 @@ security decision.
 ## Retire the legacy credential
 
 Retire the old credential only after all activation checks pass: the enabled
-release succeeded, all five packages and the GitHub release were verified, the
+release succeeded, all six packages and the GitHub release were verified, the
 repository was refrozen, and the NuGet.org policy is active or permanently
 active as applicable.
 

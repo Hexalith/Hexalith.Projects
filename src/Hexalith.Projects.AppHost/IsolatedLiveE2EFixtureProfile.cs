@@ -251,7 +251,8 @@ public static class IsolatedLiveE2EFixtureProfile
         ];
         Assembly Load(string project, string assembly)
             => Assembly.LoadFrom(Path.Combine(Value("Artifacts"), "bin", project, "debug", assembly));
-        Assembly projectOwner = Load("Hexalith.Projects.Server", "Hexalith.Projects.Server.dll");
+        Assembly projectOwner = Load("Hexalith.Projects.Server", "Hexalith.Projects.Contracts.dll");
+        Assembly projectAdapters = Load("Hexalith.Projects.Server", "Hexalith.Projects.EventStoreExtensions.dll");
         Assembly tenantOwner = Load("Hexalith.Tenants", "Hexalith.Tenants.Contracts.dll");
         Assembly tenantAdapters = Load("Hexalith.Tenants", "Hexalith.Tenants.Server.dll");
         string statePath = Path.Combine(directory, "catalog-statestore.json");
@@ -261,7 +262,7 @@ public static class IsolatedLiveE2EFixtureProfile
         var options = new DevelopmentRouteCatalogCompositionOptions(Path.Combine(directory, "catalog-custody"), "fixturecatalog",
             isolation, "fixture-v1", new Dictionary<string, string> { ["fixture-v1"] = Value("CatalogDigestKey") }, "fixture-v1");
         var catalog = builder.AddEventStoreDevelopmentRouteCatalog(gateway,
-            [new(projects, projectOwner, projectOwner), new(tenants, tenantOwner, tenantAdapters)], receivers, statePath, options, isolation);
+            [new(projects, projectOwner, projectAdapters), new(tenants, tenantOwner, tenantAdapters)], receivers, statePath, options, isolation);
         builder.AddEventStoreDevelopmentSqliteStartupOrdering(tenants, gateway, projects, workers);
         _ = tenants.WithEnvironment("Tenants__BootstrapBoundWorkloadReceiptPath", Path.Combine(catalog.Directory, "tenants.bootstrap.json"));
         _ = tenants.WithEnvironment("EventStore__Testing__OwnerSourceRead__Enabled", "true")

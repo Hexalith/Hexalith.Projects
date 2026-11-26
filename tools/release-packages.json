@@ -32,6 +32,16 @@
       "probe": "using Hexalith.Projects.Contracts.Identifiers;\nConsole.WriteLine(new ProjectId(\"01HZ9K8YQ3W6V2N4R7T5P0X1AB\").Value);\n"
     },
     {
+      "id": "Hexalith.Projects.EventStoreExtensions",
+      "project": "src/Hexalith.Projects.EventStoreExtensions/Hexalith.Projects.EventStoreExtensions.csproj",
+      "assembly": "Hexalith.Projects.EventStoreExtensions",
+      "frameworkReferences": [],
+      "dependencies": {
+        "Hexalith.Projects.Contracts": "{version}"
+      },
+      "probe": "using Hexalith.Projects.EventStoreExtensions;\nConsole.WriteLine(typeof(ProjectsIntentAdapters).Assembly.GetName().Name);\n"
+    },
+    {
       "id": "Hexalith.Projects",
       "project": "src/Hexalith.Projects/Hexalith.Projects.csproj",
       "assembly": "Hexalith.Projects",

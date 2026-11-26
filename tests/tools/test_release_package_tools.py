@@ -25,8 +25,12 @@ REPOSITORY_ROOT = Path(__file__).resolve().parents[2]
 SCRIPTS = REPOSITORY_ROOT / "scripts"
 sys.path.insert(0, str(SCRIPTS))
 
+import _nuget
 import _pack_release_packages as packer  # noqa: E402
 from _nuget import (  # noqa: E402
+    EXTENSION_PACKAGE_ID,
+    MODULE_MANIFEST,
+    PACKAGED_MODULE_MANIFEST,
     ManifestPackage,
     expected_dependencies,
     load_manifest,
@@ -114,7 +118,7 @@ def write_candidates(
     version: str = VERSION,
     source_sha: str = SOURCE_SHA,
 ) -> None:
-    """Write the exact five lightweight candidate archives."""
+    """Write the exact lightweight candidate archives."""
 
     manifest = load_manifest()
     for package in manifest.packages:
@@ -129,6 +133,8 @@ def write_candidates(
                 b"MZfixture-assembly",
             )
             archive.writestr(manifest.metadata.readme, b"fixture readme")
+            if package.package_id == EXTENSION_PACKAGE_ID:
+                archive.writestr(PACKAGED_MODULE_MANIFEST, MODULE_MANIFEST.read_bytes())
 
 
 def rewrite_candidate(
@@ -137,6 +143,7 @@ def rewrite_candidate(
     *,
     raw_nuspec: bytes | None = None,
     remove_asset: bool = False,
+    remove_entry: str | None = None,
     extra_entry: tuple[str, bytes] | None = None,
 ) -> None:
     """Rewrite one archive to model a hostile or drifting candidate."""
@@ -145,7 +152,7 @@ def rewrite_candidate(
         payloads = {
             entry.filename: source.read(entry)
             for entry in source.infolist()
-            if not (remove_asset and entry.filename.casefold().endswith(".dll"))
+            if entry.filename != remove_entry and not (remove_asset and entry.filename.casefold().endswith(".dll"))
         }
     nuspec_name = next(name for name in payloads if name.casefold().endswith(".nuspec"))
     if raw_nuspec is not None:
@@ -259,6 +266,7 @@ class ReleasePublicationTests(unittest.TestCase):
     def verify(
         self, mutation: tuple[str, bytes] | None = None, invalid_signature: bool = False,
         signature: str = "Signature type: Repository\nhttps://api.nuget.org/v3/index.json",
+        committed_manifest: bytes | None = None,
     ) -> None:
         responses = {
             "actions/runs/42": self.run,
@@ -290,9 +298,12 @@ class ReleasePublicationTests(unittest.TestCase):
         with (
             mock.patch.object(self.verifier, "github", side_effect=responses.__getitem__),
             mock.patch.object(self.verifier, "download_package", side_effect=fetch_package),
+            mock.patch.object(self.verifier, "read_committed_module_manifest",
+                              return_value=MODULE_MANIFEST.read_bytes() if committed_manifest is None else committed_manifest) as read_manifest,
             mock.patch.object(self.verifier.subprocess, "run", side_effect=execute),
         ):
             self.verifier.verify_publication(VERSION, SOURCE_SHA, 42, self.evidence)
+        read_manifest.assert_called_once_with(SOURCE_SHA)
 
     def test_exact_release_emits_complete_receipt(self) -> None:
         self.verify()
@@ -338,6 +349,26 @@ class ReleasePublicationTests(unittest.TestCase):
     def test_changed_payload_is_rejected(self) -> None:
         with self.assertRaisesRegex(ValueError, "payloads differ"):
             self.verify(mutation=("README.md", b"Different public readme"))
+
+    def test_rejects_package_that_matches_worktree_instead_of_commit(self) -> None:
+        with self.assertRaisesRegex(ValueError, "must contain the exact Projects module manifest"):
+            self.verify(committed_manifest=b"committed bytes that differ from the checkout")
+
+    def test_reads_manifest_from_requested_commit_even_when_worktree_is_dirty(self) -> None:
+        worktree = self.directory / "committed"
+        worktree.mkdir()
+        manifest_path = worktree / "module/hexalith.module-manifest.v2.json"
+        manifest_path.parent.mkdir()
+        manifest_path.write_bytes(b"committed declaration")
+        git = ["git", "-C", str(worktree)]
+        subprocess.run([*git, "init", "-q"], check=True)
+        subprocess.run([*git, "add", str(manifest_path)], check=True)
+        subprocess.run([*git, "-c", "user.name=Fixture", "-c", "user.email=fixture@example.com",
+                        "commit", "-qm", "fixture"], check=True)
+        revision = subprocess.check_output([*git, "rev-parse", "HEAD"], text=True).strip()
+        manifest_path.write_bytes(b"modified worktree")
+        with mock.patch.object(_nuget, "ROOT", worktree), mock.patch.object(_nuget, "MODULE_MANIFEST", manifest_path):
+            self.assertEqual(b"committed declaration", _nuget.read_committed_module_manifest(revision))
 
     def test_signature_failure_never_creates_success_receipt(self) -> None:
         with self.assertRaises(subprocess.CalledProcessError):
@@ -395,11 +426,55 @@ class ReleasePackageToolTests(unittest.TestCase):
         self.assertIs(failure, raised.exception)
         run.assert_called_once()
 
+    def test_publication_pushes_extension_first_and_stops_after_refusal(self) -> None:
+        binary = self.directory / "bin"
+        binary.mkdir()
+        fake_dotnet = binary / "dotnet"
+        fake_dotnet.write_text(
+            '#!/bin/sh\nprintf "%s\\n" "$3" >> "$PUSH_LOG"\nexit 23\n', encoding="utf-8",
+        )
+        fake_dotnet.chmod(0o755)
+        fake_python = binary / "python3"
+        fake_python.write_text("#!/bin/sh\nexit 0\n", encoding="utf-8")
+        fake_python.chmod(0o755)
+        self.directory.joinpath("nupkgs").mkdir()
+        for archive in self.directory.glob("*.nupkg"):
+            shutil.copyfile(archive, self.directory / "nupkgs" / archive.name)
+        command = subprocess.check_output(
+            ["node", "-e", 'process.stdout.write(require("./release.config.cjs").plugins[2][1].publishCmd)'],
+            cwd=REPOSITORY_ROOT, text=True,
+        ).replace("${nextRelease.version}", VERSION)
+        push_log = self.directory / "push.log"
+        result = subprocess.run(["bash", "-c", command], cwd=self.directory, check=False, env={
+            **os.environ, "PATH": f"{binary}{os.pathsep}{os.environ['PATH']}", "PUSH_LOG": str(push_log),
+            "NUGET_API_KEY": "fixture-key",
+        })
+        self.assertEqual(23, result.returncode)
+        self.assertEqual([f"./nupkgs/{EXTENSION_PACKAGE_ID}.{VERSION}.nupkg"], push_log.read_text().splitlines())
+
     def test_exact_candidates_pass(self) -> None:
         packages, version, source = validate_packages(self.directory, VERSION, SOURCE_SHA)
-        self.assertEqual(5, len(packages))
+        self.assertEqual(6, len(packages))
         self.assertEqual(VERSION, version)
         self.assertEqual(SOURCE_SHA, source)
+
+    def test_extension_rejects_manifest_with_different_content(self) -> None:
+        rewrite_candidate(
+            self.candidate(EXTENSION_PACKAGE_ID),
+            extra_entry=(PACKAGED_MODULE_MANIFEST, b"{}"),
+        )
+        self.assert_invalid("must contain the exact Projects module manifest")
+
+    def test_extension_rejects_stripped_manifest(self) -> None:
+        rewrite_candidate(self.candidate(EXTENSION_PACKAGE_ID), remove_entry=PACKAGED_MODULE_MANIFEST)
+        self.assert_invalid("must contain the exact Projects module manifest")
+
+    def test_other_packages_reject_a_module_manifest(self) -> None:
+        rewrite_candidate(
+            self.candidate("Hexalith.Projects.Contracts"),
+            extra_entry=(PACKAGED_MODULE_MANIFEST, MODULE_MANIFEST.read_bytes()),
+        )
+        self.assert_invalid("unexpected Projects module manifest")
 
     def test_service_defaults_rejects_stale_opentelemetry_dependency_versions(self) -> None:
         package = next(item for item in load_manifest().packages
@@ -442,10 +517,10 @@ class ReleasePackageToolTests(unittest.TestCase):
 
     def test_missing_and_stale_packages_fail(self) -> None:
         self.candidate("Hexalith.Projects.Client").unlink()
-        self.assert_invalid("Expected exactly 5 release packages")
+        self.assert_invalid("Expected exactly 6 release packages")
         write_candidates(self.directory)
         (self.directory / "Stale.1.0.0.nupkg").write_bytes(b"not a package")
-        self.assert_invalid("Expected exactly 5 release packages")
+        self.assert_invalid("Expected exactly 6 release packages")
 
     def test_metadata_and_provenance_drift_fail(self) -> None:
         path = self.candidate("Hexalith.Projects")
@@ -561,6 +636,10 @@ class ReleasePackageToolTests(unittest.TestCase):
                 "using Hexalith.Projects.Contracts.Identifiers;\n"
                 'Console.WriteLine(new ProjectId("01HZ9K8YQ3W6V2N4R7T5P0X1AB").Value);\n'
             ),
+            EXTENSION_PACKAGE_ID: (
+                "using Hexalith.Projects.EventStoreExtensions;\n"
+                "Console.WriteLine(typeof(ProjectsIntentAdapters).Assembly.GetName().Name);\n"
+            ),
             "Hexalith.Projects": (
                 "using Hexalith.Projects;\nConsole.WriteLine(ProjectsModule.Name);\n"
             ),
@@ -617,6 +696,34 @@ class ReleasePackageToolTests(unittest.TestCase):
         )
         with self.assertRaisesRegex(ValueError, "mismatched Projects candidates"):
             module.assert_package_only_assets(assets_path, "Hexalith.Projects", VERSION)
+
+    def test_extension_only_closure_rejects_transitive_provider(self) -> None:
+        module = load_consumer_module()
+        path = self.directory / "extension-assets.json"
+        contracts = next(package for package in load_manifest().packages if package.package_id == "Hexalith.Projects.Contracts")
+        libraries = {
+            f"{identifier}/{VERSION}": {"type": "package"}
+            for identifier in (EXTENSION_PACKAGE_ID, contracts.package_id, *contracts.dependencies)
+        }
+        path.write_text(json.dumps({"libraries": libraries}), encoding="utf-8")
+        module.assert_package_only_assets(path, EXTENSION_PACKAGE_ID, VERSION, extension_only=True)
+        libraries["Dapr.Client/1.19.1"] = {"type": "package"}
+        path.write_text(json.dumps({"libraries": libraries}), encoding="utf-8")
+        with self.assertRaisesRegex(ValueError, "unexpected=.*dapr.client"):
+            module.assert_package_only_assets(path, EXTENSION_PACKAGE_ID, VERSION, extension_only=True)
+
+    def test_packed_extension_consumer_builds_and_executes_eventstore_host(self) -> None:
+        module = load_consumer_module()
+        package = next(package for package in load_manifest().packages if package.package_id == EXTENSION_PACKAGE_ID)
+        with mock.patch.object(module, "assert_package_only_assets") as assets, mock.patch.object(module.subprocess, "run") as run:
+            module.run_consumer(package, VERSION, self.directory, self.directory, eventstore_host=True)
+        host = self.directory / "eventstore-extension-host"
+        self.assertIn('Include="Hexalith.EventStore.Server" Version="[5.6.0]"', (host / "Consumer.csproj").read_text())
+        assets.assert_called_once_with(host / "obj/project.assets.json", EXTENSION_PACKAGE_ID, VERSION, extension_only=False)
+        self.assertEqual(3, run.call_count)
+        runtime_command = run.call_args.args[0]
+        self.assertEqual(["dotnet", str(host / "bin/Release/net11.0/Consumer.dll"),
+                          str(host / ".packages" / EXTENSION_PACKAGE_ID.lower() / VERSION / PACKAGED_MODULE_MANIFEST)], runtime_command)
 
     def test_consumer_restore_failure_propagates(self) -> None:
         module = load_consumer_module()
@@ -847,6 +954,59 @@ exit 0
                 self.assertIn("must not reference Hexalith.FrontComposer", result.stdout + result.stderr)
                 self.assertNotIn("PASSED", result.stdout)
                 self.assertEqual("", command_log.read_text(encoding="utf-8"))
+
+
+class PlatformMtlsInputTests(unittest.TestCase):
+    """Exercise the imported MSBuild target with all three real consumer projects."""
+
+    def test_direct_mapped_and_sibling_only_inputs(self) -> None:
+        consumers = {
+            "src/Hexalith.Projects.AppHost/Hexalith.Projects.AppHost.csproj": "true",
+            "tests/Hexalith.Projects.Integration.Tests/Hexalith.Projects.Integration.Tests.csproj": "false",
+            "tests/Hexalith.Projects.PackageFixtures.AppHost/Hexalith.Projects.PackageFixtures.AppHost.csproj": "false",
+        }
+        for project, source_mode in consumers.items():
+            with self.subTest(project=project), tempfile.TemporaryDirectory() as private:
+                scratch = Path(private)
+                root = scratch / "active"
+                target = root / project
+                target.parent.mkdir(parents=True)
+                shutil.copyfile(REPOSITORY_ROOT / project, target)
+                imported = root / "src/PlatformMtlsHelpers.targets"
+                imported.parent.mkdir(exist_ok=True)
+                shutil.copyfile(REPOSITORY_ROOT / "src/PlatformMtlsHelpers.targets", imported)
+                direct = root / "references/Hexalith.Platform"
+                mapped = scratch / "mapped"
+                sibling = scratch / "Hexalith.Platform"
+                helpers = ("DaprSelfHostedMtls.cs", "DaprSelfHostedMtlsSubscriber.cs")
+                for available in (sibling, mapped):
+                    available.mkdir(parents=True)
+                    for helper in helpers:
+                        (available / helper).touch()
+                args = [
+                    "dotnet", "msbuild", str(target), "-nologo", "-t:ValidateProjectsPlatformMtlsInput",
+                    f"-p:UseHexalithProjectReferences={source_mode}",
+                    f"-p:HexalithTenantsRoot={scratch / 'tenants'}", f"-p:HexalithFoldersRoot={scratch / 'folders'}",
+                ]
+
+                def build(*variables: str) -> subprocess.CompletedProcess:
+                    return subprocess.run(
+                        [*args, *variables], cwd=root, capture_output=True, text=True,
+                        timeout=30, check=False,
+                    )
+
+                refused = build("-p:HexalithPlatformRoot=")
+                self.assertNotEqual(0, refused.returncode)
+                self.assertIn(f"Projects Platform input is missing at '{direct}'", refused.stdout + refused.stderr)
+                selected = build(f"-p:HexalithPlatformRoot={mapped}")
+                self.assertEqual(0, selected.returncode, selected.stdout + selected.stderr)
+                shutil.copytree(mapped, direct)
+                selected = build("-p:HexalithPlatformRoot=")
+                self.assertEqual(0, selected.returncode, selected.stdout + selected.stderr)
+                missing = scratch / "missing-mapped-input"
+                refused = build(f"-p:HexalithPlatformRoot={missing}")
+                self.assertNotEqual(0, refused.returncode)
+                self.assertIn(f"Projects Platform input is missing at '{missing}'", refused.stdout + refused.stderr)
 
 
 if __name__ == "__main__":

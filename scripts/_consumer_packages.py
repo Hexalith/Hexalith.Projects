@@ -11,7 +11,17 @@ import tempfile
 import xml.etree.ElementTree as ET
 from pathlib import Path
 
-from _nuget import ROOT, ManifestPackage, load_manifest, validate_packages
+from _nuget import (
+    EXTENSION_PACKAGE_ID,
+    PACKAGED_MODULE_MANIFEST,
+    ROOT,
+    ManifestPackage,
+    load_manifest,
+    validate_packages,
+)
+
+
+EXTENSION_PROBE = ROOT / "tests/tools/ProjectsExtensionPackageProbe.cs"
 
 
 def parse_arguments() -> argparse.Namespace:
@@ -22,7 +32,7 @@ def parse_arguments() -> argparse.Namespace:
     return parser.parse_args()
 
 
-def render_consumer_project(package: ManifestPackage, version: str) -> str:
+def render_consumer_project(package: ManifestPackage, version: str, *, eventstore_host: bool = False) -> str:
     """Render one exact-version executable package consumer."""
 
     project = ET.Element("Project", {"Sdk": "Microsoft.NET.Sdk"})
@@ -37,6 +47,8 @@ def render_consumer_project(package: ManifestPackage, version: str) -> str:
         "PackageReference",
         {"Include": package.package_id, "Version": f"[{version}]"},
     )
+    if eventstore_host:
+        ET.SubElement(dependencies, "PackageReference", {"Include": "Hexalith.EventStore.Server", "Version": "[5.6.0]"})
     ET.indent(project)
     return ET.tostring(project, encoding="unicode") + "\n"
 
@@ -62,7 +74,9 @@ def render_nuget_config(package_directory: Path) -> str:
     return ET.tostring(configuration, encoding="unicode") + "\n"
 
 
-def assert_package_only_assets(assets_path: Path, package_id: str, version: str) -> None:
+def assert_package_only_assets(
+    assets_path: Path, package_id: str, version: str, *, extension_only: bool = False,
+) -> None:
     """Reject project fallbacks and unexpected Projects package versions."""
 
     with assets_path.open("r", encoding="utf-8") as handle:
@@ -88,20 +102,33 @@ def assert_package_only_assets(assets_path: Path, package_id: str, version: str)
     if unexpected:
         raise ValueError(f"Consumer {package_id} restored mismatched Projects candidates: {unexpected}")
 
+    if extension_only:
+        contracts = next(package for package in load_manifest().packages if package.package_id == "Hexalith.Projects.Contracts")
+        allowed_ids = {name.casefold() for name in (package_id, contracts.package_id, *contracts.dependencies)}
+        actual_ids = {name.rsplit("/", 1)[0].casefold() for name in libraries}
+        if actual_ids != allowed_ids:
+            raise ValueError(
+                "Extension-only dependency closure differs from its contract packages: "
+                f"missing={sorted(allowed_ids - actual_ids)}, unexpected={sorted(actual_ids - allowed_ids)}"
+            )
+
 
 def run_consumer(
     package: ManifestPackage,
     version: str,
     package_directory: Path,
     workspace: Path,
+    *,
+    eventstore_host: bool = False,
 ) -> None:
-    """Restore and compile one isolated candidate consumer."""
+    """Restore an isolated candidate consumer and run the extension probe when selected."""
 
-    consumer = workspace / package.package_id
+    consumer = workspace / ("eventstore-extension-host" if eventstore_host else package.package_id)
     consumer.mkdir()
     project = consumer / "Consumer.csproj"
-    project.write_text(render_consumer_project(package, version), encoding="utf-8")
-    (consumer / "Program.cs").write_text(package.probe, encoding="utf-8")
+    project.write_text(render_consumer_project(package, version, eventstore_host=eventstore_host), encoding="utf-8")
+    probe = EXTENSION_PROBE.read_text(encoding="utf-8") if eventstore_host else package.probe
+    (consumer / "Program.cs").write_text(probe, encoding="utf-8")
     config = workspace / "NuGet.Config"
     subprocess.run(
         ["dotnet", "restore", str(project), "--configfile", str(config), "-noAutoResponse",
@@ -109,7 +136,10 @@ def run_consumer(
          "--packages", str(consumer / ".packages"), "/nr:false"],
         check=True,
     )
-    assert_package_only_assets(consumer / "obj" / "project.assets.json", package.package_id, version)
+    assert_package_only_assets(
+        consumer / "obj" / "project.assets.json", package.package_id, version,
+        extension_only=package.package_id == EXTENSION_PACKAGE_ID and not eventstore_host,
+    )
     subprocess.run(
         [
             "dotnet",
@@ -126,7 +156,14 @@ def run_consumer(
         ],
         check=True,
     )
-    print(f"Consumer compiled real API from {package.package_id} {version}.")
+    if eventstore_host:
+        manifest = consumer / ".packages" / package.package_id.lower() / version.lower() / PACKAGED_MODULE_MANIFEST
+        subprocess.run(
+            ["dotnet", str(consumer / "bin/Release/net11.0/Consumer.dll"), str(manifest)],
+            check=True,
+        )
+    else:
+        print(f"Consumer compiled real API from {package.package_id} {version}.")
 
 
 def main(arguments: argparse.Namespace | None = None) -> int:
@@ -147,6 +184,8 @@ def main(arguments: argparse.Namespace | None = None) -> int:
             if package.package_id not in validated_ids:
                 raise ValueError(f"Candidate was not validated before consumption: {package.package_id}")
             run_consumer(package, version, package_directory, workspace)
+            if package.package_id == EXTENSION_PACKAGE_ID:
+                run_consumer(package, version, package_directory, workspace, eventstore_host=True)
     print(f"Validated {len(manifest.packages)} isolated package consumers.")
     return 0
 

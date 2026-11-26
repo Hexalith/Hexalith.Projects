@@ -98,7 +98,7 @@ Invoke-PythonTool @(
     $PackageDirectory
 )
 
-Write-Host "package-dependency-gate: PASSED — manifest inventory, exact metadata and dependency graph, provenance, compile assets, and five real API consumers validated."
+Write-Host "package-dependency-gate: PASSED — manifest inventory, exact metadata and dependency graph, provenance, compile assets, and six real API consumers validated."
 }
 finally {
     if ($ownedPackageDirectory -and (Test-Path -LiteralPath $ownedPackageDirectory)) {

@@ -4,6 +4,9 @@
   </PropertyGroup>
   <ItemGroup>
     <InternalsVisibleTo Include="Hexalith.Projects.Contracts.Tests" />
+    <InternalsVisibleTo Include="Hexalith.Projects.Server" />
+    <InternalsVisibleTo Include="Hexalith.Projects.EventStoreExtensions" />
+    <InternalsVisibleTo Include="Hexalith.Projects.Server.Tests" />
   </ItemGroup>
   <!-- External contracts resolve from root-declared sibling source in Debug and from the centrally
        versioned packages in Release. EventStore.Contracts brings IRejectionEvent / IEventPayload plus

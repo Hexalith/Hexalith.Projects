@@ -39,15 +39,17 @@ def published_versions(package_id: str) -> set[str]:
     return {version.lower() for version in versions}
 
 
-def require_available(version: str) -> None:
+def require_available(version: str) -> int:
     if not VERSION_PATTERN.fullmatch(version):
         raise ValueError("Expected a normalized NuGet version")
+    packages = load_manifest().packages
     occupied = [
-        package.package_id for package in load_manifest().packages
+        package.package_id for package in packages
         if version.lower() in published_versions(package.package_id)
     ]
     if occupied:
         raise ValueError(f"Version {version} is already occupied for: {', '.join(occupied)}")
+    return len(packages)
 
 
 def main() -> int:
@@ -55,11 +57,11 @@ def main() -> int:
     parser.add_argument("version")
     args = parser.parse_args()
     try:
-        require_available(args.version)
+        count = require_available(args.version)
     except (ValueError, OSError) as exc:
         print(f"Refusing release: {exc}", file=sys.stderr)
         return 1
-    print(f"Version {args.version} is absent for all five release packages.", file=sys.stderr)
+    print(f"Version {args.version} is absent for all {count} release packages.", file=sys.stderr)
     return 0
 
 

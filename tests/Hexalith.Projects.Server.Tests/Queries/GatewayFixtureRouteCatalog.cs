@@ -17,6 +17,7 @@ using Hexalith.Folders.Server.Queries;
 #endif
 using Hexalith.Projects.Contracts.Queries;
 using Hexalith.Projects.Server.Queries;
+using Hexalith.Projects.Contracts.Routing;
 using Hexalith.Projects.Server;
 
 /// <summary>Commits the routes exercised by an isolated gateway and domain service fixture.</summary>

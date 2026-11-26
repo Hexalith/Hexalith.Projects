@@ -3,6 +3,7 @@ namespace Hexalith.Projects.Server.Tests.Queries;
 using System.Text.Json;
 
 using Hexalith.Projects.Client;
+using Hexalith.Projects.Contracts.Routing;
 using Hexalith.Projects.Server;
 using Hexalith.Projects.Testing.Reads;
 

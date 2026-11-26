@@ -72,7 +72,7 @@ public sealed class OrdinaryRunModeCompositionTests : IDisposable
 
         // The gateway binds the authenticated originating caller for every compiled Projects query without delegated context.
         string[] publicQueries = Hexalith.EventStore.ServiceDefaults.Routing.CompiledRouteCatalogDeclarations
-            .Read([typeof(Hexalith.Projects.Server.ProjectsServerModule).Assembly])
+            .Read([typeof(Hexalith.Projects.Contracts.Routing.ProjectsRuntimeCatalogDeclarations).Assembly])
             .Where(static route => route.Kind == "query" && route.Execution?.RequiresDelegatedContext != true)
             .Select(static route => route.MessageType!).Order(StringComparer.Ordinal).ToArray();
         publicQueries.ShouldNotBeEmpty();

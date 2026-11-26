@@ -1,0 +1,14 @@
+<Project>
+  <PropertyGroup>
+    <_ProjectsPlatformMtlsRoot Condition="'$(HexalithPlatformRoot)' == ''">$([MSBuild]::NormalizePath('$(MSBuildThisFileDirectory)..', 'references/Hexalith.Platform'))</_ProjectsPlatformMtlsRoot>
+    <_ProjectsPlatformMtlsRoot Condition="'$(HexalithPlatformRoot)' != ''">$([MSBuild]::NormalizePath('$(MSBuildThisFileDirectory)..', '$(HexalithPlatformRoot)'))</_ProjectsPlatformMtlsRoot>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="$(_ProjectsPlatformMtlsRoot)/DaprSelfHostedMtls.cs" Link="Platform/DaprSelfHostedMtls.cs" />
+    <Compile Include="$(_ProjectsPlatformMtlsRoot)/DaprSelfHostedMtlsSubscriber.cs" Link="Platform/DaprSelfHostedMtlsSubscriber.cs" />
+  </ItemGroup>
+  <Target Name="ValidateProjectsPlatformMtlsInput" BeforeTargets="PrepareForBuild"
+          Condition="!Exists('$(_ProjectsPlatformMtlsRoot)/DaprSelfHostedMtls.cs') or !Exists('$(_ProjectsPlatformMtlsRoot)/DaprSelfHostedMtlsSubscriber.cs')">
+    <Error Text="Projects Platform input is missing at '$(_ProjectsPlatformMtlsRoot)'. Initialize the direct references/Hexalith.Platform checkout or set HexalithPlatformRoot to the selected Platform source root. Both DaprSelfHostedMtls.cs and DaprSelfHostedMtlsSubscriber.cs are required." />
+  </Target>
+</Project>

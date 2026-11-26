@@ -32,15 +32,16 @@ def validate_project_boundaries() -> None:
         raise ValueError('FrontComposer SourceTools must remain private, package-mode-only and analyzer-enabled')
 
 
-def verify(directory: Path, version: str, skip_pack: bool) -> None:
+def verify(directory: Path, version: str, skip_pack: bool) -> int:
     if skip_pack:
         if not directory.is_dir():
             raise ValueError('Prepared package directory is missing')
         normalize_internal_dependency_ranges(directory, version)
     else:
         pack_packages(argparse.Namespace(output_directory=directory, version=version))
-    validate_packages(directory, version)
+    packages, _, _ = validate_packages(directory, version)
     check_consumers(argparse.Namespace(package_directory=directory))
+    return len(packages)
 
 
 def main() -> int:
@@ -54,10 +55,10 @@ def main() -> int:
     validate_project_boundaries()
     if arguments.package_directory is None:
         with tempfile.TemporaryDirectory(prefix='projects-package-') as private:
-            verify(Path(private), arguments.version, arguments.skip_pack)
+            count = verify(Path(private), arguments.version, arguments.skip_pack)
     else:
-        verify(arguments.package_directory.resolve(), arguments.version, arguments.skip_pack)
-    print('Package dependency gate passed: inventory, metadata, provenance, payload and five real API consumers.')
+        count = verify(arguments.package_directory.resolve(), arguments.version, arguments.skip_pack)
+    print(f'Package dependency gate passed: inventory, metadata, provenance, payload and {count} isolated real API consumers.')
     return 0
 
 
