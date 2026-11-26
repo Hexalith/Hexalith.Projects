@@ -1919,3 +1919,15 @@ status: open
 - source_spec: `_bmad-output/implementation-artifacts/spec-dw-63-migrate-projects-server-to-eventstore-sdk-host.md`
   summary: Diagnose an intermittent HTTP 500 on the protected full-prefix Project rebuild.
   evidence: At Projects `928f66f552c041efa306a445587a6ae9a9fb5486` with its tracked gitlinks, three rebuilds completed and the fourth `POST /project/rebuild/v1` returned HTTP 500 without a durable outcome. The same source passed all four rebuilds and the persisted replay assertions on one standalone retry. The first run preserved preexisting resources. The retry removed its own resources and exited 1 when two preexisting containers disappeared. The DW-63 spec records the native receipt hashes and paths. The cause of the 500 is unconfirmed.
+
+## Deferred from: code review of the 7.1-P2 G-2 correction candidate (2026-11-26)
+
+- source_spec: `_bmad-output/implementation-artifacts/spec-7-1-p2-qualify-durable-task-and-folder-provisioning.md`
+  summary: Decide how callers retry an owner safe-denial 503 that the aggregate actor records as a terminal idempotent result.
+  evidence: Review findings ECC-3 and BHC-5 (medium). `references/Hexalith.EventStore/src/Hexalith.EventStore.Server/Actors/AggregateActor.cs:1540-1546` completes `DomainServiceSafeDenialException` through `CompleteTerminalAsync`, so a retry with the same MessageId replays the 503 after the freeze lifts. The shared gateway and the Folders host both report `retryable: true`. The EventStore owner chooses between non-terminal recording of 503 denials and a client action that requires a new MessageId.
+- source_spec: `_bmad-output/implementation-artifacts/spec-7-1-p2-qualify-durable-task-and-folder-provisioning.md`
+  summary: Add EventStore tests for the domain-service invoker's safe-denial gate.
+  evidence: Review finding BHC-7 (medium, pre-existing). `DaprDomainServiceInvoker` raises `DomainServiceSafeDenialException` only for domain `folders`, statuses 401, 403, 404 or 503, and the exact `X-Hexalith-Authorization-Denial: v1` header. No EventStore test references that header.
+- source_spec: `_bmad-output/implementation-artifacts/spec-7-1-p2-qualify-durable-task-and-folder-provisioning.md`
+  summary: Retire the Folders host's `FoldersDomainServiceSafeDenialExceptionHandler` once Folders consumes an EventStore release with the shared handler.
+  evidence: Review finding BHC-9 (medium). `references/Hexalith.Folders/src/Hexalith.Folders.EventStore/Program.cs:22` registers the Folders copy before `AddEventStore()`, so it handles denials in that host. The two copies already differ in their aborted-response guard and serializer path. Folders builds against released EventStore 5.6.0, which lacks the shared handler.

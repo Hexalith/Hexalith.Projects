@@ -5,7 +5,7 @@ created: '2026-11-25'
 status: 'in-progress'
 baseline_commit: 'fdc8ca69ebe0a656f88d55f9e32c8de71b1262f6'
 route: 'dispatch'
-review_loop_iteration: 0
+review_loop_iteration: 1
 context: []
 ---
 
@@ -57,6 +57,18 @@ The user approved `DurableTaskExecution` for the G-1 authenticated host and requ
 
 The [Folders owner decision](../../references/Hexalith.Folders/docs/governance/g2-folder-provisioning-scope-decision.md) governs this isolated qualification. The Folders v1 workload command derives the Folder identity from the Tenant and canonical numbered task step. Its first write requires version zero. The command verifies the [committed EventStore lookup](../../references/Hexalith.EventStore/src/Hexalith.EventStore.DomainService/DurableTasks/DurableTaskStepLookupExtensions.cs), rechecks current Folders authority, and appends the creation, receipt, and two explicit grants in one actor commit. Legacy creation retains Organization permission inheritance. The Folder owner lookup returns current access evidence with the committed receipt. The worker retains the Folder and receipt when activation needs attention.
 
+## G-2 follow-up on the two requalification findings (2026-11-26)
+
+The Folders owner decision and pushed-revision requalification established the two source findings. The original isolated deployment evidence is under `~/.local/state/hexalith-projects/7-1-p2-g2-pushed-G7oDoWbT`.
+
+- [x] In Folders `tests/Hexalith.Folders.Server.Tests/FoldersHumanCommandCatalogTests.cs`, verify the installed `folders-provision-folder` payload schema with its internal ingress and continue verifying the existing public command schemas with public ingress.
+- [x] In shared EventStore gateway composition, return `DomainServiceSafeDenialException` as the Folders host's metadata-only problem for each closed status. Copy the `title`, `code`, `category`, `retryable` and `details.visibility` values of [`FoldersDomainServiceSafeDenialExceptionHandler`](../../references/Hexalith.Folders/src/Hexalith.Folders.EventStore/FoldersDomainServiceSafeDenialExceptionHandler.cs) and omit `detail`. Reuse the existing `ProblemTypeUris` types: 401 `AuthenticationRequired`, 403 `Forbidden`, 404 `NotFound` and 503 `ServiceUnavailable`. Make the handler `public` like its siblings in `src/Hexalith.EventStore/ErrorHandling/`, and log each denial at Warning as a `SecurityEvent` with the correlation ID and status through a source-generated `LoggerMessage`.
+- [x] Document each response as an additional example of its existing `ErrorReferenceEndpoints.ErrorModels` entry, and add the four scenarios to `ErrorReferenceHandlerParityTests`. As with `bad-request` and `not-found`, the primary `authentication-required` example comes from outside the exception handlers, from the JWT challenge in `ConfigureJwtBearerOptions`. Keep the signed regression through `POST /api/v1/commands/workload` and assert its media type without a null-conditional.
+- Verify from `references/Hexalith.EventStore` with `run-with-temp bash -c 'export NUGET_PACKAGES="$TMPDIR/nuget" CI=true; dotnet build tests/Hexalith.EventStore.Server.Tests/Hexalith.EventStore.Server.Tests.csproj -c Debug -m:1 --artifacts-path "$PWD/artifacts/7-1-p2-g2-followup" && dotnet "$PWD/artifacts/7-1-p2-g2-followup/bin/Hexalith.EventStore.Server.Tests/debug/Hexalith.EventStore.Server.Tests.dll" -class "*DaprInternalAuthenticationHandlerTests" -class "*ErrorReferenceHandlerParityTests" -class "*ErrorReferenceEndpointTests" -class "Hexalith.EventStore.Server.Tests.ErrorHandling.*" -failSkips'`. The ignored in-repository artifacts path lets the tests locate the solution and source files. The build must have no warnings or errors, and every selected test must pass with zero skips.
+- This re-derivation covers only the two unchecked tasks above. Leave the Folders test change, the evidence bundles and the package tasks below untouched, and make no commits. The correction candidate requalification below covers the pre-review EventStore candidate `5bc9e7a9`, and it needs a rerun before the EventStore change lands.
+
+The [correction candidate requalification](#g-2-correction-candidate-requalification-2026-11-26) records the Release package, runtime, enrollment and native results.
+
 ## Tasks & Acceptance
 
 **Execution**
@@ -93,6 +105,8 @@ The [Folders owner decision](../../references/Hexalith.Folders/docs/governance/g
 - The live crash rehearsal now passes with an EventStore test assertion change. `DurableTaskRecovery` prepares a named step with a hashed key. `ResolveStepAsync` parses the numbered keys used by `DurableTaskExecution` and reads progress from the shared task row. The 2026-11-26 lookup slice selects the numbered step model and exposes the authenticated lookup for G-2 to verify the admitted actor and request. The owner entry point needs a create-only commit that retains the restricted ACL and receipt with the Folder history. [EventStore crash test](../../references/Hexalith.EventStore/tests/Hexalith.EventStore.DomainService.Tests/DurableTasks/DurableTaskAdmissionLiveTests.Recovery.cs) · [Folders scope decision](../../references/Hexalith.Folders/docs/governance/g2-folder-provisioning-scope-decision.md)
 
 ## Spec Change Log
+
+- **2026-11-26, review loop 1.** Trigger: BHC-1, BHC-2 and VGC-2 (high). The shared safe-denial handler failed `ErrorReferenceHandlerParityTests` and documented none of its four responses. BHC-3 (medium): the gateway stopped logging the denial. Amended the second G-2 follow-up task into two tasks. They require the existing `ProblemTypeUris` types (owner decision on 2026-11-26), a public handler with a `SecurityEvent` log, documented examples, and parity scenarios for all four statuses (VGC-1). They also require a media-type assertion without a null-conditional (ECC-5), the verification command and the re-derivation scope. Known-bad state avoided: a gateway handler outside EventStore's error-reference contract that fails EventStore CI and leaves owner refusals unlogged. KEEP: register the handler directly before `GlobalExceptionHandler`. Keep the closed status mapping and the Folders titles, codes, categories, retryable values and metadata-only details. Keep the signed workload regression and its `SignedWorkloadCommandRequest` helper. The Folders test change and candidate `20015f06` were not reverted, because no surviving finding touches them.
 
 ## Review Triage Log
 
@@ -189,6 +203,55 @@ Design gaps whose fix needs new contract surface went to the G-1 Still open list
 | Native source APIs are newer than the published package and ordinary tests would skip the fixture | Medium | The source build opts into the Docker qualification fixture. The regular package-mode test project compiles against its released cohort. |
 | Reusing a result directory can accept an earlier passing receipt | Medium | The probe requires a new directory and exactly one passing native XML test per phase. |
 | Persisted fixture bypasses deployed gateway command and stream transport | Medium | The real signed Folders callback is tested separately. The isolated fixture uses an attributed callback adapter and an actor-backed stream receiver adapter. Running the fully enrolled deployment is a package acceptance item. |
+
+### G-2 correction candidate review (2026-11-26)
+
+The review covered the uncommitted EventStore gateway handler and the Folders schema test. On 2026-11-26 the owner chose to reuse EventStore's existing problem types. The bad_spec loopback reverted the EventStore candidate edits and kept the Folders test change.
+
+| ID | Finding | Verdict | Evidence and disposition |
+| --- | --- | --- | --- |
+| BHC-1 | The new handler breaks `ErrorReferenceHandlerParityTests`, and it is `internal` while its siblings are `public` | high | Confirmed: the parity test failed on candidate `5bc9e7a9` with the handler missing from its scenarios. bad_spec with BHC-2 and VGC-2, because the follow-up task omitted the error-reference contract. |
+| BHC-2 | The four responses are undocumented and their type URIs are inline | high | `ErrorReferenceEndpoints.ErrorModels` has no entry, and `ErrorReferenceEndpointTests` pairs each documented slug with a `ProblemTypeUris` constant. bad_spec; the owner chose the existing `ProblemTypeUris` types. |
+| BHC-3 | The denial is no longer logged at the gateway | medium | `GlobalExceptionHandler` logged it before the change. The new handler has no logger, while sibling denial handlers log a `SecurityEvent`. bad_spec. |
+| BHC-4 | The body has no `correlationId` or `instance` | low | The caller already holds the identifiers it submitted, and adding fields diverges from the Folders host body. Reject. |
+| BHC-5 | `retryable: true` contradicts the terminal idempotency record | medium | Same as ECC-3. Deferred. The missing `Retry-After` is ECC-1. |
+| BHC-6 | Every 503 is labelled `read_model_unavailable` through a catch-all arm | false | The exception admits only 401, 403, 404 and 503, so the default arm handles only 503. It carries only the closed status by design, and the labels match the Folders host theory. Reject. |
+| BHC-7 | The regression mocks the router and skips the invoker gate | medium | The regression covers the required path from router result through `SubmitCommandHandler` to the shared handler. The unchanged invoker gate in `DaprDomainServiceInvoker.cs` has no EventStore test. Deferred. |
+| BHC-8 | Only the 503 branch is tested | medium | Same as VGC-1. Patch carried into the amended task. |
+| BHC-9 | Two diverging handler copies | medium | Folders `Program.cs` registers its copy before `AddEventStore()`, so it runs in that host. Retiring it needs an EventStore release with the shared handler. Deferred. |
+| BHC-10 | An owner 401 reaches an authenticated caller as 401 | low | Same as ECC-2. Reject. |
+| BHC-11 | The Folders schema test passes if the provisioning route disappears | false | `EveryExistingCommandRetainsItsSupportedHumanEligibility` pins all 19 commands, including `ProvisionFolderCommandType` and its internal ingress. Reject. |
+| ECC-1 | The retryable 503 has no `Retry-After` | low | Owner freezes are rare, and the header would advertise a same-MessageId retry that ECC-3 defeats. Reject. |
+| ECC-2 | A 401 has no `WWW-Authenticate` | low | The mapping is the Folders host contract, and an owner 401 after gateway authentication is rare. Reject. |
+| ECC-3 | A same-MessageId retry after the retryable 503 replays the denial | medium | `AggregateActor.cs:1540-1546` records the denial through `CompleteTerminalAsync`. That actor behavior predates this change. Deferred to the EventStore owner. |
+| ECC-4 | An aborted write makes the handler throw | low | It occurs only after the caller disconnects, and the middleware logs and rethrows. Reject. |
+| ECC-5 | `ContentType?.MediaType.ShouldBe` skips the assertion when null | low | Confirmed in the new regression. Patch carried into the amended task. |
+| ECC-6 | The denial stub leaks to later fixture tests | low | `Reset()` clears only received calls, but each later router test sets its own stub or asserts no calls. Reject. |
+| VGC-1 | The 401, 403 and 404 mappings are untested | medium | Pre-verified gap. Patch carried into the amended task. |
+| VGC-2 | The change breaks `ErrorReferenceHandlerParityTests` | high | Same as BHC-1. The recorded run covered only `DaprInternalAuthenticationHandlerTests`. bad_spec. |
+
+### G-2 correction candidate review, loop 1 (2026-11-26)
+
+The re-derived EventStore change had no bad_spec or intent_gap finding. The three patches below were applied by the implementation session.
+
+| ID | Finding | Verdict | Evidence and disposition |
+| --- | --- | --- | --- |
+| EC2-1 | A same-MessageId retry after the retryable 503 replays the denial | medium | carried: ECC-3. Already deferred. |
+| EC2-2 | Owner categories collapse into `read_model_unavailable` | false | carried: BHC-6. The titles match the Folders host. Reject. |
+| EC2-3 | A 401 has no `WWW-Authenticate` | low | carried: ECC-2. Reject. |
+| EC2-4 | The retryable 503 has no `Retry-After` | low | carried: ECC-1. Reject. |
+| EC2-5 | An idempotent replay logs another denial security event | low | Each replay serves the recorded denial to a caller, as sibling denial handlers log each refusal. Distinguishing replays needs a new flag. Reject. |
+| EC2-6 | The `authentication-required` page gives JWT guidance for an owner 401 | low | Confirmed in the served description and steps. Patched with BH2-4 and BH2-5. |
+| EC2-7 | A rollback that resubmits the same provisioning step through the gateway never re-executes | maybe-false | Same root cause as ECC-3, which is deferred. It would be medium if the worker resubmits with the original MessageId. The qualified recovery used the committed lookup instead. |
+| BH2-1 | Extension keys are literals instead of `GatewayProblemDetailsExtensions` constants | low | Sibling handlers and `EventStoreGatewayClient` use the constants. Patched. |
+| BH2-2 | The response has no `clientAction` | low | The Folders host omits it as well, and choosing values is a contract decision tied to the ECC-3 deferral. Reject. |
+| BH2-3 | The security log omits tenant, domain, command type and MessageId | low | The exception carries only the closed status, and the log uses the request correlation ID like `GlobalExceptionHandler`. Adding fields needs an exception change. Reject. |
+| BH2-4 | The served pages describe other causes than the new examples | low | Confirmed for the four entries. Patched with appended steps that keep each primary corrective action. |
+| BH2-5 | The markdown problem pages omit the owner denial, and `service-unavailable.md` promises `Retry-After` | low | Confirmed. Patched. |
+| BH2-6 | `ProblemTypeUriComplianceTests` does not list the new handler | false | The parity test pins each exact body, including its `hexalith.io` type and title, so a noncompliant URI or term fails there. Reject. |
+| BH2-7 | The signed regression checks only some identifiers for leaks | false | The handler builds the whole body from constants and the closed status, so no request identifier can enter it. The parity test pins the exact body. Reject. |
+| BH2-8 | The handler summary claims the Folders host body although the type URIs differ | low | Patched the summary. The spec and the BHC-9 entry are not edited by this review. |
+| VG2-1 | The 503 is retryable although the actor records a terminal rejection | medium | carried: ECC-3. Already deferred; EventStore also tracks the question in its own deferred work. |
 
 ## Verification
 
@@ -487,7 +550,7 @@ Both deployment xUnit phases passed with zero skips. Missing assertion and wrong
 
 The harness simulated a lost owner reply after the native commit. Task `01M8BSEVC7BHB2WRNN2YM044HR` waited for its dependency with no task-side receipt. The replacement runner and all three replacement sidecars used the same Redis store after restart, with provisioning disabled and mutations frozen. Fence 1 returned 404. Fence 2 recovered `prov-04a18d87526242413f682db042a560a865b86b16` for Folder `fld-p-04a18d87526242413f682db042a560a865b86b16`, recording one task receipt and zero recovery execution calls. Both explicit grants remained with `original-actor` and the incumbent retained its inherited read grant. The version-3 Folder history hash `deb6543f33380273ffc1c4101267dc18af65ccb2c6cfbd23a268248b62b69744`, native prefix digest `0d9a5e17575783c0c351c5667d1f44fffedb1916d89bfcc1afac70c4c7cd5d56` and incumbent history hash `1c5eaf96ea6388e2f74650603867d247c62ad7b4637cd160d12fccec8fa53f6e` matched across restart.
 
-**Open transport finding.** The signed Folders callback refused a post-recovery mutation with 503 and the persisted histories stayed identical. The shared gateway's global handler mapped `DomainServiceSafeDenialException` to a generic 500. The standalone Folders EventStore host registers an explicit handler for that exception. Package acceptance still needs the shared gateway's denial mapping and the owner-approved deployment and enrollment records. [Standalone exception handler](../../references/Hexalith.Folders/src/Hexalith.Folders.EventStore/FoldersDomainServiceSafeDenialExceptionHandler.cs)
+**Transport finding on the pushed tuple.** The signed Folders callback refused a post-recovery mutation with 503 and the persisted histories stayed identical. The shared gateway's global handler mapped `DomainServiceSafeDenialException` to a generic 500. The standalone Folders EventStore host registers an explicit handler for that exception. See the correction candidate below for the shared gateway mapping. Package acceptance still needs the owner-approved deployment and enrollment records. [Standalone exception handler](../../references/Hexalith.Folders/src/Hexalith.Folders.EventStore/FoldersDomainServiceSafeDenialExceptionHandler.cs)
 
 ```bash
 bundle="$HOME/.local/state/hexalith-projects/7-1-p2-g2-pushed-G7oDoWbT"
@@ -505,3 +568,64 @@ python3 "$bundle/verify-results.py" "$bundle"
 | `topology.json` | `2a36fdc7c6f679355785adc9cefa017f28ce15b9512bffab6113d370db40b6b5` |
 
 The verified bundle manifest has SHA-256 `c0df0f7ae8dfd75d195e0c8625cdda9c72469b439be2936ca22c9d582b3dd788`. The package archive, runtime dependencies and assembly hashes, replay harness, native XML and process logs are retained in that bundle. The combined capability pin and the five package acceptance records are pending. **7.1-P2 remains open and Story 7.1 remains blocked.**
+
+### G-2 correction candidate requalification (2026-11-26)
+
+Both findings reproduced on the pushed baseline and passed on the correction candidate. The [Folders schema test](../../references/Hexalith.Folders/tests/Hexalith.Folders.Server.Tests/FoldersHumanCommandCatalogTests.cs) rebuilds `folders-provision-folder` with internal ingress and checks the other commands with public ingress. The [shared gateway handler](../../references/Hexalith.EventStore/src/Hexalith.EventStore/ErrorHandling/DomainServiceSafeDenialExceptionHandler.cs) converts the closed trusted denial status into the standalone Folders host's metadata-only problem format. The [signed workload regression](../../references/Hexalith.EventStore/tests/Hexalith.EventStore.Server.Tests/Authentication/DaprInternalAuthenticationHandlerTests.cs) checks this composition through `POST /api/v1/commands/workload`.
+
+| Input | Exact revision |
+| --- | --- |
+| Projects base gitlinks | `685eb6c3476c472573f9e223e37e3fd61859a25c` |
+| Folders candidate | `20015f0666daaa3c6354024ab06ad4f601da0d03` |
+| EventStore candidate | `5bc9e7a901bfdc1b36d2340e7182ce0872ff30e9` |
+| Platform | `80a60039b46ea6bdccd9eeac5091551bc59643fa` |
+| Builds | `a6abb7908ec38dcb3fbd99d69e7ed29ae25794d2` |
+
+The detached Folders and EventStore candidate commits are retained as local Git bundles against the original pinned parents. The full source tuple, patches, and commitlint output are in `source/` of the evidence bundle.
+
+Both `Hexalith.Folders.EventStoreExtensions` and `Hexalith.Folders.Contracts` were built in Release for `net11.0` at `2.2.0-g2.20015f06`. Their NuGet manifests name the Folders candidate commit and the dependency chain uses released EventStore Contracts `5.6.0` and McpCli.Abstractions `3.0.0`. The archives have SHA-256 `c0961182cfb993e0e911a2c1837156e75cc1d1c5adf67ec15967f9ea5fcda8bc` and `73c09e1ae8865998fe8554cf0d1c2fdf5932601580f5cd3e50a195081c0198cc`, respectively. The installed extension registered as `folders`, API major 1, and its DLL matched the archive at SHA-256 `06ac81e682250726e70cc89143349a43ccd6db8e0a53c552c6df609fcb542a8c`. The installed Contracts DLL matched its archive as well.
+
+The deployment built the EventStore candidate and Folders Server from source in Debug and loaded both Release packages from the isolated NuGet feed. Runtime coordinates were .NET SDK `11.0.100`, .NET and ASP.NET Core `11.0.0`, EventStore assemblies version `5.6.0`, Dapr .NET SDK `1.19.1`, Dapr sidecars and control plane `1.19.2`, Redis `7.4.12` with AOF and synchronous fsync, and Docker `29.8.2`. Both lanes used the image digests recorded above. The exact assembly dependencies and hashes are in `deployment/runtime-deps.json` and `deployment/runtime-assemblies.sha256`.
+
+The isolated deployment used fixture-signed assertions, separate gateway and Folders application-channel tokens, and three Dapr app IDs with no published ports. The fixture ran with Dapr mTLS disabled and seeded Tenant and Organization authority. Its catalog root was `3be80240ab45101ae4b1a2a63aff4829bcc0582fcc3b14ea9949b176698cb456` in both phases. The workload bindings used Tenant `tenant-a` and domain `folders`.
+
+| Caller → receiver | Enrolled route and assertion |
+| --- | --- |
+| `projects-fixture` → `eventstore` | `POST /api/v1/commands/workload` with `eventstore:command-submit` and internal command `Hexalith.Folders.Commands.ProvisionFolder`. |
+| `eventstore` → `folders` | `POST /process` with `domain-service:process`, the committed catalog binding and the gateway-stamped `projects-fixture` origin. |
+| `folders` → `eventstore` | `POST /internal/durable-tasks/v1/steps/lookup` with `eventstore:durable-task-step-lookup`. The host grant binds `fixture.activate-project@1`, numbered step 1, the derived target and the current fence. |
+| `folders` → `eventstore` | `POST /api/v1/streams/read/workload` with `eventstore:stream-read` and an enrolled Folders public key. The RS256 `X-Hexalith-Bound-Stream-Read-Proof` binds the exact stream and read window. |
+| `projects-fixture` → `folders` | `POST /internal/folders/v1/provisioning/lookup` with `folders:provisioning-lookup`. |
+
+All 106 focused Folders Server tests, the focused freeze test, 43 Folders catalog tests and 53 EventStore authentication tests passed with zero skips. The Folders Server Release package-mode build passed. The Projects planning index and guard passed with 60 tests and 442 subtests. Both persisted fixture phases and both isolated packaged deployment phases passed with zero skips.
+
+The packaged worker lost the response after the Folder committed. Before restart the task was `WaitingForDependency` with zero task-side receipts. The harness restarted Redis on the same store and replaced the runner and all three sidecars. With provisioning disabled and mutations frozen, fence 1 returned 404 and fence 2 recovered the original receipt `prov-88f1559fea26250f54067010404384fbc5be9314` for `fld-p-88f1559fea26250f54067010404384fbc5be9314` on task `01M8BTJ8JY8PTX9FXE0F4A7X9E`. The replacement recorded one receipt and executed the owner effect zero times. When the worker submitted a mutation during the freeze, the signed Folders callback and `POST /api/v1/commands/workload` both returned 503. The gateway emitted `application/problem+json` with `code=read_model_unavailable`, `retryable=true` and `details.visibility=metadata_only`. The source fixture recovered `prov-a77ed1440e3646416174cb6714204f31cd73209e` with zero owner execution calls and verified its direct mutation freeze at 503.
+
+Each lane matched the original and recovered receipt, the version-3 Folder history, the incumbent history, and the native stream proof across restart. The Folder grants were `original-actor:manage_folder_access` and `original-actor:read_metadata`. The deployment verified exact equality of all incumbent grants, including inherited `tenant-reader:read_metadata`.
+
+| Matched across restart | Persisted fixture | Packaged deployment |
+| --- | --- | --- |
+| Folder history SHA-256 | `0e5cd75db8011823112d2c6ba4f41f39cafd4257f9d2c949169087928aa3565d` | `8acf34ee91383028247880732b337e1f805b5ade98502ae65af546e3cda7659d` |
+| Incumbent history SHA-256 | `23322cedfe4160cb713fd4df0b466844bf4729ea1b8946998db050a5449e7ed1` | `745689b2768f1b3f0db777de0fdc08eb94759ea132afcf7289fd9cd0878c5dc3` |
+| Native prefix digest | `8c7afb6c0217e88de15e10efa00d97137290319909503b503299aba0197ce16f` | `7c5b05814e7e858e2be631a12505d10c9953c6fc852aec079eb703d882b55c29` |
+
+The evidence bundle is `~/.local/state/hexalith-projects/7-1-p2-g2-candidate-8ga5_g7t/`. Its `README.md` records the Release pack and replay commands. The result verifier passed and the 86-file SHA-256 manifest verified at digest `b6684a9dae6cd469f951840503b7a1f099b6f3e76e848bc2fd50959e1aeace15`.
+
+| Retained artifact | SHA-256 |
+| --- | --- |
+| `gateway/focused.xml` | `0354c9ccf1b7522a2e4bb048212bfc606cb81b72ff0c5c496fbd389e4ad1a5b7` |
+| `persisted/focused.xml` | `37ae196df121783fa35990350b8ea6915fb0f68be7a69976515a655db037e545` |
+| `persisted/native/before-restart.json` | `b2d5dc96c8e72e0dccfbbe07b5866ccacf074a46c7f6c174c00d07e09efccb52` |
+| `persisted/native/before-restart.xml` | `597d3a366516752c2c0161aa36483fe4e3e77c11c07f1239ddc2422364da6178` |
+| `persisted/native/after-restart.json` | `a0e12924f6bbba80f3c0b98651296966efef113c13b3d1dc8e7efdb347e88aea` |
+| `persisted/native/after-restart.xml` | `80dea9377b8909cd8b79a17f21f130b30efef6a778e1489cc25332b1ed687e4b` |
+| `deployment/native/before-restart.json` | `4ba15386efde998a9a7ad20e994342a918332c72d756211ed2e306bff0c9e78a` |
+| `deployment/native/before-restart.xml` | `ecb3eb3f96e839902c47d4e3c4c45ec1b86d6a6b0b99579a2fcbd4c9f6ee3431` |
+| `deployment/native/after-restart.json` | `d1687f78a3a9dd0a2b7c85221d47eeda70ac2fd9d14f8d66727424783a4e55ea` |
+| `deployment/native/after-restart.xml` | `33f3d7ec0b328e3efdbdb41df9795eaf69c47e89d05c1a0cc4781174ffb347fb` |
+| `deployment/native/before-restart-wire.json` | `7d95076f75286f0906448b93e25f27753b89914935fd245c03234a1ac4d4ce3f` |
+| `deployment/native/after-restart-wire.json` | `f72671e3e78b9482cb6dcd0c8f0d636d24b4683891c02bd6cf31d21817bb5ad1` |
+| `persisted/native/topology.json` | `df1aef42a64a11d709abf1c96877a1ad059c94335abc0baf8edb299a98399126` |
+| `deployment/native/topology.json` | `16a11ed8566f1e70237ad04f8524a039f1b4dd3c3b12cff267e0032c38fb624e` |
+
+The released provisioning artifact, deployed workload enrollment, combined capability pin and five acceptance records are pending. **7.1-P2 remains open and Story 7.1 remains blocked pending package acceptance.**
