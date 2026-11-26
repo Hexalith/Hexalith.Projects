@@ -53,6 +53,10 @@ The user approved `DurableTaskExecution` for the G-1 authenticated host and requ
 - [x] In EventStore `tests/Hexalith.EventStore.DomainService.Tests/DurableTasks/`, exercise the real opt-in HTTP route with signed assertions against the existing Platform `probe_state_store.py --native-execution` phases. Given a persisted pending step and a scoped caller, the route returns the original admission and accepts only the current fence. Given a wrong workload, Tenant, target, operation, step or digest, it discloses no binding. Given takeover after restart, the stale fence is refused, the replacement fence recovers the same receipt with execution disabled once checkpointed, and the owner row shows no duplicate effect. Keep the existing local crash-recovery assertion patch byte-for-byte. Retain the native XML and exact source overlay and command receipts.
 - [x] Record the exact revisions, commands, results and receipt hashes in this spec. End this slice with the spec in progress and 7.1-P2 open for runtime qualification, Folder provisioning, rollback evidence and owner acceptance. Preserve the package matrix below as outstanding acceptance criteria.
 
+## G-2 Folder provisioning slice (2026-11-26)
+
+The [Folders owner decision](../../references/Hexalith.Folders/docs/governance/g2-folder-provisioning-scope-decision.md) governs this isolated qualification. The Folders v1 workload command derives the Folder identity from the Tenant and canonical numbered task step. Its first write requires version zero. The command verifies the [committed EventStore lookup](../../references/Hexalith.EventStore/src/Hexalith.EventStore.DomainService/DurableTasks/DurableTaskStepLookupExtensions.cs), rechecks current Folders authority, and appends the creation, receipt, and two explicit grants in one actor commit. Legacy creation retains Organization permission inheritance. The Folder owner lookup returns current access evidence with the committed receipt. The worker retains the Folder and receipt when activation needs attention.
+
 ## Tasks & Acceptance
 
 **Execution**
@@ -165,6 +169,26 @@ Design gaps whose fix needs new contract surface went to the G-1 Still open list
 | VGQ-4 | No test reads a row written before the failure count existed | medium | Pre-verified. Rollback and row compatibility are still open. Deferred to the ledger. |
 | VGQ-O1 | Failures after lease expiry are uncounted | medium | Same as BHQ-1. Patched. |
 | VGQ-O2 | `AcceptsExecution` ignores expiry | low | Same as BHQ-5. Docs patched. |
+
+### G-2 slice review (2026-11-26)
+
+| Finding | Verdict | Resolution |
+| --- | --- | --- |
+| Native reads lack proof at an uncreated identity | High | An authenticated zero-window check must establish missing-stream before the owner reports HTTP 204. A persisted task step and real actor metadata exercise this path. |
+| Worker may disclose after a revocation or takeover during a native prefix read | High | The service rechecks membership and the committed fence after the final source observation. The fixture revokes membership during that observation. |
+| Non-executable pending step can appear definitively rejected | Medium | The owner withholds execution and returns an empty 404 for this binding. |
+| Receipt and access mode leak through reflected legacy projection fields | High | The projection excludes both fields. The legacy projection test asserts their absence. |
+| Direct content and lease mutations bypass the freeze | High | The server gates direct writes and keeps recovery reads available. Forward recovery also fences previous servers and permission-projecting workers. |
+| AppHost, gateway and worker inventories expected 18 command declarations | Medium | A separate internal provisioning entry joins the 18 public Folders commands. Legacy canonical data still covers its original set. |
+| Gateway canonicalization did not cover provisioning casing, fence changes or changed intent | Medium | The wire parser and adapter use exact camelCase. Registry coverage exercises equivalent intent across fences and changed immutable input. |
+| Physical Dapr target was used as the gateway JWT audience | High | Stream presence uses the SDK's logical gateway audience. The fixture checks both the target and the signed audience. |
+| Native qualification originally accepted proofless read pages | High | The actor supplies native metadata and event envelopes. The SDK reader validates the actual native prefix using EventStore's codec. Withholding proof produces an empty 503. |
+| Fixture originally checked membership revocation only | High | A second Folder records an explicit manage revocation and keeps its receipt. Both command retry and lookup withhold it, and the task reaches `NeedsAttention`. |
+| A recomputed digest for different intent receives 404 | False | The G-1 binding rejects an uncommitted digest. With the committed digest and edited owner fields, Folders returns the conflict decision. The fixture exercises both. |
+| An Organization read failure blocks projected use of restricted grants | Medium | The candidate preserves the existing fail-closed projection dependency policy. The owner receipt reads committed Folder evidence and rechecks membership. |
+| Native source APIs are newer than the published package and ordinary tests would skip the fixture | Medium | The source build opts into the Docker qualification fixture. The regular package-mode test project compiles against its released cohort. |
+| Reusing a result directory can accept an earlier passing receipt | Medium | The probe requires a new directory and exactly one passing native XML test per phase. |
+| Persisted fixture bypasses deployed gateway command and stream transport | Medium | The real signed Folders callback is tested separately. The isolated fixture uses an attributed callback adapter and an actor-backed stream receiver adapter. Running the fully enrolled deployment is a package acceptance item. |
 
 ## Verification
 
@@ -337,3 +361,90 @@ Both builds reported zero warnings and errors. The replay passed 87 focused test
 | `verified/probe.log` | `1b7fdf81e8e208485ecf8895bba8d3f889db0db8b81ef0e6bb08215cf0f8a834` |
 
 The replay bundle retains the build logs, process logs, tool versions and full hash manifest. The authenticated lookup runtime slice is verified. 7.1-P2 stays in progress and its tracker stays open for the remaining G-1 runtime work, Folder provisioning, exercised rollback and owner acceptance.
+
+### G-2 persisted qualification and forward recovery (2026-11-26)
+
+The candidate uses the internal `Hexalith.Folders.Commands.ProvisionFolder` command, Folders `POST /internal/folders/v1/provisioning/lookup` and EventStore `POST /internal/durable-tasks/v1/steps/lookup`. The Folders receipt and inheritance marker are additive fields on the v1 `FolderCreated` event. The same actor commit stores two explicit ACL events. The source candidate is the Folders base below plus `folders-candidate.patch` with SHA-256 `fc52b1fcdb9b8f78ae445adeefd8c19e2ebc5e4d6c7896ade6cbbd263b577782`. The replay script SHA-256 is `b85f2ee1c949b97f768d5f28f26d12fadda97cb8095a44e704155ea5b00129d8`.
+
+| Checkout | Exact revision |
+| --- | --- |
+| Projects | `fa85cf96b1d5804334dac772281e98cab2f7e139` |
+| AI.Tools | `a71569a6262467a70c5135709cd10af3b953af9a` |
+| Builds | `a6abb7908ec38dcb3fbd99d69e7ed29ae25794d2` |
+| Commons | `0a1d70723b2d112690aa06e6e6a207459cfa2e0f` |
+| EventStore | `a11d584a5bc9fe680c9b6d7908befb574d98e620` |
+| Folders | `4f0ccfd7b116770df699a700858a8c5e29a4e72c` |
+| FrontComposer | `4908b7ad53bbfa4b4ad31b153d5a76a5341b18a0` |
+| McpCli | `ec657cbce665baf5ebe81283162dea406584dc3a` |
+| Memories | `1f68406be7a61064044963139941c9ba2c117947` |
+| Platform | `80a60039b46ea6bdccd9eeac5091551bc59643fa` |
+| Tenants | `d34f353abb59213ac021e81da6885b78ee3231fd` |
+
+| Runtime | Pinned image |
+| --- | --- |
+| daprd | `daprio/daprd@sha256:ed471547b67db50c831d498b8ee861822fb037d9d594c38ac299546b425f575a` |
+| control | `daprio/dapr@sha256:16ca01236a97825e30b19ef9c89c7c9006fabdd9036a6d7e8947662371418851` |
+| redis | `redis@sha256:7f7d30b7fdd09467bac58198a1f166dd69789d348d4fe859cccb20e0cf287fbe` |
+| dotnet | `mcr.microsoft.com/dotnet/sdk@sha256:65f3c7c6a25a239ab3e6719f2896147e7b68242ff2d8818dd70498bde6ef8bea` |
+
+The source build used .NET SDK `11.0.100`. The fixture used Dapr and its control plane `1.19.2`, Redis `7.4.12` with AOF and synchronous fsync, and .NET `11.0.0`. The network was private, with fixture-signed workload assertions and no published ports. Folders called the real authenticated G-1 endpoint through Dapr. The test composed the EventStore aggregate actor over the retained store and exercised the real Folders receipt endpoint. The fixture supplied callback attribution and adapted native actor reads to the stream receiver's wire shape. It used the SDK reader and EventStore's native proof codec to verify the committed prefix. The focused lane separately exercised the real signed Folders `/process` endpoint and the activated command admission registry.
+
+The recorded command ran from the Projects root. For a repeat run, set the final argument to a new results directory. The script clones the exact root and owner inputs under the private job directory, checks the patch hash, applies the patch and retains logs, native XML and JSON receipts.
+
+```bash
+bundle="$HOME/.local/state/hexalith-projects/7-1-p2-g2-native-lzDWrr15"
+run-with-temp bash "$bundle/replay.sh" "$PWD" "$bundle" "$bundle/verified"
+(cd "$bundle/verified" && sha256sum --check sha256.txt)
+```
+
+The replay ran the following source and package build and test commands from the detached Folders root.
+
+```bash
+project=Hexalith.Folders.Server.Tests
+artifacts="$PWD/.artifacts/g2-qualification"
+dotnet build "tests/$project/$project.csproj" -c Debug -m:1 --artifacts-path "$artifacts" \
+    -p:UseHexalithProjectReferences=true -p:UseNuGetDeps=false -p:EnableG2ProvisioningQualification=true
+assembly="$artifacts/bin/$project/debug/$project.dll"
+dotnet "$assembly" -class '*FolderEventReplayTests' -class '*FolderOwnerReadQueryHandlerTests' \
+    -class '*FolderDomainProcessorRejectionTests' -class '*ProductionProcessWireEventTests' \
+    -class '*FoldersHumanCommandCatalogTests' -class '*FolderServerCatalogAdapterSourceTests' \
+    -class '*FolderProvisioningContractTests' -failSkips -result-xml "$results/focused.xml"
+dotnet "$assembly" -method '*FrozenFolderRejectsDirectWritesAndKeepsNativeReadsAvailable' \
+    -failSkips -result-xml "$results/freeze.xml"
+python3 eng/g2-folder-provisioning/probe.py "$assembly" "$results/native"
+catalog=Hexalith.Folders.EventStore.Tests
+dotnet build "tests/$catalog/$catalog.csproj" -c Debug -m:1 --artifacts-path "$artifacts" \
+    -p:UseHexalithProjectReferences=true -p:UseNuGetDeps=false
+dotnet "$artifacts/bin/$catalog/debug/$catalog.dll" -class '*FoldersDeclaredAdmissionTests' \
+    -class '*FoldersIdempotencyIntentAdapterCatalogTests' -class '*DeclaredFoldersIntentCompatibilityTests' \
+    -failSkips -result-xml "$results/catalog.xml"
+dotnet build "tests/$project/$project.csproj" -c Release -m:1 --artifacts-path "$artifacts-package" -p:UseNuGetDeps=true
+```
+
+The builds finished with zero warnings and errors. The Server and EventStore catalog lanes passed 104 and 43 tests. A focused test verified the direct-write freeze. Each native phase passed its test with zero skips. From the detached Projects root, `run-with-temp env PYTHONDONTWRITEBYTECODE=1 python3 tools/planning/validate_production_authority.py --validate-index` passed, and `run-with-temp env PYTHONDONTWRITEBYTECODE=1 python3 -m pytest tests/tools/test_production_authority_guard.py -q -p no:cacheprovider` passed 60 tests and 442 subtests. The Release build checks compatibility with the published EventStore `5.6.0` cohort. The live G-1 fixture compiles against the committed source APIs.
+
+| Persisted case | Verified result |
+| --- | --- |
+| First create and equivalent retry | Authorized lookup returned empty 204 for the missing stream. One creation batch reached version 3 with the original actor's explicit `read_metadata` and `manage_folder_access`. The retry returned `receipt_available` and lookup returned the same receipt. A different step created a distinct Folder with the same display name. |
+| Changed intent and stale precondition | Both produced `conflict` under the committed binding. A replacement digest received empty 404 from the binding check. The committed Folder stayed at version 3. |
+| Occupied identity | The owner reported `conflict` and lookup returned empty 409. The generic incumbent remained at version 1 with inherited read grants. |
+| Scope and revocation | Cross-Tenant use and revoked membership returned 404. Revocation during the final native observation and removal of the explicit Folder manage grant also withheld the receipt. The latter effect retained its creation receipt and the task entered `NeedsAttention`. |
+| Dependencies | The unavailable G-1 target and missing native proof both yielded empty 503 responses. The dependency failure created no Folder stream. |
+| Lost response | Task `01M8BQQMM5ZRY8AHXZ1KBD1TXX` stayed `WaitingForDependency` with its step pending and no task-side receipt after Folder `fld-p-8d6527e7ba1b35bac880bca69c0c172d46bbf044` committed receipt `prov-8d6527e7ba1b35bac880bca69c0c172d46bbf044`. |
+| Forward recovery | The original application and sidecar were removed before the replacement started. Redis restarted on its original retained store. The replacement ran the same source with `Folders:Provisioning:Enabled=false` and `Folders:Provisioning:FreezeMutations=true`. Fence 1 returned empty 404. At fence 2, the task recorded the same owner receipt with zero owner execution calls. A frozen mutation returned 503. |
+| Retained state | Folder version 3, receipt, native prefix proof and effective ACL matched across restart. The Folder history SHA-256 was `d1e71ba4ec85830a5524f1b3016c03d41cdece5885814b50ef56ebb6beaaf68d` and its native prefix digest was `f7a2b6b5d50160d3dc204ae948463d246b4f59237f8a3dbf8a48e912ba8e1b52`. The incumbent history SHA-256 was `fd7655ed6c0c8ef75b9574e3aa2274118ea5dec098730f2d3a9fb6622b4a7b97`. |
+
+| Retained artifact under `verified/` | SHA-256 |
+| --- | --- |
+| `focused.xml` | `558fc17de541f2481d5594b1267faa658a843dc9d4f2284af322e50c5f70165d` |
+| `freeze.xml` | `134cd5f817771fcf5c9f964510e24380809c4a78a9cc9548ea130c406b9ae6d8` |
+| `catalog.xml` | `453843cec6dc2cf61a06e8054cc5fe9a5b1f83ab36c9a003a5aac65db1887c2e` |
+| `native/after-restart.json` | `be298a8a9d9e352b9ba29f1c23b97ae9b70e1df468126536a8b7e204f01be7c9` |
+| `native/before-restart.json` | `829819660f44be8bcb282dc9acd58057433e59b48f0823c8f5519cece6c794a8` |
+| `native/topology.json` | `7c8d32b2709ee83d1bb579f9152bb3ddfe213894eca573e18680c66d6e89f4e2` |
+| `native/after-restart.xml` | `48b0ba60cdc6430b5cdf4cf1d4247da45436b88c7c3009a1a7c0b3f692e6ac15` |
+| `native/before-restart.xml` | `3c43fbd36efca5a98446a8b239ed4ac528421dfb2f0e6448769d584d6dc9db35` |
+
+The AppHost catalog cross-check ran `SelectedOwnerCatalogBindsFinalAppIdsAndKeepsAllIntentPolicies`. With the Folders base's Tenants gitlink `54985ab11ade150d5fa908be179cf2a5a407353d`, the candidate passed. The clean Folders base and candidate each failed the same external catalog assertion with Projects' Tenants pin `d34f353abb59213ac021e81da6885b78ee3231fd`, which supplies 14 non-Folders adapters against the expected 13. Commands, revisions and XML are in `~/.local/state/hexalith-projects/7-1-p2-g2-baseline-WEC2Pv7w/` under `replay-implementation-apphost.sh`, `apphost-clean-pinned/` and `apphost-folder-owner/`.
+
+**Remaining owner decisions.** EventStore and Platform still own the G-1 runtime and package choices recorded above. Folders and Platform must approve the released provisioning artifact and deployed workload enrollment for submission, G-1 lookup, and bound stream reads. The deployed composition must run the same receipt and recovery cases with those approved policies. Projects must bind its final activation operation and normalized request digest to the v1 Folder step. The owner disposition retains the Folder and receipt for unresolved activation. The five role acceptances and the combined capability pin remain pending. **7.1-P2 remains open and Story 7.1 remains blocked.**
