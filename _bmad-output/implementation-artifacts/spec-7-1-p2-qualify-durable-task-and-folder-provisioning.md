@@ -916,3 +916,73 @@ The first worker lost its reply after the Folder committed. Task `01M8C8A8C6ZKFD
 | `sha256.txt` | `33f8444f565365a1c5bd90ff1d137dd4a5285139f41a20d46703b3b158b466c3` |
 
 The independent verifier passed and all 41 manifest entries verified. The approved G-2 release and isolated workload enrollment are complete. **7.1-P2 remains open** for the Projects activation operation and digest binding, the combined capability pin, and the five role acceptances.
+
+### Projects activation binding qualification gap (2026-11-26)
+
+The released G-2 replay enrolled `fixture.activate-project@1` and admitted the Folder display-name digest as the task digest. At the selected EventStore revision, the signed lookup accepts and returns the committed admission digest. Folders 2.2.0 independently requires the digest of the trimmed display name and verifies that the lookup returned the same digest. For fixture name `Shared name`, that digest is `da828e812bde3ae43486b58431c7666d864307f7c3bb36b7a4324fd59887a16b`. The existing Projects create fingerprint computes `sha256:5b1c9810d2a8110bef8b026a11abbf92bae24927879b793d20052d2fcde99738` from the display name and request schema version. The recorded different-digest control returned an empty 404 from G-1. [Committed admission lookup](../../references/Hexalith.EventStore/src/Hexalith.EventStore.DomainService/DurableTasks/DurableTaskStepLookupExtensions.cs#L74) · [Folders v1 digest](../../references/Hexalith.Folders/src/Hexalith.Folders.Server/Provisioning/FolderProvisioningContract.cs#L29) · [Folders lookup response checks](../../references/Hexalith.Folders/src/Hexalith.Folders.Server/Provisioning/DurableTaskStepLookupClient.cs#L54) · [Projects create fingerprint](../../src/Hexalith.Projects/Aggregates/Project/ProjectCommandValidator.cs#L467)
+
+Projects still needs an approved activation operation and canonical admission intent. FR-1 requires same-name Folder creation. Projects accepts trimmed names up to 160 characters, while Folders v1 accepts up to 128. The owners need to decide how the Folder-first path handles names of 129 to 160 characters before admission enables provisioning. The existing Projects aggregate fingerprint covers the display name and schema version, and current tests deliberately treat description and setup metadata changes as equivalent there. AD-5 gives Durable Task admission authority over the activation request's retry equivalence. [FR-1](../planning-artifacts/prds/prd-Hexalith.Projects-2026-05-24/prd.md#L216) · [Projects validation](../../src/Hexalith.Projects/Aggregates/Project/ProjectCommandValidator.cs#L120) · [Folders provisioning input checks](../../references/Hexalith.Folders/src/Hexalith.Folders.Server/Provisioning/FolderProvisioningService.cs#L317) · [Projects command equivalence tests](../../tests/Hexalith.Projects.Tests/Replay/CommandDeliveryIdempotencyTests.cs#L121) · [AD-5](../planning-artifacts/architecture/architecture-projects-2026-07-15/ARCHITECTURE-SPINE.md#ad-5--adopted-confirmation-required-admission-uses-bound-artifacts-and-scoped-idempotency)
+
+**Proposed for owner review.** Use `projects.activate-project@1` and commit the full normalized Projects activation intent digest for admission and retries. Give the isolated activation grant a trusted resolver that reads the immutable canonical intent under the admitted scope, verifies it against the committed admission digest, and derives the v1 Folder digest for numbered step 1. Have the signed lookup compare and return that step digest for this grant. Preserve the existing lookup grants and the Folders v1 wire format. Projects owns the activation intent and display-name rule, EventStore owns the lookup grant contract, and Platform and Folders own the isolated enrollment and owner verification. Qualification should show that material changes to the activation intent conflict on the same key, that changed Folder input or unavailable canonical intent prevents provisioning, and that the same receipt is recovered after restart and takeover with one Folder create. Verify that the Folder and receipt are retained in `NeedsAttention` when activation cannot commit.
+
+**Proposed name-limit decision.** Extend the Folders-owned provisioning path to accept the same 160-character display-name limit as Projects. Qualify the 128-, 129-, 160- and 161-character boundaries against an isolated successor package. Folders owner approval is required before preparing the candidate. Publication requires its own approval.
+
+The retained G-1 rehearsal and released G-2 enrollment verifiers passed, and their SHA-256 manifests and the published archive manifest matched. The active production-authority index returned `[6, 7, 8]`, and the focused guard suite passed 60 tests and 442 subtests. These checks revalidated the existing receipts. Combined persisted qualification of the Projects activation binding and five acceptances tied to its qualification digest are still pending. The capability pin remains pending and 7.1-P2 remains open.
+
+#### Approved Projects activation rehearsal (2026-11-26)
+
+The requesting user approved both isolated owner scopes in this session. The EventStore and Platform scope covers the opt-in lookup resolver and the replay for `projects.activate-project@1`. The Folders scope covers an isolated successor package for same-name provisioning through 160 characters. Keep the v1 Folder wire shape and apply the wider limit only to owner provisioning. The approved work uses disposable copies through `run-with-temp`. Keep the prior G-1, G-2 and publication evidence intact. Retain new source patches, reusable replay code, exact coordinates and sanitized evidence outside the disposable workspace. Publication and the five final role acceptances are separate decisions.
+
+- [x] Extend the EventStore numbered lookup grant in `src/Hexalith.EventStore.DomainService/DurableTasks/` with an opt-in host resolver. Existing grants continue to require and return the committed admission digest. The Projects grant derives its Folder digest from immutable canonical activation intent after verifying the full digest and admitted scope. Missing or mismatched intent, the wrong digest, and a stale fence yield empty 404. Keep the signed workload, Tenant, operation, step and owner-derived target checks.
+- [x] In the Folders owner candidate, extend both the provisioning ingress and aggregate validation paths to preserve the full Project display name through 160 UTF-16 code units. Verify the 128-, 129-, 160- and 161-character boundaries and unchanged generic Folder creation limits. Build the isolated package cohort from the approved release base plus the retained owner patch, with distinct candidate coordinates. Verify package payloads and loaded assemblies in the signed replay.
+- [x] In the reusable isolated replay built from the approved Platform and G-2 harnesses, admit validated Projects activation intent under `projects.activate-project@1`. Canonical intent binds schema/classification, display name and material creation metadata, and excludes transport correlation and generated task identity. Use the committed full intent digest for admission equivalence and the independently derived Folder v1 digest for provisioning. Verify equivalent retry, a same-name material change conflict, corrupted or unavailable intent, and mismatched digest refusal. Run signed creation and bound receipt recovery against real persisted state across replica replacement and Redis restart. Show stale-fence refusal, a single owner create, identical committed Folder history across takeover, and retention of the Folder and receipt when activation ends in `NeedsAttention`. Keep Projects writer, AD-35, and shared enrollment outside this slice.
+- [x] Retain the replay commands, hashes, test results, scope/intent binding evidence and rollback receipts. Use the existing production-authority guard to verify 7.1-P2 stays open pending released successor coordinates and five matching role acceptances.
+
+
+#### Isolated Projects activation result (2026-11-26)
+
+The rehearsal used Projects `8faccc8d87f60abd47b1eed0b45b80418b6a0455`, EventStore `df6a96ab2a5bae24fe5951eee5429bda223cc675`, Platform `80a60039b46ea6bdccd9eeac5091551bc59643fa`, and Folders `2791d7a82825238da15a1bfb77c544079a7f7d09`. The replay applied the previously approved G-1 DurableTasks source overlay and the new EventStore lookup patch. The Folders package build used its selected Builds revision `bf8a28b4bbcec619e8d9764d335f786f2bafb69e` and selected Folders base plus the provisioning-only patch. The six unpublished package and symbol pairs used version `2.2.1-activation.p7f23cd4154fe`. The signed replay verified the package inventory and loaded the candidate Folders, Contracts and EventStoreExtensions DLLs byte-for-byte from the staged archives.
+
+Run from the Projects root. Choose fresh output directories for a repeat.
+
+```bash
+bundle="$HOME/.local/state/hexalith-projects/7-1-p2-activation-urvLdvsP"
+run-with-temp bash "$bundle/pack-folders.sh" ../folders "$bundle/archives"
+run-with-temp bash "$bundle/replay-deployment.sh" "$PWD" ../folders "$bundle/archives/packages" "$bundle/third-run"
+python3 -B "$bundle/verify-results.py" "$bundle/third-run"
+(cd "$bundle/third-run" && sha256sum --check sha256.txt)
+(cd "$bundle/archives/packages" && sha256sum --check ../package-sha256.txt)
+run-with-temp env PYTHONDONTWRITEBYTECODE=1 python3 tools/planning/validate_production_authority.py --validate-index
+run-with-temp env PYTHONDONTWRITEBYTECODE=1 python3 -m pytest tests/tools/test_production_authority_guard.py -q -p no:cacheprovider
+```
+
+The combined Debug build reported zero warnings and errors. Both native phases passed with zero skips. The independent verifier checked the five signed enrollments over TLS, the Dapr peer mTLS and exact route ACLs, and the before/after evidence on the retained Redis volume. The active authority index returned `[6, 7, 8]`. The guard passed 60 tests and 442 subtests. The prior G-1, released G-2 and publication SHA-256 manifests still matched.
+
+| Persisted case | Verified result |
+| --- | --- |
+| Admission | The approved Projects validator and metadata classifier accepted the fixture under `projects.activate-project@1`. Equivalent intent with new transport identifiers returned task `01M8CE1AH1J5CW3WEP7P5D2QD5`. Same-name changes to description, setup metadata or classification conflicted. The committed full digest was `84b9ce42cfc6fef5d2883d40b0421b6a92120316bba6f4a0e6d5b18997a82e70`. The owner grant compared and returned the separately derived Folder v1 digest `33d529e2f8d8d6ad50fe259bd2f27f5a89df742c40b4213628a2265001249d0d`. The legacy grant returned its committed admission digest. |
+| Intent and authority controls | Missing, unavailable, altered and wrongly scoped intent returned empty 404 from G-1. Signed receipt lookup refused unavailable, altered and missing intent, and the control Folder stream stayed absent. A wrong or full-admission digest sent as the owner-step digest returned empty 404. The signed revoked-actor create and receipt lookup refused disclosure or mutation. |
+| Name limits | Signed provisioning committed the complete 128-, 129- and 160-code-unit names. Projects admission and the Folders provisioning aggregate rejected 161, and signed owner lookup refused that length. An 80-surrogate-pair boundary confirmed the use of UTF-16 code units. The generic aggregate still admitted 128 and refused 129, 160 and 161. |
+| Fenced recovery | The first worker lost the response after commit. Following replica replacement and Redis restart, directory discovery recovered the same task with its exact scope and intent ETag `1`. Both signed lookup routes refused fence 1 with empty 404. Fence 2 appended receipt `prov-2c1bf2a524552a9f7d10d8b7ead4b4ec59ec78a4` for Folder `fld-p-2c1bf2a524552a9f7d10d8b7ead4b4ec59ec78a4` with zero repeat owner executions. A frozen mutation returned 503. |
+| Unresolved activation | A synthetic unresolved activation step moved the real persisted task to `NeedsAttention` with the recovered receipt. The retained Folder history had one create and exactly the two original-actor read/manage grants. Its SHA-256 `8fd1875f91c21de90f948863ff5dc517883838aa54ee1b9cd169e3767088bf20`, native proof digest `ecc832ed0f0d2b9927df42613e9c8712a41679239422d3fc18af216d8f917547` and incumbent history all matched before and after restart. |
+
+| Retained input or result | SHA-256 |
+| --- | --- |
+| `source/g1-approved.patch` | `85825f71a757e914e11c7f2efbe08e44441faebd7f1f84973756fe13ac399c4b` |
+| `source/eventstore.patch` | `152bd80fd284cd17b0445ecc54554c3d9edfc53ded09d3806ceb26efe7da2d13` |
+| `source/folders.patch` | `7f23cd4154fe41482dde26e710f332454ffe979d1cddf57b75564aca5f6ed2b6` |
+| `archives/package-sha256.txt` | `313b094704c76f1e227ab1ff27844e699a1a5302f490c75c600b9f7f3904f9ff` |
+| `third-run/harness.sha256` | `a485ece180d1518d529a16c914fb3c1c6f62c6866573f9cacded0a790ca32cc4` |
+| `third-run/package-inputs.json` | `0e3e6abcf25c37e80f92bf6be49de9ca90dc7eeac36fdd97ced9bb4eb3170a15` |
+| `third-run/runtime-assemblies.sha256` | `cdb7d5fc6f917dbf901cbd7e12c98c365052813f7a1360cd484c4abc41ca44b2` |
+| `third-run/enrollment.json` | `851d5ceb22f3cc5a259e8b2f918f701fe5f561e2ea9cfce10fab7916e341f3b7` |
+| `third-run/native/before-restart.xml` | `275f08af1a38b8298d8bf5891852baedcce638f814008fa71716e575ffdab5d1` |
+| `third-run/native/after-restart.xml` | `da475b969410166d8cc0d841ec9291e7b6345c59b0f2196cfa393e4aed9466a1` |
+| `third-run/native/before-restart.json` | `10f99d64ddbec439b880b19c8ecfeb9ffe99891f547ad2da0d32e675cc48245a` |
+| `third-run/native/after-restart.json` | `ff8d7fea684d49993b8f94484ea4ca3e722e1ff8f550c0ef2f4f9fd4f8d42e43` |
+| `third-run/native/before-restart-wire.json` | `0e5af9b374eb54c4f3de658f90aca4ec45e2fa95ea4fc65de2c49ebcf0dc57d1` |
+| `third-run/native/after-restart-wire.json` | `90c9206a612619babf9c4e7d5df3ce038355c55cde12727bc29192e305140150` |
+| `third-run/native/topology.json` | `fa31e0bf50ea5b2761e95e118a20e1ba4f913af1d81df3d18acd01fbd8664e9c` |
+| `third-run/sha256.txt` | `6f725b06443852da64ec3589fc0ea10c8ee11e9e7fb24ea81ec4c7b5f9f963ac` |
+
+The 39-entry replay manifest verified. **7.1-P2 stays open** pending released successor coordinates, combined capability pin and five matching role acceptances. The activation outcome in this isolated run used a fixture owner for the Project commit step. Story 7.1 still owns the real Projects writer and AD-35 qualification.
