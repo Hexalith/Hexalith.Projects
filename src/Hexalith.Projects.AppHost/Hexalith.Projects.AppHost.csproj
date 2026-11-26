@@ -8,8 +8,6 @@
     <NoWarn>$(NoWarn);ASPIRE012</NoWarn>
     <SuppressAspireAppHostSdkObsoleteWarning>true</SuppressAspireAppHostSdkObsoleteWarning>
     <UserSecretsId>hexalith-projects</UserSecretsId>
-    <HexalithPlatformRoot Condition="'$(HexalithPlatformRoot)' == '' and Exists('$(MSBuildThisFileDirectory)..\..\references\Hexalith.Platform\DaprSelfHostedMtls.cs')">$(MSBuildThisFileDirectory)..\..\references\Hexalith.Platform</HexalithPlatformRoot>
-    <HexalithPlatformRoot Condition="'$(HexalithPlatformRoot)' == '' and Exists('$(MSBuildThisFileDirectory)..\..\..\Hexalith.Platform\DaprSelfHostedMtls.cs')">$(MSBuildThisFileDirectory)..\..\..\Hexalith.Platform</HexalithPlatformRoot>
     <HexalithBuildsRoot Condition="'$(HexalithBuildsRoot)' == '' and Exists('$(MSBuildThisFileDirectory)..\..\references\Hexalith.Builds\src\libraries\Hexalith.Builds.Tooling')">$(MSBuildThisFileDirectory)..\..\references\Hexalith.Builds</HexalithBuildsRoot>
     <HexalithBuildsRoot Condition="'$(HexalithBuildsRoot)' == '' and Exists('$(MSBuildThisFileDirectory)..\..\..\Hexalith.Builds\src\libraries\Hexalith.Builds.Tooling')">$(MSBuildThisFileDirectory)..\..\..\Hexalith.Builds</HexalithBuildsRoot>
     <DefineConstants Condition="'$(UseHexalithProjectReferences)' == 'true'">$(DefineConstants);SUPPORTED_PROJECT_READ_SOURCE</DefineConstants>
@@ -29,8 +27,6 @@
     <ProjectReference Include="$(HexalithFoldersRoot)\src\Hexalith.Folders.Workers\Hexalith.Folders.Workers.csproj" Condition="'$(UseHexalithProjectReferences)' == 'true'" />
   </ItemGroup>
   <ItemGroup Condition="'$(UseHexalithProjectReferences)' == 'true'">
-    <Compile Include="$(HexalithPlatformRoot)\DaprSelfHostedMtls.cs" Link="Platform\DaprSelfHostedMtls.cs" />
-    <Compile Include="$(HexalithPlatformRoot)\DaprSelfHostedMtlsSubscriber.cs" Link="Platform\DaprSelfHostedMtlsSubscriber.cs" />
     <ProjectReference Include="$(HexalithFoldersRoot)\src\Hexalith.Folders.EventStore\Hexalith.Folders.EventStore.csproj" IsAspireProjectResource="false" />
     <ProjectReference Include="$(HexalithBuildsRoot)\src\libraries\Hexalith.Builds.Tooling\Hexalith.Builds.Tooling.csproj" IsAspireProjectResource="false" />
   </ItemGroup>
@@ -41,4 +37,5 @@
     <PackageReference Include="CommunityToolkit.Aspire.Hosting.Dapr" />
     <PackageReference Include="Hexalith.EventStore.Aspire" Condition="'$(UseHexalithProjectReferences)' != 'true'" />
   </ItemGroup>
+  <Import Project="../PlatformMtlsHelpers.targets" Condition="'$(UseHexalithProjectReferences)' == 'true'" />
 </Project>

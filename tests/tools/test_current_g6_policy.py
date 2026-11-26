@@ -59,7 +59,7 @@ class OwningCurrentPolicyTests(unittest.TestCase):
         policy = CURRENT.policy_document(ROOT / RELATIVE)
         self.assertEqual(original["resolvedProjects"], policy["resolvedProjects"])
         self.assertEqual(original["materialPrefixes"], policy["materialPrefixes"])
-        self.assertEqual(original["materialFiles"] + ["tools/qualification/g6-current-policy-2026-11-12-dapr-net1191.json", RELATIVE, DAPR_ACTION], policy["materialFiles"])
+        self.assertEqual(original["materialFiles"] + ["tools/qualification/g6-current-policy-2026-11-12-dapr-net1191.json", RELATIVE, DAPR_ACTION, "module/hexalith.module-manifest.v2.json"], policy["materialFiles"])
         self.assertEqual(21, CURRENT.SUPPORT_SELECTORS)
         self.assertEqual(33, CURRENT.SUPPORT_CASES)
         expected = copy.deepcopy(original["tuple"])

@@ -27,20 +27,27 @@ public sealed class PackageOwnerMetadataTests
     [InlineData("folders")]
     public void ActualOwnerMetadataSurvivesLoadedPackageNameCollisions(string owner)
     {
-        Assembly published = typeof(Hexalith.Tenants.Contracts.Events.TenantAccessRefreshed).Assembly;
+        Assembly? referencedContracts = owner switch
+        {
+            "tenants" => typeof(Hexalith.Tenants.Contracts.Events.TenantAccessRefreshed).Assembly,
+            "projects" => typeof(Hexalith.Projects.Contracts.Routing.ProjectsRuntimeCatalogDeclarations).Assembly,
+            _ => null,
+        };
         (string executable, string declaration, string adapters) = Artifacts(owner);
         Assert.SkipUnless(
-            File.Exists(executable) && File.Exists(declaration) && File.Exists(adapters),
-            "Prebuilt " + owner + " owner artifacts are missing.");
+            File.Exists(executable),
+            "Prebuilt " + owner + " owner executable is missing.");
+        File.Exists(declaration).ShouldBeTrue("Missing catalog declarations at " + declaration);
+        File.Exists(adapters).ShouldBeTrue("Missing intent adapters at " + adapters);
         PackageHost.PackageOwnerLoadContext context = new(executable);
         Assembly actual = context.LoadOwner(declaration);
         Path.GetFullPath(actual.Location).ShouldBe(Path.GetFullPath(declaration));
         SHA256.HashData(File.ReadAllBytes(actual.Location)).ShouldBe(SHA256.HashData(File.ReadAllBytes(declaration)));
         AssemblyLoadContext.GetLoadContext(actual).ShouldNotBeSameAs(AssemblyLoadContext.Default);
-        if (owner == "tenants")
+        if (referencedContracts is not null)
         {
-            actual.GetName().Name.ShouldBe(published.GetName().Name);
-            actual.ShouldNotBeSameAs(published);
+            actual.GetName().Name.ShouldBe(referencedContracts.GetName().Name);
+            actual.ShouldNotBeSameAs(referencedContracts);
         }
         var routes = CompiledRouteCatalogDeclarations.Read([actual]);
         routes.ShouldNotBeEmpty();
@@ -86,7 +93,7 @@ public sealed class PackageOwnerMetadataTests
         {
             "tenants" => (Path.Combine(SelectedRoot("PackageFixtureTenantsRoot"), "src/Hexalith.Tenants"), "Hexalith.Tenants.dll", "Hexalith.Tenants.Contracts.dll", "Hexalith.Tenants.Server.dll"),
             "folders" => (Path.Combine(SelectedRoot("PackageFixtureFoldersRoot"), "src/Hexalith.Folders.Server"), "Hexalith.Folders.Server.dll", "Hexalith.Folders.Server.dll", "Hexalith.Folders.Server.dll"),
-            "projects" => ("src/Hexalith.Projects.Server", "Hexalith.Projects.Server.dll", "Hexalith.Projects.Server.dll", "Hexalith.Projects.Server.dll"),
+            "projects" => ("src/Hexalith.Projects.Server", "Hexalith.Projects.Server.dll", "Hexalith.Projects.Contracts.dll", "Hexalith.Projects.EventStoreExtensions.dll"),
             _ => throw new InvalidOperationException("Unknown actual owner."),
         };
         string configuration = typeof(PackageOwnerMetadataTests).Assembly.GetCustomAttribute<AssemblyConfigurationAttribute>()!.Configuration;

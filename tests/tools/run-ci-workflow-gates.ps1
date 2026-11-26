@@ -22,6 +22,7 @@ $g6PostgresqlImage = 'postgres@sha256:a02db8cac496f15b094798a38254f14d6e00741f70
 $nugetLoginSha = '8d196754b4036150537f80ac539e15c2f1028841'
 $expectedReleasePackageIds = @(
     'Hexalith.Projects.Contracts',
+    'Hexalith.Projects.EventStoreExtensions',
     'Hexalith.Projects',
     'Hexalith.Projects.Client',
     'Hexalith.Projects.Testing',
@@ -464,7 +465,7 @@ $g6CatalogStep = Get-RequiredNamedStep -Steps $releaseSteps -Name 'Acquire revie
 $g6RunStep = Get-RequiredNamedStep -Steps $releaseSteps -Name 'Run fresh exact-source G-6 qualifier' -Owner 'release'
 $g6ValidateStep = Get-RequiredNamedStep -Steps $releaseSteps -Name 'Validate fresh exact-source G-6 evidence' -Owner 'release'
 $g6UploadStep = Get-RequiredNamedStep -Steps $releaseSteps -Name 'Upload exact-source G-6 evidence' -Owner 'release'
-$manifestStep = Get-RequiredNamedStep -Steps $releaseSteps -Name 'Validate five-package manifest' -Owner 'release'
+$manifestStep = Get-RequiredNamedStep -Steps $releaseSteps -Name 'Validate six-package manifest' -Owner 'release'
 $freezeStep = Get-RequiredNamedStep -Steps $releaseSteps -Name 'Resolve release publication freeze' -Owner 'release'
 $sourceStep = Get-RequiredNamedStep -Steps $releaseSteps -Name 'Revalidate current source before NuGet login' -Owner 'release'
 $loginStep = Get-RequiredNamedStep -Steps $releaseSteps -Name 'Exchange GitHub OIDC token for temporary NuGet API key' -Owner 'release'
@@ -506,7 +507,7 @@ else {
     $manifestCount = $manifestPackageIds.Count
     if ($manifestCount -ne $expectedReleasePackageIds.Count -or
         @(Compare-Object -ReferenceObject $expectedReleasePackageIds -DifferenceObject $manifestPackageIds).Count -ne 0) {
-        $failures.Add('tools/release-packages.json must contain exactly the five approved Projects package IDs.')
+        $failures.Add('tools/release-packages.json must contain exactly the six approved Projects package IDs.')
     }
     Require-Match $manifestStep.Text ("^\s{10}EXPECTED_PACKAGE_COUNT:\s*'" + $manifestCount + "'\s*$") "The named manifest step count gate must equal the $manifestCount package(s) declared in tools/release-packages.json."
     Require-Match $manifestStep.Text '\.packages \| length == \$expected' 'The named manifest step must compare the package count with its independent expected count.'
@@ -554,7 +555,7 @@ $orderedReleaseSteps = @(
     'Run fresh exact-source G-6 qualifier',
     'Validate fresh exact-source G-6 evidence',
     'Upload exact-source G-6 evidence',
-    'Validate five-package manifest',
+    'Validate six-package manifest',
     'Resolve release publication freeze',
     'Revalidate current source before NuGet login',
     'Exchange GitHub OIDC token for temporary NuGet API key',
@@ -598,10 +599,10 @@ foreach ($policyRow in $expectedPolicyRows) {
     }
 }
 
-$scopeStart = $runbookPolicyText.IndexOf('Grant publication of new versions only for these five exact package ID', [System.StringComparison]::Ordinal)
-$scopeEnd = if ($scopeStart -ge 0) { $runbookPolicyText.IndexOf('Do not grant a new-package scope.', $scopeStart, [System.StringComparison]::Ordinal) } else { -1 }
+$scopeStart = $runbookPolicyText.IndexOf('Grant publication of new versions only for these six exact package ID', [System.StringComparison]::Ordinal)
+$scopeEnd = if ($scopeStart -ge 0) { $runbookPolicyText.IndexOf('Keep publication frozen until the maintainer authorizes the first publication', $scopeStart, [System.StringComparison]::Ordinal) } else { -1 }
 if ($scopeStart -lt 0 -or $scopeEnd -le $scopeStart) {
-    $failures.Add('The Trusted Publishing runbook must contain the exact five-package policy-scope section.')
+    $failures.Add('The Trusted Publishing runbook must contain the exact six-package policy-scope section.')
 }
 else {
     $scopeSection = $runbookPolicyText.Substring($scopeStart, $scopeEnd - $scopeStart)
@@ -611,7 +612,7 @@ else {
     )
     if ($runbookPackageIds.Count -ne $expectedReleasePackageIds.Count -or
         @(Compare-Object -ReferenceObject $expectedReleasePackageIds -DifferenceObject $runbookPackageIds).Count -ne 0) {
-        $failures.Add('The Trusted Publishing runbook policy scope must contain exactly the five manifest package-ID bullets, with no prefixes or extras.')
+        $failures.Add('The Trusted Publishing runbook policy scope must contain exactly the six manifest package-ID bullets, with no prefixes or extras.')
     }
 }
 

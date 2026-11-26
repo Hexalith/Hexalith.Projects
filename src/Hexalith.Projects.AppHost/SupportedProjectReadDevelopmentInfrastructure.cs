@@ -46,7 +46,8 @@ internal static class SupportedProjectReadDevelopmentInfrastructure
             .Single(resource => resource.Name == "projects-workers"));
         IResourceBuilder<DotnetProjectResource> foldersWorkers = builder.CreateResourceBuilder(builder.Resources.OfType<DotnetProjectResource>()
             .Single(resource => resource.Name == "folders-workers"));
-        Assembly projectOwner = Load(projects.Resource, "Hexalith.Projects.Server.dll");
+        Assembly projectOwner = Load(projects.Resource, "Hexalith.Projects.Contracts.dll");
+        Assembly projectAdapters = Load(projects.Resource, "Hexalith.Projects.EventStoreExtensions.dll");
         Assembly folderOwner = Load(folders.Resource, "Hexalith.Folders.Server.dll");
         Assembly folderAdapters = typeof(Hexalith.Folders.EventStore.FoldersCatalogAdapterSource).Assembly;
         Assembly tenantOwner = Load(tenants.Resource, "Hexalith.Tenants.Contracts.dll");
@@ -103,7 +104,7 @@ internal static class SupportedProjectReadDevelopmentInfrastructure
         _ = projects.WithEnvironment("Projects__SupportedReads__Enabled", "true");
         _ = projectsWorkers.WithEnvironment("Projects__SupportedReads__Enabled", "true");
         DevelopmentRouteCatalogComposition catalog = builder.AddEventStoreDevelopmentRouteCatalog(gateway,
-            [new(projects, projectOwner, projectOwner), new(tenants, tenantOwner, tenantAdapters), new(folders, folderOwner, folderAdapters)],
+            [new(projects, projectOwner, projectAdapters), new(tenants, tenantOwner, tenantAdapters), new(folders, folderOwner, folderAdapters)],
             receivers, statePath, options, isolation);
         builder.AddEventStoreDevelopmentSqliteStartupOrdering(tenants, gateway, projects, projectsWorkers, folders, foldersWorkers);
         _ = tenants.WithEnvironment("Tenants__BootstrapBoundWorkloadReceiptPath", Path.Combine(catalog.Directory, "tenants.bootstrap.json"));

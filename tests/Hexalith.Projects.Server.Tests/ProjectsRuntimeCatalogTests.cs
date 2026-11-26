@@ -11,10 +11,13 @@ using Hexalith.EventStore.Client.Aggregates;
 using Hexalith.EventStore.Client.Routing;
 using Hexalith.EventStore.Contracts.Routing;
 using Hexalith.EventStore.DomainService;
+using Hexalith.EventStore.Server.Extensions;
 using Hexalith.EventStore.ServiceDefaults.Routing;
 using Hexalith.EventStore.ServiceDefaults.Authentication;
 using Microsoft.IdentityModel.Tokens;
 using Hexalith.Projects.Contracts.Queries;
+using Hexalith.Projects.Contracts.Routing;
+using Hexalith.Projects.EventStoreExtensions;
 using Hexalith.Projects.Server;
 
 using Microsoft.AspNetCore.Builder;
@@ -22,6 +25,7 @@ using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Diagnostics.HealthChecks;
 
 using Shouldly;
 
@@ -50,7 +54,9 @@ public sealed class ProjectsRuntimeCatalogTests
             .ShouldBe(declarations.Where(route => route.Kind == "query").Select(route => route.MessageType!).Order(StringComparer.Ordinal));
         app.Services.GetServices<IAsyncDomainProjectionHandler>().Select(handler => handler.ProjectionType).Order(StringComparer.Ordinal)
             .ShouldBe(new[] { "conversation-start-setup", "project-reads" });
-        app.Services.GetServices<IDomainProjectionHandler>().ShouldHaveSingleItem().ShouldBeOfType<ProjectProjectionHandler>();
+        var legacyHandler = app.Services.GetServices<IDomainProjectionHandler>().ShouldHaveSingleItem().ShouldBeOfType<ProjectProjectionHandler>();
+        declarations.Single(route => route.Kind == "projection" && route.ProjectionType == ProjectsServerModule.ProjectionType)
+            .Execution!.HandlerType.ShouldBe(legacyHandler.GetType().FullName);
         app.Services.GetKeyedServices<IAsyncAggregateReplay>("projects").ShouldHaveSingleItem().ShouldBeOfType<ProjectsDomainProcessor>();
         var routes = ((IEndpointRouteBuilder)app).DataSources.SelectMany(source => source.Endpoints).ToArray();
         DevelopmentDomainRouteCatalog.Targets(app.Services, routes, declarations).Count.ShouldBe(25);
@@ -65,6 +71,51 @@ public sealed class ProjectsRuntimeCatalogTests
         {
             endpoint.Metadata.ShouldContain(metadata => metadata.GetType().Name == "DomainRouteCatalogGuardMetadata");
         }
+    }
+
+    /// <summary>Registers all declared adapters once and includes the extension in gateway readiness.</summary>
+    [Fact]
+    public async Task GatewayLoadsProjectsExtensionAndReportsHealthyReadiness()
+    {
+        var services = new ServiceCollection();
+        services.AddLogging();
+        services.AddEventStoreExtensions(ExtensionConfiguration("1"));
+        using ServiceProvider provider = services.BuildServiceProvider();
+
+        var routeIds = provider.GetServices<IIdempotencyIntentAdapter>()
+            .Cast<IDeclaredIdempotencyIntentAdapter>()
+            .Select(adapter => adapter.Declaration.Route.RouteId)
+            .Order(StringComparer.Ordinal);
+        routeIds.ShouldBe(ProjectsRuntimeCatalogDeclarations.Commands
+            .Select(command => command.Route.RouteId)
+            .Order(StringComparer.Ordinal));
+
+        HealthReport report = await provider.GetRequiredService<HealthCheckService>()
+            .CheckHealthAsync(check => check.Tags.Contains("ready"), TestContext.Current.CancellationToken);
+        report.Entries[EventStoreExtensionServiceCollectionExtensions.HealthCheckName].Status.ShouldBe(HealthStatus.Healthy);
+    }
+
+    /// <summary>Refuses an unsupported API major before registering Projects or allowing startup.</summary>
+    [Fact]
+    public void GatewayRefusesProjectsExtensionWithUnsupportedMajor()
+    {
+        var services = new ServiceCollection();
+        var refused = Should.Throw<EventStoreExtensionException>(() => services.AddEventStoreExtensions(ExtensionConfiguration("2")));
+        refused.Condition.ShouldBe(EventStoreExtensionConditions.UnsupportedMajor);
+        refused.Message.ShouldContain("Hexalith.Projects.EventStoreExtensions");
+        services.ShouldNotContain(service => service.ServiceType == typeof(IIdempotencyIntentAdapter));
+    }
+
+    private static IConfiguration ExtensionConfiguration(string apiMajor)
+    {
+        const string prefix = EventStoreExtensionServiceCollectionExtensions.ConfigurationSection + ":0:";
+        return new ConfigurationBuilder().AddInMemoryCollection(new Dictionary<string, string?>
+        {
+            [prefix + "PackageId"] = "Hexalith.Projects.EventStoreExtensions",
+            [prefix + "ExtensionId"] = "projects",
+            [prefix + "ModuleId"] = "projects",
+            [prefix + "ApiMajor"] = apiMajor,
+        }).Build();
     }
 
     /// <summary>Checks the manifest POST grants against the actual restricted SDK receiver.</summary>

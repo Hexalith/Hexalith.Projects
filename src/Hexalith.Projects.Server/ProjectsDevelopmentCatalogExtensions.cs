@@ -1,5 +1,7 @@
 namespace Hexalith.Projects.Server;
 
+using Hexalith.Projects.Contracts.Routing;
+
 using Hexalith.EventStore.DomainService;
 
 /// <summary>Enrolls the Projects SDK receiver in an explicitly selected Development catalog.</summary>

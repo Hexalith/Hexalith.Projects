@@ -5,6 +5,8 @@
 
 namespace Hexalith.Projects.Server;
 
+using Hexalith.Projects.Contracts.Routing;
+
 using System;
 using System.Text;
 using System.Text.Json;

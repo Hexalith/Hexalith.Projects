@@ -3,6 +3,8 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 // </copyright>
 
+using Hexalith.Projects.Contracts.Routing;
+
 namespace Hexalith.Projects.Server;
 
 /// <summary>
@@ -18,31 +20,31 @@ public static class ProjectsServerModule
     public static string Name => "Hexalith.Projects.Server";
 
     /// <summary>The canonical EventStore domain segment for project aggregates.</summary>
-    public const string DomainName = "projects";
+    public const string DomainName = ProjectsRouteIdentity.DomainName;
 
     /// <summary>The fully qualified <c>CreateProject</c> command type discriminator on the wire.</summary>
-    public const string CreateProjectCommandType = "Hexalith.Projects.Commands.CreateProject";
+    public const string CreateProjectCommandType = ProjectsRouteIdentity.CreateProjectCommandType;
 
     /// <summary>The fully qualified <c>UpdateProjectSetup</c> command type discriminator on the wire.</summary>
-    public const string UpdateProjectSetupCommandType = "Hexalith.Projects.Commands.UpdateProjectSetup";
+    public const string UpdateProjectSetupCommandType = ProjectsRouteIdentity.UpdateProjectSetupCommandType;
 
     /// <summary>The fully qualified <c>ArchiveProject</c> command type discriminator on the wire.</summary>
-    public const string ArchiveProjectCommandType = "Hexalith.Projects.Commands.ArchiveProject";
+    public const string ArchiveProjectCommandType = ProjectsRouteIdentity.ArchiveProjectCommandType;
 
     /// <summary>The fully qualified <c>RestoreProject</c> command type discriminator on the wire.</summary>
-    public const string RestoreProjectCommandType = "Hexalith.Projects.Commands.RestoreProject";
+    public const string RestoreProjectCommandType = ProjectsRouteIdentity.RestoreProjectCommandType;
 
     /// <summary>The supported Conversation-start setup query type.</summary>
-    public const string GetConversationStartSetupQueryType = "Hexalith.Projects.Queries.GetConversationStartSetup.v1";
+    public const string GetConversationStartSetupQueryType = ProjectsRouteIdentity.GetConversationStartSetupQueryType;
 
     /// <summary>The supported Get Project Context query type.</summary>
-    public const string GetProjectContextQueryType = "Hexalith.Projects.Queries.GetProjectContext.v1";
+    public const string GetProjectContextQueryType = ProjectsRouteIdentity.GetProjectContextQueryType;
 
     /// <summary>The supported Refresh Project Context query type.</summary>
     public const string RefreshProjectContextQueryType = "Hexalith.Projects.Queries.RefreshProjectContext.v1";
 
     /// <summary>The supported Explain Context Selection query type.</summary>
-    public const string ExplainContextSelectionQueryType = "Hexalith.Projects.Queries.ExplainContextSelection.v1";
+    public const string ExplainContextSelectionQueryType = ProjectsRouteIdentity.ExplainContextSelectionQueryType;
 
     /// <summary>The supported advisory Conversation resolution query.</summary>
     public const string ResolveProjectFromConversationQueryType = Contracts.Queries.ResolveProjectFromConversationQuery.QueryType;
@@ -51,28 +53,28 @@ public static class ProjectsServerModule
     public const string ResolveProjectFromAttachmentsQueryType = Contracts.Queries.ResolveProjectFromAttachmentsQuery.QueryType;
 
     /// <summary>The fully qualified <c>SetProjectFolder</c> command type discriminator on the wire.</summary>
-    public const string SetProjectFolderCommandType = "Hexalith.Projects.Commands.SetProjectFolder";
+    public const string SetProjectFolderCommandType = ProjectsRouteIdentity.SetProjectFolderCommandType;
 
     /// <summary>The fully qualified <c>LinkFileReference</c> command type discriminator on the wire.</summary>
-    public const string LinkFileReferenceCommandType = "Hexalith.Projects.Commands.LinkFileReference";
+    public const string LinkFileReferenceCommandType = ProjectsRouteIdentity.LinkFileReferenceCommandType;
 
     /// <summary>The fully qualified <c>UnlinkFileReference</c> command type discriminator on the wire.</summary>
-    public const string UnlinkFileReferenceCommandType = "Hexalith.Projects.Commands.UnlinkFileReference";
+    public const string UnlinkFileReferenceCommandType = ProjectsRouteIdentity.UnlinkFileReferenceCommandType;
 
     /// <summary>The fully qualified <c>LinkMemory</c> command type discriminator on the wire.</summary>
-    public const string LinkMemoryCommandType = "Hexalith.Projects.Commands.LinkMemory";
+    public const string LinkMemoryCommandType = ProjectsRouteIdentity.LinkMemoryCommandType;
 
     /// <summary>The fully qualified <c>UnlinkMemory</c> command type discriminator on the wire.</summary>
-    public const string UnlinkMemoryCommandType = "Hexalith.Projects.Commands.UnlinkMemory";
+    public const string UnlinkMemoryCommandType = ProjectsRouteIdentity.UnlinkMemoryCommandType;
 
     /// <summary>The fully qualified <c>ConfirmProjectResolution</c> command type discriminator on the wire.</summary>
-    public const string ConfirmProjectResolutionCommandType = "Hexalith.Projects.Commands.ConfirmProjectResolution";
+    public const string ConfirmProjectResolutionCommandType = ProjectsRouteIdentity.ConfirmProjectResolutionCommandType;
 
     /// <summary>The exact protected project-grant issuance discriminator.</summary>
-    public const string GrantProjectChatBotAuthorityCommandType = "Hexalith.Projects.Contracts.Commands.GrantProjectChatBotAuthority";
+    public const string GrantProjectChatBotAuthorityCommandType = ProjectsRouteIdentity.GrantProjectChatBotAuthorityCommandType;
 
     /// <summary>The exact protected project-grant revocation discriminator.</summary>
-    public const string RevokeProjectChatBotAuthorityCommandType = "Hexalith.Projects.Contracts.Commands.RevokeProjectChatBotAuthority";
+    public const string RevokeProjectChatBotAuthorityCommandType = ProjectsRouteIdentity.RevokeProjectChatBotAuthorityCommandType;
 
     /// <summary>The aggregate-callback route the EventStore command pipeline invokes.</summary>
     public const string ProcessRoute = "/process";
@@ -81,7 +83,7 @@ public static class ProjectsServerModule
     public const string ProjectRoute = "/project";
 
     /// <summary>The stable EventStore projection type for the Project aggregate state.</summary>
-    public const string ProjectionType = "project";
+    public const string ProjectionType = ProjectsRouteIdentity.ProjectionType;
 
     /// <summary>The reserved platform tenant; never a valid project-data tenant context.</summary>
     public const string ReservedSystemTenant = "system";

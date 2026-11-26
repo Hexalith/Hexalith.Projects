@@ -180,10 +180,10 @@ jobs:
           path: ${{ env.G6_OUTPUT }}
           if-no-files-found: error
           retention-days: 90
-      - name: Validate five-package manifest
+      - name: Validate six-package manifest
         shell: bash
         env:
-          EXPECTED_PACKAGE_COUNT: '5'
+          EXPECTED_PACKAGE_COUNT: '6'
           PACKAGE_MANIFEST: tools/release-packages.json
         run: |
           set -euo pipefail
@@ -194,7 +194,7 @@ jobs:
             ([.packages[].id] | all(type == "string" and length > 0)) and
             ([.packages[].id] | unique | length == $expected)
           ' "$PACKAGE_MANIFEST" >/dev/null; then
-            echo "The release manifest must declare exactly five unique package IDs." >&2
+            echo "The release manifest must declare exactly six unique package IDs." >&2
             exit 1
           fi
       - name: Resolve release publication freeze

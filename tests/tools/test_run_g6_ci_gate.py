@@ -65,14 +65,21 @@ class G6ChangeSelectionTests(unittest.TestCase):
                 workflow = (project_root / ".github/workflows" / workflow_name).read_text()
                 self.assertIn("--policy " + policy_relative.as_posix(), workflow)
 
-    def select(self, changed: str, event: str = "push", base: str = BASE) -> tuple[bool, str]:
+    def select(self, changed: str, event: str = "push", base: str = BASE, policy: dict = POLICY) -> tuple[bool, str]:
         def fake_git(*arguments):
             if arguments[0] == "cat-file":
                 return subprocess.CompletedProcess(arguments, 0, "", "")
             self.assertEqual("diff", arguments[0])
             return subprocess.CompletedProcess(arguments, 0, changed, "")
         with patch.object(GATE, "git", side_effect=fake_git):
-            return GATE.selection(event, base, POLICY)
+            return GATE.selection(event, base, policy)
+
+    def test_manifest_only_push_requires_live_proof(self) -> None:
+        manifest = "module/hexalith.module-manifest.v2.json"
+        policy = json.loads((GATE.ROOT / "tools/qualification/g6-current-policy-2026-11-23-toolkit-preview.json").read_text())
+        required, reason = self.select(manifest + "\n", policy=policy)
+        self.assertTrue(required)
+        self.assertIn(manifest, reason)
 
     def test_unrelated_root_gitlink_does_not_require_live_proof(self) -> None:
         self.assertEqual((False, "not required by this change"),

@@ -1,8 +1,6 @@
 <Project Sdk="Aspire.AppHost.Sdk/17.0.0">
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <HexalithPlatformRoot Condition="'$(HexalithPlatformRoot)' == '' and Exists('$(MSBuildThisFileDirectory)../../references/Hexalith.Platform/DaprSelfHostedMtls.cs')">$(MSBuildThisFileDirectory)../../references/Hexalith.Platform</HexalithPlatformRoot>
-    <HexalithPlatformRoot Condition="'$(HexalithPlatformRoot)' == ''">$(MSBuildThisFileDirectory)../../../Hexalith.Platform</HexalithPlatformRoot>
     <AspireUseCliBundle>true</AspireUseCliBundle>
     <SkipAddAspireDefaultReferences>true</SkipAddAspireDefaultReferences>
     <SuppressAspireAppHostSdkObsoleteWarning>true</SuppressAspireAppHostSdkObsoleteWarning>
@@ -35,8 +33,6 @@
       <HintPath>$(NuGetPackageRoot)/hexalith.builds.module.cli/$(HexalithBuildsModuleCliVersion)/tools/net11.0/any/Hexalith.Builds.Tooling.dll</HintPath>
       <Private>true</Private>
     </Reference>
-    <Compile Include="$(HexalithPlatformRoot)/DaprSelfHostedMtls.cs" Link="Platform/DaprSelfHostedMtls.cs" />
-    <Compile Include="$(HexalithPlatformRoot)/DaprSelfHostedMtlsSubscriber.cs" Link="Platform/DaprSelfHostedMtlsSubscriber.cs" />
   </ItemGroup>
   <!-- The package runner launches the prebuilt Release fixture. Debug builds also reference
        this project for test types and use the workspace source mapping. -->
@@ -53,4 +49,5 @@
       <AssemblyMetadata Include="PackageFixtureTarget:%(_FixtureTarget.MSBuildSourceProjectFile)" Value="%(_FixtureTarget.FullPath)" />
     </ItemGroup>
   </Target>
+  <Import Project="../../src/PlatformMtlsHelpers.targets" />
 </Project>

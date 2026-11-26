@@ -17,7 +17,11 @@ from typing import Any
 
 ROOT = Path(__file__).resolve().parents[1]
 MANIFEST = ROOT / "tools" / "release-packages.json"
+EXTENSION_PACKAGE_ID = "Hexalith.Projects.EventStoreExtensions"
+PACKAGED_MODULE_MANIFEST = "build/hexalith.module-manifest.v2.json"
+MODULE_MANIFEST = ROOT / "module" / "hexalith.module-manifest.v2.json"
 PACKAGE_IDS = {
+    EXTENSION_PACKAGE_ID,
     "Hexalith.Projects",
     "Hexalith.Projects.Client",
     "Hexalith.Projects.Contracts",
@@ -121,7 +125,7 @@ def _require_string_list(value: Any, field: str) -> tuple[str, ...]:
 
 
 def load_manifest(path: Path = MANIFEST) -> ReleaseManifest:
-    """Load and strictly validate the authoritative five-package manifest."""
+    """Load and strictly validate the authoritative package manifest."""
 
     resolved = path.resolve()
     try:
@@ -216,7 +220,7 @@ def load_manifest(path: Path = MANIFEST) -> ReleaseManifest:
 
     if {package.package_id for package in packages} != PACKAGE_IDS:
         raise ValueError(
-            "Package manifest inventory differs from the frozen five-package set: "
+            "Package manifest inventory differs from the exact release package set: "
             f"{sorted(package.package_id for package in packages)}"
         )
     return ReleaseManifest(metadata=metadata, packages=tuple(packages))
@@ -301,7 +305,7 @@ def _safe_entries(archive: zipfile.ZipFile, path: Path) -> tuple[zipfile.ZipInfo
             or any(part in ("", ".", "..") for part in parts)
         ):
             raise ValueError(f"Package {path.name} contains unsafe archive entry {name!r}")
-        if parts[0].casefold() in ACTIVE_PAYLOAD_ROOTS:
+        if parts[0].casefold() in ACTIVE_PAYLOAD_ROOTS and name != PACKAGED_MODULE_MANIFEST:
             raise ValueError(
                 f"Package {path.name} contains forbidden active payload root {parts[0]!r}"
             )
@@ -337,7 +341,7 @@ def _required_child_text(element: ET.Element, name: str, package_name: str) -> s
     return matches[0].text.strip()
 
 
-def _read_package(path: Path, manifest: ReleaseManifest) -> tuple[PackageMetadata, dict[str, Any]]:
+def _read_package(path: Path, manifest: ReleaseManifest, module_manifest: bytes) -> tuple[PackageMetadata, dict[str, Any]]:
     try:
         archive = zipfile.ZipFile(path)
     except (OSError, zipfile.BadZipFile) as exc:
@@ -392,6 +396,13 @@ def _read_package(path: Path, manifest: ReleaseManifest) -> tuple[PackageMetadat
         version = _required_child_text(metadata, "version", path.name)
         if not PACKAGE_ID_PATTERN.fullmatch(package_id) or not VERSION_PATTERN.fullmatch(version):
             raise ValueError(f"Package {path.name} has invalid identity metadata")
+
+        embedded_manifests = [entry for entry in entries if entry.filename == PACKAGED_MODULE_MANIFEST]
+        if package_id == EXTENSION_PACKAGE_ID:
+            if len(embedded_manifests) != 1 or archive.read(embedded_manifests[0]) != module_manifest:
+                raise ValueError(f"Package {path.name} must contain the exact Projects module manifest")
+        elif embedded_manifests:
+            raise ValueError(f"Package {path.name} contains an unexpected Projects module manifest")
 
         repository_nodes = _children(metadata, "repository")
         if len(repository_nodes) != 1:
@@ -505,11 +516,27 @@ def expected_dependencies(package: ManifestPackage, version: str) -> dict[str, s
     }
 
 
+def read_committed_module_manifest(source_sha: str) -> bytes:
+    """Read the declaration blob from the exact release commit."""
+    if not SOURCE_SHA_PATTERN.fullmatch(source_sha):
+        raise ValueError(f"Expected source SHA is invalid: {source_sha!r}")
+    git_path = MODULE_MANIFEST.relative_to(ROOT).as_posix()
+    result = subprocess.run(
+        ["git", "-C", str(ROOT), "cat-file", "blob", f"{source_sha}^{{commit}}:{git_path}"],
+        capture_output=True, check=False,
+    )
+    if result.returncode != 0 or not result.stdout:
+        raise ValueError(f"Cannot read Projects module manifest at source commit {source_sha}")
+    return result.stdout
+
+
 def validate_packages(
     package_directory: Path,
     expected_version: str | None = None,
     expected_source_sha: str | None = None,
     manifest_path: Path = MANIFEST,
+    *,
+    module_manifest: bytes | None = None,
 ) -> tuple[tuple[PackageMetadata, ...], str, str]:
     """Validate exact inventory, metadata, provenance, dependencies, and assets."""
 
@@ -529,11 +556,13 @@ def validate_packages(
     if not SOURCE_SHA_PATTERN.fullmatch(source_sha):
         raise ValueError(f"Expected source SHA is invalid: {source_sha!r}")
 
+    if module_manifest is None:
+        module_manifest = MODULE_MANIFEST.read_bytes()
     by_manifest_id = {package.package_id: package for package in manifest.packages}
     actual: dict[str, PackageMetadata] = {}
     versions: set[str] = set()
     for archive in archives:
-        package, details = _read_package(archive, manifest)
+        package, details = _read_package(archive, manifest, module_manifest)
         if package.package_id not in by_manifest_id or package.package_id in actual:
             raise ValueError(f"Unexpected or duplicate release package id: {package.package_id}")
         expected_name = f"{package.package_id}.{package.version}.nupkg"

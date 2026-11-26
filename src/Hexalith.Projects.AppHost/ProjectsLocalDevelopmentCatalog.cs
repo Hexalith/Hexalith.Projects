@@ -27,9 +27,12 @@ internal static class ProjectsLocalDevelopmentCatalog
         var custody = builder.Configuration.GetSection("Projects:DevelopmentRouteCatalog")
             .Get<DevelopmentRouteCatalogCompositionOptions>()
             ?? throw new InvalidOperationException("Projects:DevelopmentRouteCatalog requires owner custody for the selected Redis backend.");
-        Assembly projectOwner = Load(projects, "Hexalith.Projects.Server.dll");
-        Assembly tenantOwner = Load(tenants, "Hexalith.Tenants.Contracts.dll");
-        Assembly tenantAdapters = Load(tenants, "Hexalith.Tenants.Server.dll");
+        string projectOutput = OwnerOutput(projects);
+        Assembly projectOwner = Load(Path.Combine(projectOutput, "Hexalith.Projects.Contracts.dll"));
+        Assembly projectAdapters = Load(Path.Combine(projectOutput, "Hexalith.Projects.EventStoreExtensions.dll"));
+        string tenantOutput = OwnerOutput(tenants);
+        Assembly tenantOwner = Load(Path.Combine(tenantOutput, "Hexalith.Tenants.Contracts.dll"));
+        Assembly tenantAdapters = Load(Path.Combine(tenantOutput, "Hexalith.Tenants.Server.dll"));
 
         _ = projects.WithEnvironment("Projects__DevelopmentRouteCatalog__Enabled", "true");
         var setupStore = builder.AddDaprComponent("projects-conversation-start-setup", "state.redis")
@@ -75,7 +78,7 @@ internal static class ProjectsLocalDevelopmentCatalog
                 },
             }));
             catalog = builder.AddEventStoreDevelopmentRouteCatalog(gateway,
-                [new(projects, projectOwner, projectOwner), new(tenants, tenantOwner, tenantAdapters)],
+                [new(projects, projectOwner, projectAdapters), new(tenants, tenantOwner, tenantAdapters)],
                 receivers, componentPath, custody);
             var infrastructure = DaprSelfHostedMtls.AddLocalApplicationInfrastructure(builder,
                 Path.GetFullPath(Path.Combine(builder.AppHostDirectory, "../..")), Path.Combine(resourcesPath, "sentry.yaml"));
@@ -157,19 +160,31 @@ internal static class ProjectsLocalDevelopmentCatalog
         }
     }
 
-    private static Assembly Load(IResourceBuilder<DotnetProjectResource> resource, string artifact)
+    private static string OwnerOutput(IResourceBuilder<DotnetProjectResource> resource)
     {
         string projectPath = resource.Resource.GetProjectMetadata().ProjectPath;
+        string projectName = Path.GetFileNameWithoutExtension(projectPath);
+        string executableName = projectName + ".dll";
         var appHostOutput = new DirectoryInfo(AppContext.BaseDirectory);
         // An artifacts layout (<artifacts>/bin/<project>/<config>) selects the owner from the same tree, including
         // when a test assembly composes this model; the conventional Debug output remains the fallback.
         DirectoryInfo? artifactsBin = appHostOutput.Parent?.Parent;
         string? artifactsPath = artifactsBin is null ? null
-            : Path.Combine(artifactsBin.FullName, Path.GetFileNameWithoutExtension(projectPath), appHostOutput.Name, artifact);
+            : Path.Combine(artifactsBin.FullName, projectName, appHostOutput.Name, executableName);
         string path = artifactsPath is not null
             && (appHostOutput.Parent!.Name == "Hexalith.Projects.AppHost" || (artifactsBin!.Name == "bin" && File.Exists(artifactsPath)))
             ? artifactsPath
-            : Path.Combine(Path.GetDirectoryName(projectPath)!, "bin", "Debug", "net11.0", artifact);
+            : Path.Combine(Path.GetDirectoryName(projectPath)!, "bin", "Debug", "net11.0", executableName);
+        if (!File.Exists(path))
+        {
+            throw new InvalidOperationException("Build the selected Debug source owner before composing its catalog: " + path);
+        }
+
+        return Path.GetDirectoryName(path)!;
+    }
+
+    private static Assembly Load(string path)
+    {
         if (!File.Exists(path))
         {
             throw new InvalidOperationException("Build the selected Debug source owner before composing its catalog: " + path);

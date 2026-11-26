@@ -1,4 +1,4 @@
-namespace Hexalith.Projects.Server;
+namespace Hexalith.Projects.Contracts.Routing;
 
 using System.Text.Json;
 using System.Text.Json.Serialization;

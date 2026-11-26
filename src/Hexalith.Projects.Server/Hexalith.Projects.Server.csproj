@@ -13,6 +13,7 @@
   <ItemGroup>
     <ProjectReference Include="..\Hexalith.Projects\Hexalith.Projects.csproj" />
     <ProjectReference Include="..\Hexalith.Projects.Contracts\Hexalith.Projects.Contracts.csproj" />
+    <ProjectReference Include="..\Hexalith.Projects.EventStoreExtensions\Hexalith.Projects.EventStoreExtensions.csproj" />
     <ProjectReference Include="..\Hexalith.Projects.Infrastructure\Hexalith.Projects.Infrastructure.csproj" />
     <ProjectReference Include="..\Hexalith.Projects.ServiceDefaults\Hexalith.Projects.ServiceDefaults.csproj" />
     <ProjectReference Include="$(HexalithConversationsRoot)\src\Hexalith.Conversations.Client\Hexalith.Conversations.Client.csproj" Condition="'$(UseHexalithProjectReferences)' == 'true' and '$(HexalithConversationsFromSource)' != 'false'" />

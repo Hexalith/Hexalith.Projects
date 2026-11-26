@@ -20,6 +20,7 @@ from _nuget import (
     SOURCE_SHA_PATTERN,
     VERSION_PATTERN,
     load_manifest,
+    read_committed_module_manifest,
     reject_duplicate_json_keys,
     validate_packages,
 )
@@ -122,6 +123,7 @@ def verify_publication(version: str, source: str, run_id: int, evidence: Path) -
     package_ids = [package.package_id for package in load_manifest().packages]
     names = {f"{package_id}.{version}.nupkg" for package_id in package_ids}
     receipt = verify_github(run_id, tag, source, names)
+    module_manifest = read_committed_module_manifest(source)
 
     github_packages = evidence / "github"
     nuget_packages = evidence / "nuget"
@@ -143,13 +145,13 @@ def verify_publication(version: str, source: str, run_id: int, evidence: Path) -
         if len(data) != asset["size"] or f"sha256:{digest}" != asset["digest"]:
             raise ValueError(f"Downloaded GitHub asset differs from the published asset metadata: {name}")
         github_hashes[name] = digest
-    validate_packages(github_packages, version, source)
+    validate_packages(github_packages, version, source, module_manifest=module_manifest)
 
     for package_id in package_ids:
         package_name = f"{package_id}.{version}.nupkg"
         url = f"{NUGET_PACKAGES}/{package_id.lower()}/{version.lower()}/{package_name.lower()}"
         download_package(url, nuget_packages / package_name)
-    validate_packages(nuget_packages, version, source)
+    validate_packages(nuget_packages, version, source, module_manifest=module_manifest)
 
     verified = {}
     for name in sorted(names):
