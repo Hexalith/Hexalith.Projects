@@ -448,3 +448,60 @@ The builds finished with zero warnings and errors. The Server and EventStore cat
 The AppHost catalog cross-check ran `SelectedOwnerCatalogBindsFinalAppIdsAndKeepsAllIntentPolicies`. With the Folders base's Tenants gitlink `54985ab11ade150d5fa908be179cf2a5a407353d`, the candidate passed. The clean Folders base and candidate each failed the same external catalog assertion with Projects' Tenants pin `d34f353abb59213ac021e81da6885b78ee3231fd`, which supplies 14 non-Folders adapters against the expected 13. Commands, revisions and XML are in `~/.local/state/hexalith-projects/7-1-p2-g2-baseline-WEC2Pv7w/` under `replay-implementation-apphost.sh`, `apphost-clean-pinned/` and `apphost-folder-owner/`.
 
 **Remaining owner decisions.** EventStore and Platform still own the G-1 runtime and package choices recorded above. Folders and Platform must approve the released provisioning artifact and deployed workload enrollment for submission, G-1 lookup, and bound stream reads. The deployed composition must run the same receipt and recovery cases with those approved policies. Projects must bind its final activation operation and normalized request digest to the v1 Folder step. The owner disposition retains the Folder and receipt for unresolved activation. The five role acceptances and the combined capability pin remain pending. **7.1-P2 remains open and Story 7.1 remains blocked.**
+
+### G-2 requalification on the pushed revision (2026-11-26)
+
+Projects `685eb6c3476c472573f9e223e37e3fd61859a25c` pins Folders `b9ac1212aa2e65fe10ed50379bb4a04b3cebac77`, EventStore `a11d584a5bc9fe680c9b6d7908befb574d98e620`, Platform `80a60039b46ea6bdccd9eeac5091551bc59643fa` and Builds `a6abb7908ec38dcb3fbd99d69e7ed29ae25794d2`. Projects and Folders matched their respective `origin/main` tracking refs. The persisted rerun cloned those gitlinks into a private workspace and ran the committed Folders fixture without the earlier candidate patch. The runtime was .NET SDK `11.0.100` and .NET `11.0.0`, Dapr sidecars and control plane `1.19.2`, and Redis `7.4.12` with AOF and synchronous fsync, using the image digests above.
+
+```bash
+bundle="$HOME/.local/state/hexalith-projects/7-1-p2-g2-pushed-G7oDoWbT"
+run-with-temp bash "$bundle/replay-pushed.sh" "$PWD" "$bundle/persisted-repeat"
+(cd "$bundle/persisted-final" && sha256sum --check sha256.txt)
+```
+
+| Clean-source lane | Result |
+| --- | --- |
+| Server focused | 105 passed, 1 failed, 0 skipped. `ContractsExportTheActualInstalledCommandPayloadSchemas` rebuilt `folders-provision-folder` with public ingress. The exported operation has internal ingress. The expected digest was `20e216dc27e6e8a6df864fb134354353ba5d9c2c485693645b38d27345ba195b` and the export digest was `5343af6a8df2fb25d79ee2a61a44d16effda57c7c4ba1606f7872a1f230512f2`. |
+| Catalog and mutation freeze | All 43 catalog cases and the focused freeze test passed with zero skips. |
+| Persisted qualification | Both native phases passed with zero skips. The cases covered equal retry, changed intent and digest, stale version, occupied identity, duplicate display name, scope and revocation, missing native proof, and unavailable lookup. |
+| Forward recovery | The fixture removed the original app and sidecar, restarted Redis with its original store, and started the same revision with provisioning disabled and mutations frozen. Fence 1 returned 404. Fence 2 recovered `prov-ee7350acd6251a15b47de2cb7f305a3e4f254ae4` with zero owner execution calls. Frozen mutation returned 503. The Folder stayed at version 3 with two explicit grants to `original-actor`. Its history hash `21676117d4e7875c9a735f690ebbc2f3f3923fc497c49233be3170450e420ddf`, native prefix digest `ff13ba9e92622b516f52cc510092624c581bd250eaa5ec6a7b576bcaccb865b0`, and incumbent history hash `9d1daeb4fa83b0bc4c7c796c0aebd263317f28f975d680fc1d89e5be6072db4f` matched across restart. |
+| Planning guard | `--validate-index` passed. The focused suite passed 60 tests and 442 subtests. |
+
+The native before/after receipts under `persisted-final/native` have SHA-256 `f4d950b325941dc0bb951cb41c5d6534db38dede1dd5e65b702f20d0a3cd1620` and `3ccc09c38b8771273a37c68db961df39df4b77d237195769f0a4c0e65f64f4a5`. The hash manifest covers the native XML, topology receipt, focused failure and planning guard output.
+
+#### Isolated deployment using the packaged extension
+
+The isolated deployment restored `Hexalith.Folders.EventStoreExtensions` and `Hexalith.Folders.Contracts` at local Release candidate version `2.2.0-g2.b9ac1212`. Both NuGet manifests identify Folders `b9ac1212aa2e65fe10ed50379bb4a04b3cebac77`. The extension registers as `folders`, API major 1. Its archive SHA-256 is `b2c776a072666fbd5bc933ee8aa57c3ac2000f4fb864682ca43045ec3dfb3638`. The Contracts archive SHA-256 is `51eafdb057fedd18868846a1dd456240b27b8d4f8d65c55e79bf2dcba02c1378`. The loaded extension assembly and the assembly inside the archive both hash to `0f281ff33ff84aa9e32c4d2c52af38c93d596d9ea3f414a9dc2d02c89f9fd239`.
+
+The package build used released EventStore SDK `5.6.0` and McpCli.Abstractions `3.0.0`. The isolated host used the pinned EventStore source at `a11d584a5bc9fe680c9b6d7908befb574d98e620` for the gateway and G-1 lookup. Its source projects reported version `5.6.0` in the dependency manifest. The host ran .NET and ASP.NET Core `11.0.0`, Dapr .NET SDK `1.19.1`, and the same Dapr `1.19.2` and Redis `7.4.12` images as the source lane. The harness ran the gateway and Folders Server web hosts in a disposable runner with three Dapr sidecars, fixture-signed assertions, separate application-channel tokens for the two receivers, and no published ports. Dapr mTLS was disabled for this fixture. A fixture catalog and seeded Tenant and Organization authority supplied the test enrollment. It exercised the actual gateway admission registry, Dapr domain-service invoker, signed Folders callback, owner receipt endpoint, G-1 step lookup, and native stream controller. The catalog root was `3be80240ab45101ae4b1a2a63aff4829bcc0582fcc3b14ea9949b176698cb456` in both phases.
+
+| Caller → receiver | Route and required bindings |
+| --- | --- |
+| `projects-fixture` → `eventstore` | `POST /api/v1/commands/workload`, assertion `eventstore:command-submit`, Tenant `tenant-a`, domain `folders`, and internal discriminator `Hexalith.Folders.Commands.ProvisionFolder`. |
+| `eventstore` → `folders` | `POST /process`, assertion `domain-service:process`, committed catalog binding and gateway-stamped `projects-fixture` origin. |
+| `folders` → `eventstore` | `POST /internal/durable-tasks/v1/steps/lookup`, assertion `eventstore:durable-task-step-lookup`, Tenant and domain binding, admission operation `fixture.activate-project@1`, numbered step 1, derived target and current fence. |
+| `folders` → `eventstore` | `POST /api/v1/streams/read/workload`, assertion `eventstore:stream-read`, enrolled Folders public key and RS256 proof bound to the exact stream and read window. |
+| `projects-fixture` → `folders` | `POST /internal/folders/v1/provisioning/lookup`, assertion `folders:provisioning-lookup` bound to the Tenant and domain. |
+
+Both deployment xUnit phases passed with zero skips. Missing assertion and wrong Tenant submissions returned 401 and 403. A mismatched stream proof returned 403. The bound zero-window absence check returned 404 with `missing-stream`, and the owner returned 204. The authorized command returned 202 and the signed callback returned 200. An equal request reused the gateway command identity. A changed request with that key returned 409 before any second callback. A fresh gateway attempt for the same task step returned `receipt_available` without adding events. The bound range read returned 200 with three events and the actor's native prefix proof. Stale owner version and changed intent returned 409 at receipt lookup. Changed digest and revoked membership returned 404.
+
+The harness simulated a lost owner reply after the native commit. Task `01M8BSEVC7BHB2WRNN2YM044HR` waited for its dependency with no task-side receipt. The replacement runner and all three replacement sidecars used the same Redis store after restart, with provisioning disabled and mutations frozen. Fence 1 returned 404. Fence 2 recovered `prov-04a18d87526242413f682db042a560a865b86b16` for Folder `fld-p-04a18d87526242413f682db042a560a865b86b16`, recording one task receipt and zero recovery execution calls. Both explicit grants remained with `original-actor` and the incumbent retained its inherited read grant. The version-3 Folder history hash `deb6543f33380273ffc1c4101267dc18af65ccb2c6cfbd23a268248b62b69744`, native prefix digest `0d9a5e17575783c0c351c5667d1f44fffedb1916d89bfcc1afac70c4c7cd5d56` and incumbent history hash `1c5eaf96ea6388e2f74650603867d247c62ad7b4637cd160d12fccec8fa53f6e` matched across restart.
+
+**Open transport finding.** The signed Folders callback refused a post-recovery mutation with 503 and the persisted histories stayed identical. The shared gateway's global handler mapped `DomainServiceSafeDenialException` to a generic 500. The standalone Folders EventStore host registers an explicit handler for that exception. Package acceptance still needs the shared gateway's denial mapping and the owner-approved deployment and enrollment records. [Standalone exception handler](../../references/Hexalith.Folders/src/Hexalith.Folders.EventStore/FoldersDomainServiceSafeDenialExceptionHandler.cs)
+
+```bash
+bundle="$HOME/.local/state/hexalith-projects/7-1-p2-g2-pushed-G7oDoWbT"
+run-with-temp bash "$bundle/replay-deployment.sh" "$PWD" "$bundle" "$bundle/deployment-repeat"
+python3 "$bundle/verify-results.py" "$bundle"
+(cd "$bundle" && sha256sum --check sha256.txt)
+```
+
+| Deployment artifact under `deployment/native` | SHA-256 |
+| --- | --- |
+| `before-restart.json` | `cafb774986465e0d8507accd13abcc6d2c193cd0af6c1ae48d7c784d3c340e17` |
+| `after-restart.json` | `2c67a66c2d5b7aac1a36277f3aa283342361fa85ecae2f4073bb91ed4e25f157` |
+| `before-restart-wire.json` | `8303cc657fba525a597ff9ff7b08f60fc9e35fc043a028b067208112c6c03461` |
+| `after-restart-wire.json` | `d17c41da50448766d8a82a10293be04cba8178f046fe1372288f1598dfa9938b` |
+| `topology.json` | `2a36fdc7c6f679355785adc9cefa017f28ce15b9512bffab6113d370db40b6b5` |
+
+The verified bundle manifest has SHA-256 `c0df0f7ae8dfd75d195e0c8625cdda9c72469b439be2936ca22c9d582b3dd788`. The package archive, runtime dependencies and assembly hashes, replay harness, native XML and process logs are retained in that bundle. The combined capability pin and the five package acceptance records are pending. **7.1-P2 remains open and Story 7.1 remains blocked.**
