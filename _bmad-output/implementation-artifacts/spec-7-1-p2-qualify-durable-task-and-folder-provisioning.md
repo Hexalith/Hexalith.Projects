@@ -2,7 +2,7 @@
 title: '7.1-P2: Qualify Durable Task admission and Folder provisioning'
 type: 'chore'
 created: '2026-11-25'
-status: 'in-progress'
+status: 'done'
 baseline_commit: 'fdc8ca69ebe0a656f88d55f9e32c8de71b1262f6'
 route: 'dispatch'
 review_loop_iteration: 1
@@ -74,10 +74,10 @@ The [correction candidate requalification](#g-2-correction-candidate-requalifica
 **Execution**
 
 - [x] [`7-1-p2-owner-scope-proposals.md`](7-1-p2-owner-scope-proposals.md) — prepare the G-1 and G-2 owner requests, persisted proof cases and rollback criteria for review.
-- [ ] `evidence/epic7/7.1-P2-capability-pin.json` — collect immutable owner revisions and records, contract versions, retained native receipt hashes, commands and exercised rollback evidence. Verify the matrix against real persisted task and Folder state across restart, competing replicas and lost replies.
-- [ ] `evidence/epic7/7.1-P2-capability-pin.json` — record dated EventStore, Platform and Folders approvals and Solution Architect and Test Architect acceptance against the same coordinates.
+- [x] `evidence/epic7/7.1-P2-capability-pin.json` — collect immutable owner revisions and records, contract versions, retained native receipt hashes, commands and exercised rollback evidence. Verify the matrix against real persisted task and Folder state across restart, competing replicas and lost replies.
+- [x] `evidence/epic7/7.1-P2-capability-pin.json` — record dated EventStore, Platform and Folders approvals and Solution Architect and Test Architect acceptance against the same coordinates.
 - [x] `tools/planning/validate_production_authority.py` and `tests/tools/test_production_authority_guard.py` — require the accepted pin when the tracker marks P2 done. Cover missing or mismatched evidence and preserve the Story 7.1 gate.
-- [ ] `sprint-status.yaml` — link the accepted pin after candidate and active index validation. Route it to the existing 7.1 and 8.1 gates.
+- [x] `sprint-status.yaml` — link the accepted pin after candidate and active index validation. Route it to the existing 7.1 and 8.1 gates.
 
 **Acceptance Criteria**
 
@@ -91,8 +91,7 @@ The [correction candidate requalification](#g-2-correction-candidate-requalifica
 - The pin references five dated, hash-verified approval records. Each UTF-8 JSON record declares `role`, `decision` (`accepted`), `approver`, `timestampUtc`, and `qualificationSha256`. Compute the digest over the pin's `qualification` object serialized as ASCII JSON with sorted keys, no spaces around separators, and no final newline.
 - The owner scope decisions dated 2026-11-25 are recorded locally. [EventStore G-1](../../references/Hexalith.EventStore/docs/architecture/g1-durable-task-scope-decision.md) · [Platform G-1](../../references/Hexalith.Platform/docs/implementation/g1-durable-task-scope-decision.md) · [Folders G-2](../../references/Hexalith.Folders/docs/governance/g2-folder-provisioning-scope-decision.md)
 - EventStore implemented the scoped admission and atomic confirmation candidate. Platform exercised the conditional state provider with two Dapr 1.19.2 sidecars and a Redis restart. EventStore passed four focused and three live admission cases with zero skips. The Folders investigation identified the native create, restrictive ACL and receipt lookup seams. Delegated provisioning needs verified original-actor evidence bound to the admitted task step.
-- P2 remains open. The full execution and provisioning matrix, exercised owner rollback, immutable capability records and five acceptance decisions are pending. The [owner proposals](7-1-p2-owner-scope-proposals.md) describe the required qualification runs.
-- The [Epic 7 entry verification](evidence/epic7/entry-blockers-2026-11-25.md#71-p2--durable-task-and-folder-provisioning) records the current gitlinks, focused results and the capability evidence each owner must supply. The package remains open pending qualification and acceptance.
+- The [owner proposals](7-1-p2-owner-scope-proposals.md) and [Epic 7 entry verification](evidence/epic7/entry-blockers-2026-11-25.md#71-p2--durable-task-and-folder-provisioning) record the initial qualification plan and evidence gaps. The [accepted capability pin](evidence/epic7/7.1-P2-capability-pin.json) supersedes the initial open disposition.
 
 - The G-1 execution candidate is committed at EventStore `be511806116666bb0a6d6b374f461b23449b2a4f` and Platform `7b4cc72203cf4dd4ab5f31e33b9fc5f981e30dc5`, which Projects `602816fc5f3bb206beafcbf5a61eed0a43b75416` pins. EventStore persists the lease fence, checkpoint, pending owner step and receipt identifiers on the admission row. It resolves the stable task-step key through the owner before invoking a step and fences automatic execution when the owner reports an unresolved partial effect. Current authority gates scoped progress reads. Platform runs the two execution phases as separate native test processes and restarts Redis and both Dapr sidecars between them.
 - The reviewed G-1 lifecycle candidate is committed at EventStore `388b0ad679d7f9404e10669dd1238381157259c9`. The admission row records the eight-state lifecycle, and a persisted state outside it fails closed. Owner failures record `WaitingForDependency`. A terminal outcome requires the current lease and no pending step, and it stays immutable. Cancellation fences the worker and keeps committed receipts. It is refused once an irreversible step may have reached its owner, and while another step is in flight unless the task is in `NeedsAttention`. Status and cancellation by task ID reauthorize the original scope, and a worker can acquire its lease from a scheduled task ID. [EventStore lifecycle candidate](../../references/Hexalith.EventStore/docs/architecture/g1-durable-task-scope-decision.md#execution-and-lifecycle-candidate)
@@ -252,6 +251,32 @@ The re-derived EventStore change had no bad_spec or intent_gap finding. The thre
 | BH2-7 | The signed regression checks only some identifiers for leaks | false | The handler builds the whole body from constants and the closed status, so no request identifier can enter it. The parity test pins the exact body. Reject. |
 | BH2-8 | The handler summary claims the Folders host body although the type URIs differ | low | Patched the summary. The spec and the BHC-9 entry are not edited by this review. |
 | VG2-1 | The 503 is retryable although the actor records a terminal rejection | medium | carried: ECC-3. Already deferred; EventStore also tracks the question in its own deferred work. |
+
+### Package acceptance review (2026-11-26)
+
+| ID | Finding | Verdict | Evidence and disposition |
+| --- | --- | --- | --- |
+| P2-BH1 | Both Projects AppHosts select Folders Server as the declaration owner | high | The current Folders source declares the catalog in Contracts and both callers load Server. Deferred to the Projects AppHost and DW-63 work. |
+| P2-BH2 | The original replay depends on local inputs | medium | The source overlay and verified package inputs were retained outside Git. Added a transferable, hash-verified replay input archive and fresh-output launcher. |
+| P2-BH3 | The approved object omits the complete fixture tuple and harness manifest | low | The approved owner tuple and receipts describe the capability. The replay archive now carries the complete original fixture tuple, manifest and immutable harness as supplemental provenance. |
+| P2-BH4 | The guard misses removed owner scope evidence | high | Deleting a referenced scope file passed the original guard. The guard now verifies scope and direct artifact references inside each owner record. |
+| P2-BH5 | Opaque owner records can disagree with the advertised revision or contract | medium | The previous tests used opaque bytes. The guard now checks the structured record against the owner, revision and Folders contract, and the fixture covers revision disagreement. |
+| P2-BH6 | Provisioning lacks the original pre-restart wire receipt | medium | The accepted XML and JSON record the result. The replay archive retains the exact wire receipt and its original hash manifest for inspection. |
+| P2-BH7 | The isolated Folders restart has no drain boundary | false | The first native test and its awaited owner calls finish before its sidecars and process are removed. The harness then restarts the retained store and starts the frozen recovery phase. This is the isolated fixture drain boundary. |
+| P2-BH8 | The consumer documents still show P2 as open | low | Story 7.1 and the tracker contained stale text. Updated the consumer links and recorded the current disposition beside the epics table of initial states. |
+| P2-BH9 | Replay accepts a typed rejection with missing scope identifiers | medium | The existing callback checks identifiers only when present. Deferred to the Projects replay owner. |
+| P2-BH10 | Candidate package validation can use a dirty module declaration | medium | The candidate checker defaults to the working-tree declaration. Publication reads the committed blob. Deferred to the package validator owner. |
+| P2-BH11 | A refused ordinary AppHost start records absence without a container census | maybe-false | The named refusal occurs during composition. A fixture would need to show that a refused attempt can leave owned containers before assigning medium severity. Deferred to the live-runner owner. |
+| P2-EC1 | Missing EventStore scope evidence still permits closure | high | The previous guard only hashed the outer record. Covered by the owner scope patch and the missing-artifact matrix. |
+| P2-EC2 | The rollback command uses private replay inputs and an occupied path | medium | Running the recorded Folders command again reaches an existing output directory. The launcher verifies transferable inputs and creates a unique parent for both fresh lanes. |
+| P2-EC3 | Supported-read AppHost loads the wrong Folders declaration assembly | high | The development composition selects Server for the source now declared in Contracts. Deferred with P2-BH1. |
+| P2-EC4 | Package fixture selects the wrong Folders declaration and adapter assemblies | high | The package composition uses Server for both. Deferred with P2-BH1. |
+| P2-EC5 | A typed rejection can omit required Tenant and Project fields | medium | The same replay branch accepts an empty JSON object for that event type. Deferred with P2-BH9. |
+| P2-EC6 | A refused-start check may miss a surviving individual process | maybe-false | The refused-start branch calls the AppHost discovery helper and separate process censuses. An isolated refusal with one surviving role is needed to verify medium impact. Deferred with P2-BH11. |
+| P2-VG1 | The literal Folders replay command fails before native tests | medium | The reviewer reproduced the directory collision after archive verification. The new checkout replay entry point uses fresh result paths. |
+| P2-VG2 | Removing Folders scope evidence passes the validator and guard suite | high | The reviewer reproduced the false acceptance. The structured fixture now exercises missing and changed nested scope artifacts. |
+| P2-VG3 | The truncated Projects replay test omits the last applied sequence | medium | The existing test asserts failure and null state. Deferred to DW-63 replay verification. |
+
 
 ## Verification
 
@@ -1042,4 +1067,18 @@ python3 -B "$bundle/replay/verify-results.py" "$bundle/activation-repeat"
 | `published-activation/native/after-restart.xml` | `ca740f0b06e2667f0cc03f46fcec4a4affeb48088837ad464db5c5b827903d3a` |
 | `published-activation/sha256.txt` | `5e41b1a9a795c81145e8384747de400629b8bd13ae8411f07d8118ad134c6040` |
 
-The 42-entry activation manifest and the retained G-1 verifier passed. The authority guard validated the qualification fields in `qualification-review/qualification.json` and refused the candidate without the five role decisions. The review digest is `24e379218233c378ea466c58f094bf1777903be3021889f2a38c5b4a1be87059`. **7.1-P2 remains open** pending five named acceptances of this digest before recording and linking the capability pin.
+The 42-entry activation manifest and the retained G-1 verifier passed. The authority guard validated the qualification fields in `qualification-review/qualification.json` and refused the candidate without the five role decisions. The review digest is `24e379218233c378ea466c58f094bf1777903be3021889f2a38c5b4a1be87059`. At that point 7.1-P2 was awaiting the five named acceptances of this digest.
+
+#### Package acceptance (2026-11-26)
+
+Jérôme Piquot accepted qualification SHA-256 `24e379218233c378ea466c58f094bf1777903be3021889f2a38c5b4a1be87059` at `2026-11-26T20:35:40Z` as EventStore Owner, Platform Owner, Folders Owner, Solution Architect, and Test Architect. The [capability pin](evidence/epic7/7.1-P2-capability-pin.json) binds the five dated decisions to the verified owner records, retained native receipts, and exercised forward recovery for both contracts.
+
+The isolated candidate and active production-authority index both returned `[6, 7, 8]`. The G-1 and published Folders 2.2.1 retained-result verifiers and their SHA-256 manifests passed. The guard suite passed 60 tests and 442 subtests. G-1 used the pinned EventStore and Platform sources with hash-bound isolated overlays. The activation replay used a fixture owner for the Project commit step.
+
+The [replay instructions](evidence/epic7/7.1-P2/README.md) use verified retained inputs and a fresh output directory for each lane.
+
+The [sprint tracker](sprint-status.yaml) links the accepted pin for the Story 7.1 and 8.1 gates. Both stories remain blocked under their independent entry or acceptance criteria.
+
+The post-review launcher reproduced both native replays from the retained input archive in fresh disposable checkouts. The G-1 runtime recovered its committed receipt in 13.36 seconds after teardown began. The Folders 2.2.1 build passed with zero warnings and errors, both native phases passed without skips, and the independent verifier confirmed the published artifact, five signed workload grants, and retained Folder recovery. The hardened guard passed 60 tests and 449 subtests.
+
+The run is retained in `~/.local/state/hexalith-projects/7-1-p2-acceptance-review-449fnrbo/7-1-p2-replay-9xjqLQ6l/`. Both SHA-256 manifests verified. The G-1 manifest digest is `e2d877ed0865c6b8a926a9aa08d1e469bfe8152f83b1bf839cdf063138d7eb27`. The G-2 manifest digest is `072b8f56e14d0719d12a4e9cd0781b1bc89b081c3670448e0928b0f508c12bb2`.

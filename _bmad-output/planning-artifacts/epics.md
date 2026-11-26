@@ -1702,6 +1702,8 @@ story scheduling, production routing and release require their existing gates.
 | 7.1-P1 | Hexalith.Projects Contracts/Server | Canonical and legacy creation shapes, authorization-before-parsing, exact Metadata Classification vocabulary, shared-validator parity, no-command rejection evidence, compatibility fingerprint, and executable rollback | Projects Owner + Product Owner + Test Architect | open; qualify against the accepted Story 6.7 creation-contract baseline under the bounded prerequisite scope above |
 | 7.1-P2 | EventStore/platform + Hexalith.Folders | Pinned task-admission and Folder-provisioning contracts with expected versions, deterministic step idempotency, durable receipt/status lookup, explicit compensation behavior, clean-checkout commands, and executable rollback | EventStore Owner + Platform Owner + Folders Owner + Solution Architect + Test Architect | open; prepare and qualify the relevant G-1/G-2 owner inputs under the bounded prerequisite scope above; package acceptance requires the pinned owner capability records |
 
+The [accepted 7.1-P2 capability pin](../implementation-artifacts/evidence/epic7/7.1-P2-capability-pin.json) records the current prerequisite disposition for Stories 7.1 and 8.1.
+
 ### Story 7.1: Activate a Project with exactly one authorized Folder
 
 As a **Project User with no prior Project authority on Chatbot, or a Service/Workflow Caller with no Folder supplied**,

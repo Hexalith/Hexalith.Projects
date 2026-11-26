@@ -1931,3 +1931,25 @@ status: open
 - source_spec: `_bmad-output/implementation-artifacts/spec-7-1-p2-qualify-durable-task-and-folder-provisioning.md`
   summary: Retire the Folders host's `FoldersDomainServiceSafeDenialExceptionHandler` once Folders consumes an EventStore release with the shared handler.
   evidence: Review finding BHC-9 (medium). `references/Hexalith.Folders/src/Hexalith.Folders.EventStore/Program.cs:22` registers the Folders copy before `AddEventStore()`, so it handles denials in that host. The two copies already differ in their aborted-response guard and serializer path. Folders builds against released EventStore 5.6.0, which lacks the shared handler.
+
+## Deferred from: 7.1-P2 package acceptance review (2026-11-26)
+
+- source_spec: `_bmad-output/implementation-artifacts/spec-7-1-p2-qualify-durable-task-and-folder-provisioning.md`
+  summary: Align the Projects source and package AppHost catalog composition with the Folders owner assembly split.
+  evidence: Both fixtures enroll Folders Server for declarations now in Folders Contracts. The package fixture also uses Server as the adapter assembly. The metadata test already reads Contracts but does not start either composition. P2-BH1, P2-EC3 and P2-EC4.
+
+- source_spec: `_bmad-output/implementation-artifacts/spec-7-1-p2-qualify-durable-task-and-folder-provisioning.md`
+  summary: Verify type-specific identity validation for typed rejection events during Projects replay.
+  evidence: ValidateReplayRejection checks Tenant and Project when supplied, so an object with neither can advance replay for ProjectSetupUpdateRejected. Preserve rejection formats with genuinely optional identity. P2-BH9 and P2-EC5.
+
+- source_spec: `_bmad-output/implementation-artifacts/spec-7-1-p2-qualify-durable-task-and-folder-provisioning.md`
+  summary: Use the same committed declaration for source-pinned candidate and published package validation.
+  evidence: validate_packages reads the working tree when no module_manifest is supplied. Publication passes the manifest from the exact Git commit, so a dirty candidate can produce mismatched decisions. P2-BH10.
+
+- source_spec: `_bmad-output/implementation-artifacts/spec-7-1-p2-qualify-durable-task-and-folder-provisioning.md`
+  summary: Exercise the refused ordinary startup with partially surviving owned resources.
+  evidence: Unverified medium risk. record_refused_ordinary_startup accepts the named pre-build refusal after process censuses and records absence without a container census. Establish whether the refused path can leave one process role or an owned container. P2-BH11 and P2-EC6.
+
+- source_spec: `_bmad-output/implementation-artifacts/spec-7-1-p2-qualify-durable-task-and-folder-provisioning.md`
+  summary: Assert the committed prefix sequence when DW-63 Projects replay returns a truncated failure.
+  evidence: The truncated callback branch returns LastAppliedSequenceNumber from the valid prefix, but existing assertions cover failed status and null state. Removing the lastApplied argument still passes those assertions. P2-VG3.

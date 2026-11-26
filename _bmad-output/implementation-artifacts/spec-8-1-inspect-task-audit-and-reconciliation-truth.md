@@ -74,7 +74,7 @@ The task query accepts committed observations from an explicitly authorized work
 
 | Remaining acceptance work | Dependency or evidence |
 | --- | --- |
-| Execute original-actor reauthorization and terminal reconciliation against an admitted task. Verify no new task or Confirmation Artifact, and no effect on unavailable authority. | EventStore/Platform Durable Task admission (7.1-P2) and the 7.15 reconciliation workflow. |
+| Execute original-actor reauthorization and terminal reconciliation against an admitted task. Verify no new task or Confirmation Artifact, and no effect on unavailable authority. | EventStore/Platform Durable Task admission from the [7.1-P2 capability pin](evidence/epic7/7.1-P2-capability-pin.json) and the 7.15 reconciliation workflow. |
 | Verify the complete FR-21 event families and metadata. | Committed workflow, confirmation and export outcomes, upstream receipts, admitting credential kind and role-specific Folder re-anchoring facts from their producers. |
 | Qualify audit, terminal task and scoped idempotency lifetimes. | Governed persisted-store and restart evidence for the 365-day and 30-day minimums and their longer applicable lifetimes. |
 | Run both shipped heads on one authenticated fixture. | Accepted Contracts and McpCli enrollment, qualified Epic 8 fixtures and the four evidence rows named in the scheduling change. |

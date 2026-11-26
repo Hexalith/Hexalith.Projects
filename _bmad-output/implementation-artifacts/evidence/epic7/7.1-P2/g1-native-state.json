@@ -1,0 +1,899 @@
+{
+  "competition": {
+    "cancelledTask": {
+      "etag": "2",
+      "key": "durable-task-admission-v1-9ea41e985e225fd41554ff3bbea248f76b7ac870d5465b442ef349ca76905bff",
+      "raw": "eyJzY29wZSI6eyJ0ZW5hbnRJZCI6InRlbmFudCIsImFjdG9ySWQiOiJvcmlnaW5hbC1hY3RvciIsIm9wZXJhdGlvbiI6InNhbXBsZS50YXNrQDEiLCJpZGVtcG90ZW5jeUtleSI6ImNhbmNlbC1iZWZvcmUtaXJyZXZlcnNpYmxlIn0sImNvbmZpcm1hdGlvbiI6bnVsbCwidGFzayI6eyJ0YXNrSWQiOiIwMU04QzJROE1LR0QzVEZFS04yUjU5U0FROSIsInNjb3BlIjp7InRlbmFudElkIjoidGVuYW50IiwiYWN0b3JJZCI6Im9yaWdpbmFsLWFjdG9yIiwib3BlcmF0aW9uIjoic2FtcGxlLnRhc2tAMSIsImlkZW1wb3RlbmN5S2V5IjoiY2FuY2VsLWJlZm9yZS1pcnJldmVyc2libGUifSwicmVxdWVzdFNoYTI1NiI6IjM3ZWQ3NWQwNmQzNGE2MGE5ZjQ1NDg3ZGM1OTdhOTg5MDUzNWUwMGNiYjAzZDUxNDMzMjAyNWFiNjhjYTQ1OTQiLCJhZG1pdHRlZEF0IjoiMjAyNi0xMS0yNlQxNDowNDowMi41NzkwNTM5KzAwOjAwIn0sImV4ZWN1dGlvbiI6eyJmZW5jZSI6MCwib3duZXIiOm51bGwsImV4cGlyZXNBdCI6bnVsbCwicHJvZ3Jlc3MiOnsicmVjZWlwdHMiOltdLCJlZmZlY3RQZW5kaW5nIjpmYWxzZSwic3RhdHVzIjoiQ2FuY2VsbGVkIiwiaXJyZXZlcnNpYmxlU3RlcCI6bnVsbCwiYXR0ZW1wdHMiOjB9fX0=",
+      "sha256": "988fa861d75b2426313763b709b2d6481dd9fb6364208a0776923e52c794272c",
+      "value": {
+        "confirmation": null,
+        "execution": {
+          "expiresAt": null,
+          "fence": 0,
+          "owner": null,
+          "progress": {
+            "attempts": 0,
+            "effectPending": false,
+            "irreversibleStep": null,
+            "receipts": [],
+            "status": "Cancelled"
+          }
+        },
+        "scope": {
+          "actorId": "original-actor",
+          "idempotencyKey": "cancel-before-irreversible",
+          "operation": "sample.task@1",
+          "tenantId": "tenant"
+        },
+        "task": {
+          "admittedAt": "2026-11-26T14:04:02.5790539+00:00",
+          "requestSha256": "37ed75d06d34a60a9f45487dc597a9890535e00cbb03d514332025ab68ca4594",
+          "scope": {
+            "actorId": "original-actor",
+            "idempotencyKey": "cancel-before-irreversible",
+            "operation": "sample.task@1",
+            "tenantId": "tenant"
+          },
+          "taskId": "01M8C2Q8MKGD3TFEKN2R59SAQ9"
+        }
+      }
+    },
+    "ownerHistory": [
+      {
+        "etag": "1",
+        "key": "g1-fixture-effect-v1-44c93b8a03e9422adaaa2e88a478b208976380ffdd3a2dfa084c083ee6bcc0fa",
+        "raw": "eyJrZXkiOiIwMU04QzJRM01NU1hTTjRNR1RLWEY4SEZBWi9zdGVwLzEiLCJ0YXNrSWQiOiIwMU04QzJRM01NU1hTTjRNR1RLWEY4SEZBWiIsInRlbmFudCI6InRlbmFudCIsImFjdG9yIjoib3JpZ2luYWwtYWN0b3IiLCJkaWdlc3QiOiJjOWQ3ZmUxYjI5NTU2Y2QxMTQ3M2M2MzEzMWE1NmVmY2IwZTg5ODQ3MTNjN2RkNzg4NzI5ZDg0M2U3MTczZjQ1IiwicmVjZWlwdCI6InJlY2VpcHQtNDRjOTNiOGEwM2U5NDIyYWRhYWEyZTg4YTQ3OGIyMDg5NzYzODBmZmRkM2EyZGZhMDg0YzA4M2VlNmJjYzBmYSIsImVmZmVjdHMiOjF9",
+        "sha256": "4f37df67583b03da352d9b36d5ad34b3cfc9606bc89677631b2256ce088f528d",
+        "value": {
+          "actor": "original-actor",
+          "digest": "c9d7fe1b29556cd11473c63131a56efcb0e8984713c7dd788729d843e7173f45",
+          "effects": 1,
+          "key": "01M8C2Q3MMSXSN4MGTKXF8HFAZ/step/1",
+          "receipt": "receipt-44c93b8a03e9422adaaa2e88a478b208976380ffdd3a2dfa084c083ee6bcc0fa",
+          "taskId": "01M8C2Q3MMSXSN4MGTKXF8HFAZ",
+          "tenant": "tenant"
+        }
+      },
+      {
+        "etag": "1",
+        "key": "g1-fixture-effect-v1-c745c3b55da580a683aebbbbe1313fd41e9dad5204c8af5281c9dbde5fa86d4f",
+        "raw": "eyJrZXkiOiIwMU04QzJRM01NU1hTTjRNR1RLWEY4SEZBWi9zdGVwLzIiLCJ0YXNrSWQiOiIwMU04QzJRM01NU1hTTjRNR1RLWEY4SEZBWiIsInRlbmFudCI6InRlbmFudCIsImFjdG9yIjoib3JpZ2luYWwtYWN0b3IiLCJkaWdlc3QiOiJjOWQ3ZmUxYjI5NTU2Y2QxMTQ3M2M2MzEzMWE1NmVmY2IwZTg5ODQ3MTNjN2RkNzg4NzI5ZDg0M2U3MTczZjQ1IiwicmVjZWlwdCI6InJlY2VpcHQtYzc0NWMzYjU1ZGE1ODBhNjgzYWViYmJiZTEzMTNmZDQxZTlkYWQ1MjA0YzhhZjUyODFjOWRiZGU1ZmE4NmQ0ZiIsImVmZmVjdHMiOjF9",
+        "sha256": "06ff918e1fbf26a9a63d62c20444eaf524ad4b0f72b4a4b3069eac7ef3406b1b",
+        "value": {
+          "actor": "original-actor",
+          "digest": "c9d7fe1b29556cd11473c63131a56efcb0e8984713c7dd788729d843e7173f45",
+          "effects": 1,
+          "key": "01M8C2Q3MMSXSN4MGTKXF8HFAZ/step/2",
+          "receipt": "receipt-c745c3b55da580a683aebbbbe1313fd41e9dad5204c8af5281c9dbde5fa86d4f",
+          "taskId": "01M8C2Q3MMSXSN4MGTKXF8HFAZ",
+          "tenant": "tenant"
+        }
+      }
+    ],
+    "task": {
+      "etag": "8",
+      "key": "durable-task-admission-v1-d0d67ecfce74b1c104c65177516dce708dbf9e2f2fe0aac2b8ee5e68d8115b59",
+      "raw": "eyJzY29wZSI6eyJ0ZW5hbnRJZCI6InRlbmFudCIsImFjdG9ySWQiOiJvcmlnaW5hbC1hY3RvciIsIm9wZXJhdGlvbiI6InNhbXBsZS5jb25maXJtQDEiLCJpZGVtcG90ZW5jeUtleSI6ImNvbmZpcm1lZCJ9LCJjb25maXJtYXRpb24iOnsidG9rZW5TaGEyNTYiOiJiYWQ1ZTM1NjhlNmQzZDI4MTc4M2M4MTdiYzkyN2UwMTllMTQ2YWNkMzMwMDc0NTNkOTc4YjAyNDY5MzZlYzYxIiwicmVxdWVzdFNoYTI1NiI6ImM5ZDdmZTFiMjk1NTZjZDExNDczYzYzMTMxYTU2ZWZjYjBlODk4NDcxM2M3ZGQ3ODg3MjlkODQzZTcxNzNmNDUiLCJiaW5kaW5nU2hhMjU2IjoiZDEyNDJmYjYzOTA3ZDU0NzI4ZGE4MmIzYTAwMzNjZTRhNjFkNzFjZWY1MDk5Njg5ZGIzOWM5OGVhMWNhOTg1ZCIsImV4cGlyZXNBdCI6IjIwMjYtMTEtMjZUMTQ6MTg6NTAuMDY1OTQ2OCswMDowMCIsImNvbnN1bWVkQnkiOiIwMU04QzJRM01NU1hTTjRNR1RLWEY4SEZBWiJ9LCJ0YXNrIjp7InRhc2tJZCI6IjAxTThDMlEzTU1TWFNONE1HVEtYRjhIRkFaIiwic2NvcGUiOnsidGVuYW50SWQiOiJ0ZW5hbnQiLCJhY3RvcklkIjoib3JpZ2luYWwtYWN0b3IiLCJvcGVyYXRpb24iOiJzYW1wbGUuY29uZmlybUAxIiwiaWRlbXBvdGVuY3lLZXkiOiJjb25maXJtZWQifSwicmVxdWVzdFNoYTI1NiI6ImM5ZDdmZTFiMjk1NTZjZDExNDczYzYzMTMxYTU2ZWZjYjBlODk4NDcxM2M3ZGQ3ODg3MjlkODQzZTcxNzNmNDUiLCJhZG1pdHRlZEF0IjoiMjAyNi0xMS0yNlQxNDowMzo1Ny40NjAwNTk3KzAwOjAwIn0sImV4ZWN1dGlvbiI6eyJmZW5jZSI6MSwib3duZXIiOm51bGwsImV4cGlyZXNBdCI6bnVsbCwicHJvZ3Jlc3MiOnsicmVjZWlwdHMiOlsicmVjZWlwdC00NGM5M2I4YTAzZTk0MjJhZGFhYTJlODhhNDc4YjIwODk3NjM4MGZmZGQzYTJkZmEwODRjMDgzZWU2YmNjMGZhIiwicmVjZWlwdC1jNzQ1YzNiNTVkYTU4MGE2ODNhZWJiYmJlMTMxM2ZkNDFlOWRhZDUyMDRjOGFmNTI4MWM5ZGJkZTVmYTg2ZDRmIl0sImVmZmVjdFBlbmRpbmciOmZhbHNlLCJzdGF0dXMiOiJTdWNjZWVkZWQiLCJpcnJldmVyc2libGVTdGVwIjoyLCJhdHRlbXB0cyI6MH19fQ==",
+      "sha256": "5bbd8b7ad4d7dfc30592385775db974a7d8f8424cc8f98b70dfe2109cb2b28b8",
+      "value": {
+        "confirmation": {
+          "bindingSha256": "d1242fb63907d54728da82b3a0033ce4a61d71cef5099689db39c98ea1ca985d",
+          "consumedBy": "01M8C2Q3MMSXSN4MGTKXF8HFAZ",
+          "expiresAt": "2026-11-26T14:18:50.0659468+00:00",
+          "requestSha256": "c9d7fe1b29556cd11473c63131a56efcb0e8984713c7dd788729d843e7173f45",
+          "tokenSha256": "bad5e3568e6d3d281783c817bc927e019e146acd33007453d978b0246936ec61"
+        },
+        "execution": {
+          "expiresAt": null,
+          "fence": 1,
+          "owner": null,
+          "progress": {
+            "attempts": 0,
+            "effectPending": false,
+            "irreversibleStep": 2,
+            "receipts": [
+              "receipt-44c93b8a03e9422adaaa2e88a478b208976380ffdd3a2dfa084c083ee6bcc0fa",
+              "receipt-c745c3b55da580a683aebbbbe1313fd41e9dad5204c8af5281c9dbde5fa86d4f"
+            ],
+            "status": "Succeeded"
+          }
+        },
+        "scope": {
+          "actorId": "original-actor",
+          "idempotencyKey": "confirmed",
+          "operation": "sample.confirm@1",
+          "tenantId": "tenant"
+        },
+        "task": {
+          "admittedAt": "2026-11-26T14:03:57.4600597+00:00",
+          "requestSha256": "c9d7fe1b29556cd11473c63131a56efcb0e8984713c7dd788729d843e7173f45",
+          "scope": {
+            "actorId": "original-actor",
+            "idempotencyKey": "confirmed",
+            "operation": "sample.confirm@1",
+            "tenantId": "tenant"
+          },
+          "taskId": "01M8C2Q3MMSXSN4MGTKXF8HFAZ"
+        }
+      }
+    }
+  },
+  "confirmation": {
+    "consumed": {
+      "etag": "2",
+      "key": "durable-task-admission-v1-d0d67ecfce74b1c104c65177516dce708dbf9e2f2fe0aac2b8ee5e68d8115b59",
+      "raw": "eyJzY29wZSI6eyJ0ZW5hbnRJZCI6InRlbmFudCIsImFjdG9ySWQiOiJvcmlnaW5hbC1hY3RvciIsIm9wZXJhdGlvbiI6InNhbXBsZS5jb25maXJtQDEiLCJpZGVtcG90ZW5jeUtleSI6ImNvbmZpcm1lZCJ9LCJjb25maXJtYXRpb24iOnsidG9rZW5TaGEyNTYiOiJiYWQ1ZTM1NjhlNmQzZDI4MTc4M2M4MTdiYzkyN2UwMTllMTQ2YWNkMzMwMDc0NTNkOTc4YjAyNDY5MzZlYzYxIiwicmVxdWVzdFNoYTI1NiI6ImM5ZDdmZTFiMjk1NTZjZDExNDczYzYzMTMxYTU2ZWZjYjBlODk4NDcxM2M3ZGQ3ODg3MjlkODQzZTcxNzNmNDUiLCJiaW5kaW5nU2hhMjU2IjoiZDEyNDJmYjYzOTA3ZDU0NzI4ZGE4MmIzYTAwMzNjZTRhNjFkNzFjZWY1MDk5Njg5ZGIzOWM5OGVhMWNhOTg1ZCIsImV4cGlyZXNBdCI6IjIwMjYtMTEtMjZUMTQ6MTg6NTAuMDY1OTQ2OCswMDowMCIsImNvbnN1bWVkQnkiOiIwMU04QzJRM01NU1hTTjRNR1RLWEY4SEZBWiJ9LCJ0YXNrIjp7InRhc2tJZCI6IjAxTThDMlEzTU1TWFNONE1HVEtYRjhIRkFaIiwic2NvcGUiOnsidGVuYW50SWQiOiJ0ZW5hbnQiLCJhY3RvcklkIjoib3JpZ2luYWwtYWN0b3IiLCJvcGVyYXRpb24iOiJzYW1wbGUuY29uZmlybUAxIiwiaWRlbXBvdGVuY3lLZXkiOiJjb25maXJtZWQifSwicmVxdWVzdFNoYTI1NiI6ImM5ZDdmZTFiMjk1NTZjZDExNDczYzYzMTMxYTU2ZWZjYjBlODk4NDcxM2M3ZGQ3ODg3MjlkODQzZTcxNzNmNDUiLCJhZG1pdHRlZEF0IjoiMjAyNi0xMS0yNlQxNDowMzo1Ny40NjAwNTk3KzAwOjAwIn19",
+      "sha256": "19647bbf10921ceb44ad8a2ff02ff40b17247666ce1bbbbd73c0988b34630c83",
+      "value": {
+        "confirmation": {
+          "bindingSha256": "d1242fb63907d54728da82b3a0033ce4a61d71cef5099689db39c98ea1ca985d",
+          "consumedBy": "01M8C2Q3MMSXSN4MGTKXF8HFAZ",
+          "expiresAt": "2026-11-26T14:18:50.0659468+00:00",
+          "requestSha256": "c9d7fe1b29556cd11473c63131a56efcb0e8984713c7dd788729d843e7173f45",
+          "tokenSha256": "bad5e3568e6d3d281783c817bc927e019e146acd33007453d978b0246936ec61"
+        },
+        "scope": {
+          "actorId": "original-actor",
+          "idempotencyKey": "confirmed",
+          "operation": "sample.confirm@1",
+          "tenantId": "tenant"
+        },
+        "task": {
+          "admittedAt": "2026-11-26T14:03:57.4600597+00:00",
+          "requestSha256": "c9d7fe1b29556cd11473c63131a56efcb0e8984713c7dd788729d843e7173f45",
+          "scope": {
+            "actorId": "original-actor",
+            "idempotencyKey": "confirmed",
+            "operation": "sample.confirm@1",
+            "tenantId": "tenant"
+          },
+          "taskId": "01M8C2Q3MMSXSN4MGTKXF8HFAZ"
+        }
+      }
+    },
+    "issued": {
+      "etag": "1",
+      "key": "durable-task-admission-v1-d0d67ecfce74b1c104c65177516dce708dbf9e2f2fe0aac2b8ee5e68d8115b59",
+      "raw": "eyJzY29wZSI6eyJ0ZW5hbnRJZCI6InRlbmFudCIsImFjdG9ySWQiOiJvcmlnaW5hbC1hY3RvciIsIm9wZXJhdGlvbiI6InNhbXBsZS5jb25maXJtQDEiLCJpZGVtcG90ZW5jeUtleSI6ImNvbmZpcm1lZCJ9LCJjb25maXJtYXRpb24iOnsidG9rZW5TaGEyNTYiOiJiYWQ1ZTM1NjhlNmQzZDI4MTc4M2M4MTdiYzkyN2UwMTllMTQ2YWNkMzMwMDc0NTNkOTc4YjAyNDY5MzZlYzYxIiwicmVxdWVzdFNoYTI1NiI6ImM5ZDdmZTFiMjk1NTZjZDExNDczYzYzMTMxYTU2ZWZjYjBlODk4NDcxM2M3ZGQ3ODg3MjlkODQzZTcxNzNmNDUiLCJiaW5kaW5nU2hhMjU2IjoiZDEyNDJmYjYzOTA3ZDU0NzI4ZGE4MmIzYTAwMzNjZTRhNjFkNzFjZWY1MDk5Njg5ZGIzOWM5OGVhMWNhOTg1ZCIsImV4cGlyZXNBdCI6IjIwMjYtMTEtMjZUMTQ6MTg6NTAuMDY1OTQ2OCswMDowMCIsImNvbnN1bWVkQnkiOm51bGx9LCJ0YXNrIjpudWxsfQ==",
+      "sha256": "1edcc44edde4dda4e880b67975fb206082d1528cda30d93624411dcc38a79c47",
+      "value": {
+        "confirmation": {
+          "bindingSha256": "d1242fb63907d54728da82b3a0033ce4a61d71cef5099689db39c98ea1ca985d",
+          "consumedBy": null,
+          "expiresAt": "2026-11-26T14:18:50.0659468+00:00",
+          "requestSha256": "c9d7fe1b29556cd11473c63131a56efcb0e8984713c7dd788729d843e7173f45",
+          "tokenSha256": "bad5e3568e6d3d281783c817bc927e019e146acd33007453d978b0246936ec61"
+        },
+        "scope": {
+          "actorId": "original-actor",
+          "idempotencyKey": "confirmed",
+          "operation": "sample.confirm@1",
+          "tenantId": "tenant"
+        },
+        "task": null
+      }
+    },
+    "orphanIndex": {
+      "etag": "1",
+      "key": "durable-task-id-v1-e15913f0b95ee5bbf9772f9aae1a7b89a28a7348ae936aafded528cf0803c0eb",
+      "raw": "eyJ0YXNrSWQiOiIwMU04QzJQWFZSQzAxWkJUQTJYRDBKRFJBNyIsImFkbWlzc2lvbktleSI6ImR1cmFibGUtdGFzay1hZG1pc3Npb24tdjEtZDBkNjdlY2ZjZTc0YjFjMTA0YzY1MTc3NTE2ZGNlNzA4ZGJmOWUyZjJmZTBhYWMyYjhlZTVlNjhkODExNWI1OSJ9",
+      "sha256": "b25f7fa29b678e507acce5363b4ecb0a13d93147d305866ffd202d1a35a4bbb7",
+      "value": {
+        "admissionKey": "durable-task-admission-v1-d0d67ecfce74b1c104c65177516dce708dbf9e2f2fe0aac2b8ee5e68d8115b59",
+        "taskId": "01M8C2PXVRC01ZBTA2XD0JDRA7"
+      }
+    },
+    "orphanIntent": {
+      "etag": "1",
+      "key": "g1-fixture-intent-v1-e15913f0b95ee5bbf9772f9aae1a7b89a28a7348ae936aafded528cf0803c0eb",
+      "raw": "eyJ0YXNrSWQiOiIwMU04QzJQWFZSQzAxWkJUQTJYRDBKRFJBNyIsInNjb3BlIjp7InRlbmFudElkIjoidGVuYW50IiwiYWN0b3JJZCI6Im9yaWdpbmFsLWFjdG9yIiwib3BlcmF0aW9uIjoic2FtcGxlLmNvbmZpcm1AMSIsImlkZW1wb3RlbmN5S2V5IjoiY29uZmlybWVkIn0sImRpZ2VzdCI6ImM5ZDdmZTFiMjk1NTZjZDExNDczYzYzMTMxYTU2ZWZjYjBlODk4NDcxM2M3ZGQ3ODg3MjlkODQzZTcxNzNmNDUiLCJzY2VuYXJpbyI6Im5vcm1hbCJ9",
+      "sha256": "66e500e36b2d0eb00de41bd3fcc9cfe1615b2ffff74a32fae8db86876ce1ce41",
+      "value": {
+        "digest": "c9d7fe1b29556cd11473c63131a56efcb0e8984713c7dd788729d843e7173f45",
+        "scenario": "normal",
+        "scope": {
+          "actorId": "original-actor",
+          "idempotencyKey": "confirmed",
+          "operation": "sample.confirm@1",
+          "tenantId": "tenant"
+        },
+        "taskId": "01M8C2PXVRC01ZBTA2XD0JDRA7"
+      }
+    }
+  },
+  "dependency": {
+    "ownerCalls": {
+      "execute": 0,
+      "lookup": 3
+    },
+    "ownerEffects": null,
+    "task": {
+      "etag": "10",
+      "key": "durable-task-admission-v1-2dcc1b7d7bff110547fc37870e4d283d296764fa1f01614f32a241496dcc19d6",
+      "raw": "eyJzY29wZSI6eyJ0ZW5hbnRJZCI6InRlbmFudCIsImFjdG9ySWQiOiJvcmlnaW5hbC1hY3RvciIsIm9wZXJhdGlvbiI6InNhbXBsZS50YXNrQDEiLCJpZGVtcG90ZW5jeUtleSI6ImRlcGVuZGVuY3kifSwiY29uZmlybWF0aW9uIjpudWxsLCJ0YXNrIjp7InRhc2tJZCI6IjAxTThDMlFIUFE0R1pYN0tXMkdXR0g5RkNWIiwic2NvcGUiOnsidGVuYW50SWQiOiJ0ZW5hbnQiLCJhY3RvcklkIjoib3JpZ2luYWwtYWN0b3IiLCJvcGVyYXRpb24iOiJzYW1wbGUudGFza0AxIiwiaWRlbXBvdGVuY3lLZXkiOiJkZXBlbmRlbmN5In0sInJlcXVlc3RTaGEyNTYiOiI0MWU3MmM4OWY5ZWZiMGY1OTc3Y2NhMjg3MTM0YzEyODVkMjYxZjM5Yjg0MzEwMTEyMDY3NzdlMTIzZmRjZGFiIiwiYWRtaXR0ZWRBdCI6IjIwMjYtMTEtMjZUMTQ6MDQ6MTEuODYzODEyKzAwOjAwIn0sImV4ZWN1dGlvbiI6eyJmZW5jZSI6MSwib3duZXIiOm51bGwsImV4cGlyZXNBdCI6bnVsbCwicHJvZ3Jlc3MiOnsicmVjZWlwdHMiOlsicmVjZWlwdC1iNmQxODUwZjE3NDI1NGJhM2Y1OGVjYmMyMTQyNTc4YmRhYWUwNTYwODVjZDdjYzU2YjFiMTFiYzZmZWZmNmIwIl0sImVmZmVjdFBlbmRpbmciOnRydWUsInN0YXR1cyI6Ik5lZWRzQXR0ZW50aW9uIiwiaXJyZXZlcnNpYmxlU3RlcCI6MiwiYXR0ZW1wdHMiOjMsImF1dG9tYXRpY1JldHJ5VW50aWwiOiIyMDI2LTExLTI2VDE0OjA0OjQ0LjQ1NjM2MTUrMDA6MDAifX19",
+      "sha256": "dee5f851b7ac1c4f3ae25ece3c3c797f6a4958afb8a5f6b5ca49b81a8858c0ff",
+      "value": {
+        "confirmation": null,
+        "execution": {
+          "expiresAt": null,
+          "fence": 1,
+          "owner": null,
+          "progress": {
+            "attempts": 3,
+            "automaticRetryUntil": "2026-11-26T14:04:44.4563615+00:00",
+            "effectPending": true,
+            "irreversibleStep": 2,
+            "receipts": [
+              "receipt-b6d1850f174254ba3f58ecbc2142578bdaae056085cd7cc56b1b11bc6feff6b0"
+            ],
+            "status": "NeedsAttention"
+          }
+        },
+        "scope": {
+          "actorId": "original-actor",
+          "idempotencyKey": "dependency",
+          "operation": "sample.task@1",
+          "tenantId": "tenant"
+        },
+        "task": {
+          "admittedAt": "2026-11-26T14:04:11.863812+00:00",
+          "requestSha256": "41e72c89f9efb0f5977cca287134c1285d261f39b8431011206777e123fdcdab",
+          "scope": {
+            "actorId": "original-actor",
+            "idempotencyKey": "dependency",
+            "operation": "sample.task@1",
+            "tenantId": "tenant"
+          },
+          "taskId": "01M8C2QHPQ4GZX7KW2GWGH9FCV"
+        }
+      }
+    }
+  },
+  "legacy": {
+    "after": {
+      "etag": "4",
+      "key": "durable-task-admission-v1-83748436fd27680c382c1efd777a7cd53887d7d7441da1d955f74085795c76da",
+      "raw": "eyJzY29wZSI6eyJ0ZW5hbnRJZCI6InRlbmFudCIsImFjdG9ySWQiOiJvcmlnaW5hbC1hY3RvciIsIm9wZXJhdGlvbiI6InNhbXBsZS5uYW1lZEAxIiwiaWRlbXBvdGVuY3lLZXkiOiJsZWdhY3ktY29udHJvbCJ9LCJjb25maXJtYXRpb24iOm51bGwsInRhc2siOnsidGFza0lkIjoiMDFNOEMyUlQ3UEpUS1dTR1FNRzcwNDdWMFMiLCJzY29wZSI6eyJ0ZW5hbnRJZCI6InRlbmFudCIsImFjdG9ySWQiOiJvcmlnaW5hbC1hY3RvciIsIm9wZXJhdGlvbiI6InNhbXBsZS5uYW1lZEAxIiwiaWRlbXBvdGVuY3lLZXkiOiJsZWdhY3ktY29udHJvbCJ9LCJyZXF1ZXN0U2hhMjU2IjoiZDg1ZTIyMmM3YmFmNDk0NjYwMGVkMjYwZmY4NWEzOGQ2ODM1ODQ0NmE1MjIxMmQ3YWJkNTk5MzViNDg5MWExNyIsImFkbWl0dGVkQXQiOiIyMDI2LTExLTI2VDE0OjA0OjUzLjM2NjEzOTYrMDA6MDAifSwiZXhlY3V0aW9uIjp7ImZlbmNlIjoxLCJvd25lciI6bnVsbCwiZXhwaXJlc0F0IjpudWxsLCJwcm9ncmVzcyI6eyJyZWNlaXB0cyI6WyI5YmE4MjE1M2E0MjE2MzFjZGJkYTU5Zjg2NWM2OWM5ZjM3ZGFlOWE1ODk3MDYzZGZiMzhlNTIzOGJkMWYxZGE0Il0sImVmZmVjdFBlbmRpbmciOmZhbHNlLCJzdGF0dXMiOiJTdWNjZWVkZWQiLCJpcnJldmVyc2libGVTdGVwIjpudWxsLCJhdHRlbXB0cyI6MH0sInByZXBhcmVkU3RlcCI6eyJ0YXNrIjp7InRhc2tJZCI6IjAxTThDMlJUN1BKVEtXU0dRTUc3MDQ3VjBTIiwic2NvcGUiOnsidGVuYW50SWQiOiJ0ZW5hbnQiLCJhY3RvcklkIjoib3JpZ2luYWwtYWN0b3IiLCJvcGVyYXRpb24iOiJzYW1wbGUubmFtZWRAMSIsImlkZW1wb3RlbmN5S2V5IjoibGVnYWN5LWNvbnRyb2wifSwicmVxdWVzdFNoYTI1NiI6ImQ4NWUyMjJjN2JhZjQ5NDY2MDBlZDI2MGZmODVhMzhkNjgzNTg0NDZhNTIyMTJkN2FiZDU5OTM1YjQ4OTFhMTciLCJhZG1pdHRlZEF0IjoiMjAyNi0xMS0yNlQxNDowNDo1My4zNjYxMzk2KzAwOjAwIn0sIm5hbWUiOiJsZWdhY3ktc3RlcCIsImtleSI6ImR1cmFibGUtdGFzay1zdGVwLXYxLTMzZTM4ZDJkODdlMmMzNzI4YWRlNzdkMWJkMjc5MTAwOTFmNTAxZjMxZDEwODVjNmIxMDM5ZjdjZmFmOTk1YTAifX19",
+      "sha256": "2c3ff0ff3cade75c2325bab9e0a5f5e9a5411b4e2245bb52d3783c9531fe20a8",
+      "value": {
+        "confirmation": null,
+        "execution": {
+          "expiresAt": null,
+          "fence": 1,
+          "owner": null,
+          "preparedStep": {
+            "key": "durable-task-step-v1-33e38d2d87e2c3728ade77d1bd27910091f501f31d1085c6b1039f7cfaf995a0",
+            "name": "legacy-step",
+            "task": {
+              "admittedAt": "2026-11-26T14:04:53.3661396+00:00",
+              "requestSha256": "d85e222c7baf4946600ed260ff85a38d68358446a52212d7abd59935b4891a17",
+              "scope": {
+                "actorId": "original-actor",
+                "idempotencyKey": "legacy-control",
+                "operation": "sample.named@1",
+                "tenantId": "tenant"
+              },
+              "taskId": "01M8C2RT7PJTKWSGQMG7047V0S"
+            }
+          },
+          "progress": {
+            "attempts": 0,
+            "effectPending": false,
+            "irreversibleStep": null,
+            "receipts": [
+              "9ba82153a421631cdbda59f865c69c9f37dae9a5897063dfb38e5238bd1f1da4"
+            ],
+            "status": "Succeeded"
+          }
+        },
+        "scope": {
+          "actorId": "original-actor",
+          "idempotencyKey": "legacy-control",
+          "operation": "sample.named@1",
+          "tenantId": "tenant"
+        },
+        "task": {
+          "admittedAt": "2026-11-26T14:04:53.3661396+00:00",
+          "requestSha256": "d85e222c7baf4946600ed260ff85a38d68358446a52212d7abd59935b4891a17",
+          "scope": {
+            "actorId": "original-actor",
+            "idempotencyKey": "legacy-control",
+            "operation": "sample.named@1",
+            "tenantId": "tenant"
+          },
+          "taskId": "01M8C2RT7PJTKWSGQMG7047V0S"
+        }
+      }
+    },
+    "before": {
+      "etag": "4",
+      "key": "durable-task-admission-v1-83748436fd27680c382c1efd777a7cd53887d7d7441da1d955f74085795c76da",
+      "raw": "eyJzY29wZSI6eyJ0ZW5hbnRJZCI6InRlbmFudCIsImFjdG9ySWQiOiJvcmlnaW5hbC1hY3RvciIsIm9wZXJhdGlvbiI6InNhbXBsZS5uYW1lZEAxIiwiaWRlbXBvdGVuY3lLZXkiOiJsZWdhY3ktY29udHJvbCJ9LCJjb25maXJtYXRpb24iOm51bGwsInRhc2siOnsidGFza0lkIjoiMDFNOEMyUlQ3UEpUS1dTR1FNRzcwNDdWMFMiLCJzY29wZSI6eyJ0ZW5hbnRJZCI6InRlbmFudCIsImFjdG9ySWQiOiJvcmlnaW5hbC1hY3RvciIsIm9wZXJhdGlvbiI6InNhbXBsZS5uYW1lZEAxIiwiaWRlbXBvdGVuY3lLZXkiOiJsZWdhY3ktY29udHJvbCJ9LCJyZXF1ZXN0U2hhMjU2IjoiZDg1ZTIyMmM3YmFmNDk0NjYwMGVkMjYwZmY4NWEzOGQ2ODM1ODQ0NmE1MjIxMmQ3YWJkNTk5MzViNDg5MWExNyIsImFkbWl0dGVkQXQiOiIyMDI2LTExLTI2VDE0OjA0OjUzLjM2NjEzOTYrMDA6MDAifSwiZXhlY3V0aW9uIjp7ImZlbmNlIjoxLCJvd25lciI6bnVsbCwiZXhwaXJlc0F0IjpudWxsLCJwcm9ncmVzcyI6eyJyZWNlaXB0cyI6WyI5YmE4MjE1M2E0MjE2MzFjZGJkYTU5Zjg2NWM2OWM5ZjM3ZGFlOWE1ODk3MDYzZGZiMzhlNTIzOGJkMWYxZGE0Il0sImVmZmVjdFBlbmRpbmciOmZhbHNlLCJzdGF0dXMiOiJTdWNjZWVkZWQiLCJpcnJldmVyc2libGVTdGVwIjpudWxsLCJhdHRlbXB0cyI6MH0sInByZXBhcmVkU3RlcCI6eyJ0YXNrIjp7InRhc2tJZCI6IjAxTThDMlJUN1BKVEtXU0dRTUc3MDQ3VjBTIiwic2NvcGUiOnsidGVuYW50SWQiOiJ0ZW5hbnQiLCJhY3RvcklkIjoib3JpZ2luYWwtYWN0b3IiLCJvcGVyYXRpb24iOiJzYW1wbGUubmFtZWRAMSIsImlkZW1wb3RlbmN5S2V5IjoibGVnYWN5LWNvbnRyb2wifSwicmVxdWVzdFNoYTI1NiI6ImQ4NWUyMjJjN2JhZjQ5NDY2MDBlZDI2MGZmODVhMzhkNjgzNTg0NDZhNTIyMTJkN2FiZDU5OTM1YjQ4OTFhMTciLCJhZG1pdHRlZEF0IjoiMjAyNi0xMS0yNlQxNDowNDo1My4zNjYxMzk2KzAwOjAwIn0sIm5hbWUiOiJsZWdhY3ktc3RlcCIsImtleSI6ImR1cmFibGUtdGFzay1zdGVwLXYxLTMzZTM4ZDJkODdlMmMzNzI4YWRlNzdkMWJkMjc5MTAwOTFmNTAxZjMxZDEwODVjNmIxMDM5ZjdjZmFmOTk1YTAifX19",
+      "sha256": "2c3ff0ff3cade75c2325bab9e0a5f5e9a5411b4e2245bb52d3783c9531fe20a8",
+      "value": {
+        "confirmation": null,
+        "execution": {
+          "expiresAt": null,
+          "fence": 1,
+          "owner": null,
+          "preparedStep": {
+            "key": "durable-task-step-v1-33e38d2d87e2c3728ade77d1bd27910091f501f31d1085c6b1039f7cfaf995a0",
+            "name": "legacy-step",
+            "task": {
+              "admittedAt": "2026-11-26T14:04:53.3661396+00:00",
+              "requestSha256": "d85e222c7baf4946600ed260ff85a38d68358446a52212d7abd59935b4891a17",
+              "scope": {
+                "actorId": "original-actor",
+                "idempotencyKey": "legacy-control",
+                "operation": "sample.named@1",
+                "tenantId": "tenant"
+              },
+              "taskId": "01M8C2RT7PJTKWSGQMG7047V0S"
+            }
+          },
+          "progress": {
+            "attempts": 0,
+            "effectPending": false,
+            "irreversibleStep": null,
+            "receipts": [
+              "9ba82153a421631cdbda59f865c69c9f37dae9a5897063dfb38e5238bd1f1da4"
+            ],
+            "status": "Succeeded"
+          }
+        },
+        "scope": {
+          "actorId": "original-actor",
+          "idempotencyKey": "legacy-control",
+          "operation": "sample.named@1",
+          "tenantId": "tenant"
+        },
+        "task": {
+          "admittedAt": "2026-11-26T14:04:53.3661396+00:00",
+          "requestSha256": "d85e222c7baf4946600ed260ff85a38d68358446a52212d7abd59935b4891a17",
+          "scope": {
+            "actorId": "original-actor",
+            "idempotencyKey": "legacy-control",
+            "operation": "sample.named@1",
+            "tenantId": "tenant"
+          },
+          "taskId": "01M8C2RT7PJTKWSGQMG7047V0S"
+        }
+      }
+    }
+  },
+  "operatorRecovery": {
+    "ownerCalls": {
+      "execute": 1,
+      "lookup": 5
+    },
+    "ownerEffect": {
+      "etag": "1",
+      "key": "g1-fixture-effect-v1-57a957dac64035625528c614f15da6048a38b6404546bfbe0b998fd330296e24",
+      "raw": "eyJrZXkiOiIwMU04QzJRS0Y4QjhDRlBOSkFLWjdIR0RUTi9zdGVwLzIiLCJ0YXNrSWQiOiIwMU04QzJRS0Y4QjhDRlBOSkFLWjdIR0RUTiIsInRlbmFudCI6InRlbmFudCIsImFjdG9yIjoib3JpZ2luYWwtYWN0b3IiLCJkaWdlc3QiOiI2ZmJhMzE1YjNkYTA1ZmIyN2NkNWJiMGJhMzQxYTA0NTczZDRjODQzMzdjYWE0OTZmYWYyZTg1NTJiNzBmMWU4IiwicmVjZWlwdCI6InJlY2VpcHQtNTdhOTU3ZGFjNjQwMzU2MjU1MjhjNjE0ZjE1ZGE2MDQ4YTM4YjY0MDQ1NDZiZmJlMGI5OThmZDMzMDI5NmUyNCIsImVmZmVjdHMiOjF9",
+      "sha256": "1d2b10fab248d4337e3f464813ce6f928befd7c5c9e12a5e9ddc127ad2daa097",
+      "value": {
+        "actor": "original-actor",
+        "digest": "6fba315b3da05fb27cd5bb0ba341a04573d4c84337caa496faf2e8552b70f1e8",
+        "effects": 1,
+        "key": "01M8C2QKF8B8CFPNJAKZ7HGDTN/step/2",
+        "receipt": "receipt-57a957dac64035625528c614f15da6048a38b6404546bfbe0b998fd330296e24",
+        "taskId": "01M8C2QKF8B8CFPNJAKZ7HGDTN",
+        "tenant": "tenant"
+      }
+    },
+    "revokedTask": {
+      "etag": "12",
+      "key": "durable-task-admission-v1-59b0fc578b9ebf1e0ee7df50ab40f883c4c6dabf97ca9bebce2c022ce6ad76bb",
+      "raw": "eyJzY29wZSI6eyJ0ZW5hbnRJZCI6InRlbmFudCIsImFjdG9ySWQiOiJvcmlnaW5hbC1hY3RvciIsIm9wZXJhdGlvbiI6InNhbXBsZS50YXNrQDEiLCJpZGVtcG90ZW5jeUtleSI6InBvc3Rjb21taXQtZGVwZW5kZW5jeSJ9LCJjb25maXJtYXRpb24iOm51bGwsInRhc2siOnsidGFza0lkIjoiMDFNOEMyUUtGOEI4Q0ZQTkpBS1o3SEdEVE4iLCJzY29wZSI6eyJ0ZW5hbnRJZCI6InRlbmFudCIsImFjdG9ySWQiOiJvcmlnaW5hbC1hY3RvciIsIm9wZXJhdGlvbiI6InNhbXBsZS50YXNrQDEiLCJpZGVtcG90ZW5jeUtleSI6InBvc3Rjb21taXQtZGVwZW5kZW5jeSJ9LCJyZXF1ZXN0U2hhMjU2IjoiNmZiYTMxNWIzZGEwNWZiMjdjZDViYjBiYTM0MWEwNDU3M2Q0Yzg0MzM3Y2FhNDk2ZmFmMmU4NTUyYjcwZjFlOCIsImFkbWl0dGVkQXQiOiIyMDI2LTExLTI2VDE0OjA0OjEzLjY3MjEwNzgrMDA6MDAifSwiZXhlY3V0aW9uIjp7ImZlbmNlIjoyLCJvd25lciI6bnVsbCwiZXhwaXJlc0F0IjpudWxsLCJwcm9ncmVzcyI6eyJyZWNlaXB0cyI6WyJyZWNlaXB0LTc0OGIzMDliNWQ0ZmY3ZGJjYjBkNzMzOGJkOWZmMWYyNmMyNTAyZmFmNGQyNWJiMzE0MDg4NzMyYTllOGM5NWUiXSwiZWZmZWN0UGVuZGluZyI6dHJ1ZSwic3RhdHVzIjoiTmVlZHNBdHRlbnRpb24iLCJpcnJldmVyc2libGVTdGVwIjoyLCJhdHRlbXB0cyI6MywiYXV0b21hdGljUmV0cnlVbnRpbCI6IjIwMjYtMTEtMjZUMTQ6MDQ6NDQuNTU1NTYwNyswMDowMCJ9LCJyZWNlaXB0UmVjb3ZlcnlPbmx5Ijp0cnVlfX0=",
+      "sha256": "48a5846d3fb5480308cdf7ea15f88e348f6acbc7b5f8c76fddad094ea093cb46",
+      "value": {
+        "confirmation": null,
+        "execution": {
+          "expiresAt": null,
+          "fence": 2,
+          "owner": null,
+          "progress": {
+            "attempts": 3,
+            "automaticRetryUntil": "2026-11-26T14:04:44.5555607+00:00",
+            "effectPending": true,
+            "irreversibleStep": 2,
+            "receipts": [
+              "receipt-748b309b5d4ff7dbcb0d7338bd9ff1f26c2502faf4d25bb314088732a9e8c95e"
+            ],
+            "status": "NeedsAttention"
+          },
+          "receiptRecoveryOnly": true
+        },
+        "scope": {
+          "actorId": "original-actor",
+          "idempotencyKey": "postcommit-dependency",
+          "operation": "sample.task@1",
+          "tenantId": "tenant"
+        },
+        "task": {
+          "admittedAt": "2026-11-26T14:04:13.6721078+00:00",
+          "requestSha256": "6fba315b3da05fb27cd5bb0ba341a04573d4c84337caa496faf2e8552b70f1e8",
+          "scope": {
+            "actorId": "original-actor",
+            "idempotencyKey": "postcommit-dependency",
+            "operation": "sample.task@1",
+            "tenantId": "tenant"
+          },
+          "taskId": "01M8C2QKF8B8CFPNJAKZ7HGDTN"
+        }
+      }
+    },
+    "task": {
+      "etag": "15",
+      "key": "durable-task-admission-v1-59b0fc578b9ebf1e0ee7df50ab40f883c4c6dabf97ca9bebce2c022ce6ad76bb",
+      "raw": "eyJzY29wZSI6eyJ0ZW5hbnRJZCI6InRlbmFudCIsImFjdG9ySWQiOiJvcmlnaW5hbC1hY3RvciIsIm9wZXJhdGlvbiI6InNhbXBsZS50YXNrQDEiLCJpZGVtcG90ZW5jeUtleSI6InBvc3Rjb21taXQtZGVwZW5kZW5jeSJ9LCJjb25maXJtYXRpb24iOm51bGwsInRhc2siOnsidGFza0lkIjoiMDFNOEMyUUtGOEI4Q0ZQTkpBS1o3SEdEVE4iLCJzY29wZSI6eyJ0ZW5hbnRJZCI6InRlbmFudCIsImFjdG9ySWQiOiJvcmlnaW5hbC1hY3RvciIsIm9wZXJhdGlvbiI6InNhbXBsZS50YXNrQDEiLCJpZGVtcG90ZW5jeUtleSI6InBvc3Rjb21taXQtZGVwZW5kZW5jeSJ9LCJyZXF1ZXN0U2hhMjU2IjoiNmZiYTMxNWIzZGEwNWZiMjdjZDViYjBiYTM0MWEwNDU3M2Q0Yzg0MzM3Y2FhNDk2ZmFmMmU4NTUyYjcwZjFlOCIsImFkbWl0dGVkQXQiOiIyMDI2LTExLTI2VDE0OjA0OjEzLjY3MjEwNzgrMDA6MDAifSwiZXhlY3V0aW9uIjp7ImZlbmNlIjozLCJvd25lciI6bnVsbCwiZXhwaXJlc0F0IjpudWxsLCJwcm9ncmVzcyI6eyJyZWNlaXB0cyI6WyJyZWNlaXB0LTc0OGIzMDliNWQ0ZmY3ZGJjYjBkNzMzOGJkOWZmMWYyNmMyNTAyZmFmNGQyNWJiMzE0MDg4NzMyYTllOGM5NWUiLCJyZWNlaXB0LTU3YTk1N2RhYzY0MDM1NjI1NTI4YzYxNGYxNWRhNjA0OGEzOGI2NDA0NTQ2YmZiZTBiOTk4ZmQzMzAyOTZlMjQiXSwiZWZmZWN0UGVuZGluZyI6ZmFsc2UsInN0YXR1cyI6IlN1Y2NlZWRlZCIsImlycmV2ZXJzaWJsZVN0ZXAiOjIsImF0dGVtcHRzIjowfSwicmVjZWlwdFJlY292ZXJ5T25seSI6dHJ1ZX19",
+      "sha256": "10d9c7c913ab38381df00079e5c6a7ae1773cfe812a9f75ddeb95dd402354e74",
+      "value": {
+        "confirmation": null,
+        "execution": {
+          "expiresAt": null,
+          "fence": 3,
+          "owner": null,
+          "progress": {
+            "attempts": 0,
+            "effectPending": false,
+            "irreversibleStep": 2,
+            "receipts": [
+              "receipt-748b309b5d4ff7dbcb0d7338bd9ff1f26c2502faf4d25bb314088732a9e8c95e",
+              "receipt-57a957dac64035625528c614f15da6048a38b6404546bfbe0b998fd330296e24"
+            ],
+            "status": "Succeeded"
+          },
+          "receiptRecoveryOnly": true
+        },
+        "scope": {
+          "actorId": "original-actor",
+          "idempotencyKey": "postcommit-dependency",
+          "operation": "sample.task@1",
+          "tenantId": "tenant"
+        },
+        "task": {
+          "admittedAt": "2026-11-26T14:04:13.6721078+00:00",
+          "requestSha256": "6fba315b3da05fb27cd5bb0ba341a04573d4c84337caa496faf2e8552b70f1e8",
+          "scope": {
+            "actorId": "original-actor",
+            "idempotencyKey": "postcommit-dependency",
+            "operation": "sample.task@1",
+            "tenantId": "tenant"
+          },
+          "taskId": "01M8C2QKF8B8CFPNJAKZ7HGDTN"
+        }
+      }
+    }
+  },
+  "partial": {
+    "ownerCalls": {
+      "execute": 0,
+      "lookup": 1
+    },
+    "ownerEffects": null,
+    "task": {
+      "etag": "6",
+      "key": "durable-task-admission-v1-e129a792d26658b12cac69b9f90a8a87eed6d2141175470a43e444ecb1e3105a",
+      "raw": "eyJzY29wZSI6eyJ0ZW5hbnRJZCI6InRlbmFudCIsImFjdG9ySWQiOiJvcmlnaW5hbC1hY3RvciIsIm9wZXJhdGlvbiI6InNhbXBsZS50YXNrQDEiLCJpZGVtcG90ZW5jeUtleSI6InBhcnRpYWwifSwiY29uZmlybWF0aW9uIjpudWxsLCJ0YXNrIjp7InRhc2tJZCI6IjAxTThDMlFKVkRHUDJFR0o2QjNHRjJDS1JaIiwic2NvcGUiOnsidGVuYW50SWQiOiJ0ZW5hbnQiLCJhY3RvcklkIjoib3JpZ2luYWwtYWN0b3IiLCJvcGVyYXRpb24iOiJzYW1wbGUudGFza0AxIiwiaWRlbXBvdGVuY3lLZXkiOiJwYXJ0aWFsIn0sInJlcXVlc3RTaGEyNTYiOiIzZTFlMzdkZTQzMTgwYTdkZjIyYTY5YWQwMjQzOTUwNGUzMThlNWQyOTkyNjQ0YjMzODQ2MWQyMWU0ZjA1MzYxIiwiYWRtaXR0ZWRBdCI6IjIwMjYtMTEtMjZUMTQ6MDQ6MTMuMDM3ODg2NiswMDowMCJ9LCJleGVjdXRpb24iOnsiZmVuY2UiOjEsIm93bmVyIjpudWxsLCJleHBpcmVzQXQiOm51bGwsInByb2dyZXNzIjp7InJlY2VpcHRzIjpbInJlY2VpcHQtOTFkYTRhYWMyYWZiMThkNDA2ZGYwMGJiMGYxMDVkNzlmNGExZjI4OGRjM2ViYzZhZWZlMDdkYTZhN2I1ZGIzOSJdLCJlZmZlY3RQZW5kaW5nIjp0cnVlLCJzdGF0dXMiOiJOZWVkc0F0dGVudGlvbiIsImlycmV2ZXJzaWJsZVN0ZXAiOjIsImF0dGVtcHRzIjoxLCJhdXRvbWF0aWNSZXRyeVVudGlsIjoiMjAyNi0xMS0yNlQxNDowNDo0NC41MzA0OTU3KzAwOjAwIn19fQ==",
+      "sha256": "d1d297c9ff6c043d298f2133a425a3a4aa85ac5d74907dadd59d6f5f0e6bc0af",
+      "value": {
+        "confirmation": null,
+        "execution": {
+          "expiresAt": null,
+          "fence": 1,
+          "owner": null,
+          "progress": {
+            "attempts": 1,
+            "automaticRetryUntil": "2026-11-26T14:04:44.5304957+00:00",
+            "effectPending": true,
+            "irreversibleStep": 2,
+            "receipts": [
+              "receipt-91da4aac2afb18d406df00bb0f105d79f4a1f288dc3ebc6aefe07da6a7b5db39"
+            ],
+            "status": "NeedsAttention"
+          }
+        },
+        "scope": {
+          "actorId": "original-actor",
+          "idempotencyKey": "partial",
+          "operation": "sample.task@1",
+          "tenantId": "tenant"
+        },
+        "task": {
+          "admittedAt": "2026-11-26T14:04:13.0378866+00:00",
+          "requestSha256": "3e1e37de43180a7df22a69ad02439504e318e5d2992644b338461d21e4f05361",
+          "scope": {
+            "actorId": "original-actor",
+            "idempotencyKey": "partial",
+            "operation": "sample.task@1",
+            "tenantId": "tenant"
+          },
+          "taskId": "01M8C2QJVDGP2EGJ6B3GF2CKRZ"
+        }
+      }
+    }
+  },
+  "postcommit-dependency": {
+    "ownerCalls": {
+      "execute": 1,
+      "lookup": 3
+    },
+    "ownerEffects": {
+      "etag": "1",
+      "key": "g1-fixture-effect-v1-57a957dac64035625528c614f15da6048a38b6404546bfbe0b998fd330296e24",
+      "raw": "eyJrZXkiOiIwMU04QzJRS0Y4QjhDRlBOSkFLWjdIR0RUTi9zdGVwLzIiLCJ0YXNrSWQiOiIwMU04QzJRS0Y4QjhDRlBOSkFLWjdIR0RUTiIsInRlbmFudCI6InRlbmFudCIsImFjdG9yIjoib3JpZ2luYWwtYWN0b3IiLCJkaWdlc3QiOiI2ZmJhMzE1YjNkYTA1ZmIyN2NkNWJiMGJhMzQxYTA0NTczZDRjODQzMzdjYWE0OTZmYWYyZTg1NTJiNzBmMWU4IiwicmVjZWlwdCI6InJlY2VpcHQtNTdhOTU3ZGFjNjQwMzU2MjU1MjhjNjE0ZjE1ZGE2MDQ4YTM4YjY0MDQ1NDZiZmJlMGI5OThmZDMzMDI5NmUyNCIsImVmZmVjdHMiOjF9",
+      "sha256": "1d2b10fab248d4337e3f464813ce6f928befd7c5c9e12a5e9ddc127ad2daa097",
+      "value": {
+        "actor": "original-actor",
+        "digest": "6fba315b3da05fb27cd5bb0ba341a04573d4c84337caa496faf2e8552b70f1e8",
+        "effects": 1,
+        "key": "01M8C2QKF8B8CFPNJAKZ7HGDTN/step/2",
+        "receipt": "receipt-57a957dac64035625528c614f15da6048a38b6404546bfbe0b998fd330296e24",
+        "taskId": "01M8C2QKF8B8CFPNJAKZ7HGDTN",
+        "tenant": "tenant"
+      }
+    },
+    "task": {
+      "etag": "10",
+      "key": "durable-task-admission-v1-59b0fc578b9ebf1e0ee7df50ab40f883c4c6dabf97ca9bebce2c022ce6ad76bb",
+      "raw": "eyJzY29wZSI6eyJ0ZW5hbnRJZCI6InRlbmFudCIsImFjdG9ySWQiOiJvcmlnaW5hbC1hY3RvciIsIm9wZXJhdGlvbiI6InNhbXBsZS50YXNrQDEiLCJpZGVtcG90ZW5jeUtleSI6InBvc3Rjb21taXQtZGVwZW5kZW5jeSJ9LCJjb25maXJtYXRpb24iOm51bGwsInRhc2siOnsidGFza0lkIjoiMDFNOEMyUUtGOEI4Q0ZQTkpBS1o3SEdEVE4iLCJzY29wZSI6eyJ0ZW5hbnRJZCI6InRlbmFudCIsImFjdG9ySWQiOiJvcmlnaW5hbC1hY3RvciIsIm9wZXJhdGlvbiI6InNhbXBsZS50YXNrQDEiLCJpZGVtcG90ZW5jeUtleSI6InBvc3Rjb21taXQtZGVwZW5kZW5jeSJ9LCJyZXF1ZXN0U2hhMjU2IjoiNmZiYTMxNWIzZGEwNWZiMjdjZDViYjBiYTM0MWEwNDU3M2Q0Yzg0MzM3Y2FhNDk2ZmFmMmU4NTUyYjcwZjFlOCIsImFkbWl0dGVkQXQiOiIyMDI2LTExLTI2VDE0OjA0OjEzLjY3MjEwNzgrMDA6MDAifSwiZXhlY3V0aW9uIjp7ImZlbmNlIjoxLCJvd25lciI6bnVsbCwiZXhwaXJlc0F0IjpudWxsLCJwcm9ncmVzcyI6eyJyZWNlaXB0cyI6WyJyZWNlaXB0LTc0OGIzMDliNWQ0ZmY3ZGJjYjBkNzMzOGJkOWZmMWYyNmMyNTAyZmFmNGQyNWJiMzE0MDg4NzMyYTllOGM5NWUiXSwiZWZmZWN0UGVuZGluZyI6dHJ1ZSwic3RhdHVzIjoiTmVlZHNBdHRlbnRpb24iLCJpcnJldmVyc2libGVTdGVwIjoyLCJhdHRlbXB0cyI6MywiYXV0b21hdGljUmV0cnlVbnRpbCI6IjIwMjYtMTEtMjZUMTQ6MDQ6NDQuNTU1NTYwNyswMDowMCJ9fX0=",
+      "sha256": "6a89477c8bfda662da206781d773fd6eddb585cb562b2268a7a43db8a4658c76",
+      "value": {
+        "confirmation": null,
+        "execution": {
+          "expiresAt": null,
+          "fence": 1,
+          "owner": null,
+          "progress": {
+            "attempts": 3,
+            "automaticRetryUntil": "2026-11-26T14:04:44.5555607+00:00",
+            "effectPending": true,
+            "irreversibleStep": 2,
+            "receipts": [
+              "receipt-748b309b5d4ff7dbcb0d7338bd9ff1f26c2502faf4d25bb314088732a9e8c95e"
+            ],
+            "status": "NeedsAttention"
+          }
+        },
+        "scope": {
+          "actorId": "original-actor",
+          "idempotencyKey": "postcommit-dependency",
+          "operation": "sample.task@1",
+          "tenantId": "tenant"
+        },
+        "task": {
+          "admittedAt": "2026-11-26T14:04:13.6721078+00:00",
+          "requestSha256": "6fba315b3da05fb27cd5bb0ba341a04573d4c84337caa496faf2e8552b70f1e8",
+          "scope": {
+            "actorId": "original-actor",
+            "idempotencyKey": "postcommit-dependency",
+            "operation": "sample.task@1",
+            "tenantId": "tenant"
+          },
+          "taskId": "01M8C2QKF8B8CFPNJAKZ7HGDTN"
+        }
+      }
+    }
+  },
+  "rollback": {
+    "after": {
+      "etag": "8",
+      "key": "durable-task-admission-v1-99fb4db5bd4eff95e166671017e7f01ab8f5674b433285be4e4e4007d1039169",
+      "raw": "eyJzY29wZSI6eyJ0ZW5hbnRJZCI6InRlbmFudCIsImFjdG9ySWQiOiJvcmlnaW5hbC1hY3RvciIsIm9wZXJhdGlvbiI6InNhbXBsZS50YXNrQDEiLCJpZGVtcG90ZW5jeUtleSI6Imxvc3QtcmVwbHktYW5kLXJldGFpbmVkLXN0b3JlIn0sImNvbmZpcm1hdGlvbiI6bnVsbCwidGFzayI6eyJ0YXNrSWQiOiIwMU04QzJSVjNGOVNEWkhLV0dDRDJGREUwNyIsInNjb3BlIjp7InRlbmFudElkIjoidGVuYW50IiwiYWN0b3JJZCI6Im9yaWdpbmFsLWFjdG9yIiwib3BlcmF0aW9uIjoic2FtcGxlLnRhc2tAMSIsImlkZW1wb3RlbmN5S2V5IjoibG9zdC1yZXBseS1hbmQtcmV0YWluZWQtc3RvcmUifSwicmVxdWVzdFNoYTI1NiI6IjU3N2VmNjQyM2FlN2JlZmY0ODhlYWRkYjg4ZGJjOTFlYzk5YzEzMzI5MjRmYjA5ZjdhZDBjYjNiYjRhMzAzZmIiLCJhZG1pdHRlZEF0IjoiMjAyNi0xMS0yNlQxNDowNDo1NC4yNTU5NjM5KzAwOjAwIn0sImV4ZWN1dGlvbiI6eyJmZW5jZSI6Miwib3duZXIiOm51bGwsImV4cGlyZXNBdCI6bnVsbCwicHJvZ3Jlc3MiOnsicmVjZWlwdHMiOlsicmVjZWlwdC03Njg5YjQ1ZjI2ZDEwM2Q4NzRjZDNjYzc4ODQ5NmFjNWM4MGM2MDU1NTFjYzBkNWM0OWZlYjk3OTdmODFmZTQ4IiwicmVjZWlwdC1hYmQ5NmYxNzhjZGIwNzcwZmQ0NDQ3Zjc2ZDAwZmYxMDhjNWVkNjQ1ZTA4MzY3ZDljMjc2OWVkNWNiYjlkNzY1Il0sImVmZmVjdFBlbmRpbmciOmZhbHNlLCJzdGF0dXMiOiJTdWNjZWVkZWQiLCJpcnJldmVyc2libGVTdGVwIjoyLCJhdHRlbXB0cyI6MH0sInJlY2VpcHRSZWNvdmVyeU9ubHkiOnRydWV9fQ==",
+      "sha256": "764a56051e32571f3f54fdf67f63a1830524d66d77311979545f119ac162ce31",
+      "value": {
+        "confirmation": null,
+        "execution": {
+          "expiresAt": null,
+          "fence": 2,
+          "owner": null,
+          "progress": {
+            "attempts": 0,
+            "effectPending": false,
+            "irreversibleStep": 2,
+            "receipts": [
+              "receipt-7689b45f26d103d874cd3cc788496ac5c80c605551cc0d5c49feb9797f81fe48",
+              "receipt-abd96f178cdb0770fd4447f76d00ff108c5ed645e08367d9c2769ed5cbb9d765"
+            ],
+            "status": "Succeeded"
+          },
+          "receiptRecoveryOnly": true
+        },
+        "scope": {
+          "actorId": "original-actor",
+          "idempotencyKey": "lost-reply-and-retained-store",
+          "operation": "sample.task@1",
+          "tenantId": "tenant"
+        },
+        "task": {
+          "admittedAt": "2026-11-26T14:04:54.2559639+00:00",
+          "requestSha256": "577ef6423ae7beff488eaddb88dbc91ec99c1332924fb09f7ad0cb3bb4a303fb",
+          "scope": {
+            "actorId": "original-actor",
+            "idempotencyKey": "lost-reply-and-retained-store",
+            "operation": "sample.task@1",
+            "tenantId": "tenant"
+          },
+          "taskId": "01M8C2RV3F9SDZHKWGCD2FDE07"
+        }
+      }
+    },
+    "afterStaleAttempts": {
+      "etag": "8",
+      "key": "durable-task-admission-v1-99fb4db5bd4eff95e166671017e7f01ab8f5674b433285be4e4e4007d1039169",
+      "raw": "eyJzY29wZSI6eyJ0ZW5hbnRJZCI6InRlbmFudCIsImFjdG9ySWQiOiJvcmlnaW5hbC1hY3RvciIsIm9wZXJhdGlvbiI6InNhbXBsZS50YXNrQDEiLCJpZGVtcG90ZW5jeUtleSI6Imxvc3QtcmVwbHktYW5kLXJldGFpbmVkLXN0b3JlIn0sImNvbmZpcm1hdGlvbiI6bnVsbCwidGFzayI6eyJ0YXNrSWQiOiIwMU04QzJSVjNGOVNEWkhLV0dDRDJGREUwNyIsInNjb3BlIjp7InRlbmFudElkIjoidGVuYW50IiwiYWN0b3JJZCI6Im9yaWdpbmFsLWFjdG9yIiwib3BlcmF0aW9uIjoic2FtcGxlLnRhc2tAMSIsImlkZW1wb3RlbmN5S2V5IjoibG9zdC1yZXBseS1hbmQtcmV0YWluZWQtc3RvcmUifSwicmVxdWVzdFNoYTI1NiI6IjU3N2VmNjQyM2FlN2JlZmY0ODhlYWRkYjg4ZGJjOTFlYzk5YzEzMzI5MjRmYjA5ZjdhZDBjYjNiYjRhMzAzZmIiLCJhZG1pdHRlZEF0IjoiMjAyNi0xMS0yNlQxNDowNDo1NC4yNTU5NjM5KzAwOjAwIn0sImV4ZWN1dGlvbiI6eyJmZW5jZSI6Miwib3duZXIiOm51bGwsImV4cGlyZXNBdCI6bnVsbCwicHJvZ3Jlc3MiOnsicmVjZWlwdHMiOlsicmVjZWlwdC03Njg5YjQ1ZjI2ZDEwM2Q4NzRjZDNjYzc4ODQ5NmFjNWM4MGM2MDU1NTFjYzBkNWM0OWZlYjk3OTdmODFmZTQ4IiwicmVjZWlwdC1hYmQ5NmYxNzhjZGIwNzcwZmQ0NDQ3Zjc2ZDAwZmYxMDhjNWVkNjQ1ZTA4MzY3ZDljMjc2OWVkNWNiYjlkNzY1Il0sImVmZmVjdFBlbmRpbmciOmZhbHNlLCJzdGF0dXMiOiJTdWNjZWVkZWQiLCJpcnJldmVyc2libGVTdGVwIjoyLCJhdHRlbXB0cyI6MH0sInJlY2VpcHRSZWNvdmVyeU9ubHkiOnRydWV9fQ==",
+      "sha256": "764a56051e32571f3f54fdf67f63a1830524d66d77311979545f119ac162ce31",
+      "value": {
+        "confirmation": null,
+        "execution": {
+          "expiresAt": null,
+          "fence": 2,
+          "owner": null,
+          "progress": {
+            "attempts": 0,
+            "effectPending": false,
+            "irreversibleStep": 2,
+            "receipts": [
+              "receipt-7689b45f26d103d874cd3cc788496ac5c80c605551cc0d5c49feb9797f81fe48",
+              "receipt-abd96f178cdb0770fd4447f76d00ff108c5ed645e08367d9c2769ed5cbb9d765"
+            ],
+            "status": "Succeeded"
+          },
+          "receiptRecoveryOnly": true
+        },
+        "scope": {
+          "actorId": "original-actor",
+          "idempotencyKey": "lost-reply-and-retained-store",
+          "operation": "sample.task@1",
+          "tenantId": "tenant"
+        },
+        "task": {
+          "admittedAt": "2026-11-26T14:04:54.2559639+00:00",
+          "requestSha256": "577ef6423ae7beff488eaddb88dbc91ec99c1332924fb09f7ad0cb3bb4a303fb",
+          "scope": {
+            "actorId": "original-actor",
+            "idempotencyKey": "lost-reply-and-retained-store",
+            "operation": "sample.task@1",
+            "tenantId": "tenant"
+          },
+          "taskId": "01M8C2RV3F9SDZHKWGCD2FDE07"
+        }
+      }
+    },
+    "before": {
+      "etag": "5",
+      "key": "durable-task-admission-v1-99fb4db5bd4eff95e166671017e7f01ab8f5674b433285be4e4e4007d1039169",
+      "raw": "eyJzY29wZSI6eyJ0ZW5hbnRJZCI6InRlbmFudCIsImFjdG9ySWQiOiJvcmlnaW5hbC1hY3RvciIsIm9wZXJhdGlvbiI6InNhbXBsZS50YXNrQDEiLCJpZGVtcG90ZW5jeUtleSI6Imxvc3QtcmVwbHktYW5kLXJldGFpbmVkLXN0b3JlIn0sImNvbmZpcm1hdGlvbiI6bnVsbCwidGFzayI6eyJ0YXNrSWQiOiIwMU04QzJSVjNGOVNEWkhLV0dDRDJGREUwNyIsInNjb3BlIjp7InRlbmFudElkIjoidGVuYW50IiwiYWN0b3JJZCI6Im9yaWdpbmFsLWFjdG9yIiwib3BlcmF0aW9uIjoic2FtcGxlLnRhc2tAMSIsImlkZW1wb3RlbmN5S2V5IjoibG9zdC1yZXBseS1hbmQtcmV0YWluZWQtc3RvcmUifSwicmVxdWVzdFNoYTI1NiI6IjU3N2VmNjQyM2FlN2JlZmY0ODhlYWRkYjg4ZGJjOTFlYzk5YzEzMzI5MjRmYjA5ZjdhZDBjYjNiYjRhMzAzZmIiLCJhZG1pdHRlZEF0IjoiMjAyNi0xMS0yNlQxNDowNDo1NC4yNTU5NjM5KzAwOjAwIn0sImV4ZWN1dGlvbiI6eyJmZW5jZSI6MSwib3duZXIiOiIwMU04QzJSV1FXSkJHUERBR1RUQVA2SFk0TiIsImV4cGlyZXNBdCI6IjIwMjYtMTEtMjZUMTQ6MDU6MTAuOTMzMDQ0NSswMDowMCIsInByb2dyZXNzIjp7InJlY2VpcHRzIjpbInJlY2VpcHQtNzY4OWI0NWYyNmQxMDNkODc0Y2QzY2M3ODg0OTZhYzVjODBjNjA1NTUxY2MwZDVjNDlmZWI5Nzk3ZjgxZmU0OCJdLCJlZmZlY3RQZW5kaW5nIjp0cnVlLCJzdGF0dXMiOiJSdW5uaW5nIiwiaXJyZXZlcnNpYmxlU3RlcCI6MiwiYXR0ZW1wdHMiOjEsImF1dG9tYXRpY1JldHJ5VW50aWwiOiIyMDI2LTExLTI2VDE0OjA1OjI2LjA2ODc4KzAwOjAwIn19fQ==",
+      "sha256": "51d57df249ff4fe93f0d267a0cf873d2b844b3b6cd6eaf370ee24217afce7ff7",
+      "value": {
+        "confirmation": null,
+        "execution": {
+          "expiresAt": "2026-11-26T14:05:10.9330445+00:00",
+          "fence": 1,
+          "owner": "01M8C2RWQWJBGPDAGTTAP6HY4N",
+          "progress": {
+            "attempts": 1,
+            "automaticRetryUntil": "2026-11-26T14:05:26.06878+00:00",
+            "effectPending": true,
+            "irreversibleStep": 2,
+            "receipts": [
+              "receipt-7689b45f26d103d874cd3cc788496ac5c80c605551cc0d5c49feb9797f81fe48"
+            ],
+            "status": "Running"
+          }
+        },
+        "scope": {
+          "actorId": "original-actor",
+          "idempotencyKey": "lost-reply-and-retained-store",
+          "operation": "sample.task@1",
+          "tenantId": "tenant"
+        },
+        "task": {
+          "admittedAt": "2026-11-26T14:04:54.2559639+00:00",
+          "requestSha256": "577ef6423ae7beff488eaddb88dbc91ec99c1332924fb09f7ad0cb3bb4a303fb",
+          "scope": {
+            "actorId": "original-actor",
+            "idempotencyKey": "lost-reply-and-retained-store",
+            "operation": "sample.task@1",
+            "tenantId": "tenant"
+          },
+          "taskId": "01M8C2RV3F9SDZHKWGCD2FDE07"
+        }
+      }
+    },
+    "beforeRestart": {
+      "etag": "5",
+      "key": "durable-task-admission-v1-99fb4db5bd4eff95e166671017e7f01ab8f5674b433285be4e4e4007d1039169",
+      "raw": "eyJzY29wZSI6eyJ0ZW5hbnRJZCI6InRlbmFudCIsImFjdG9ySWQiOiJvcmlnaW5hbC1hY3RvciIsIm9wZXJhdGlvbiI6InNhbXBsZS50YXNrQDEiLCJpZGVtcG90ZW5jeUtleSI6Imxvc3QtcmVwbHktYW5kLXJldGFpbmVkLXN0b3JlIn0sImNvbmZpcm1hdGlvbiI6bnVsbCwidGFzayI6eyJ0YXNrSWQiOiIwMU04QzJSVjNGOVNEWkhLV0dDRDJGREUwNyIsInNjb3BlIjp7InRlbmFudElkIjoidGVuYW50IiwiYWN0b3JJZCI6Im9yaWdpbmFsLWFjdG9yIiwib3BlcmF0aW9uIjoic2FtcGxlLnRhc2tAMSIsImlkZW1wb3RlbmN5S2V5IjoibG9zdC1yZXBseS1hbmQtcmV0YWluZWQtc3RvcmUifSwicmVxdWVzdFNoYTI1NiI6IjU3N2VmNjQyM2FlN2JlZmY0ODhlYWRkYjg4ZGJjOTFlYzk5YzEzMzI5MjRmYjA5ZjdhZDBjYjNiYjRhMzAzZmIiLCJhZG1pdHRlZEF0IjoiMjAyNi0xMS0yNlQxNDowNDo1NC4yNTU5NjM5KzAwOjAwIn0sImV4ZWN1dGlvbiI6eyJmZW5jZSI6MSwib3duZXIiOiIwMU04QzJSV1FXSkJHUERBR1RUQVA2SFk0TiIsImV4cGlyZXNBdCI6IjIwMjYtMTEtMjZUMTQ6MDU6MTAuOTMzMDQ0NSswMDowMCIsInByb2dyZXNzIjp7InJlY2VpcHRzIjpbInJlY2VpcHQtNzY4OWI0NWYyNmQxMDNkODc0Y2QzY2M3ODg0OTZhYzVjODBjNjA1NTUxY2MwZDVjNDlmZWI5Nzk3ZjgxZmU0OCJdLCJlZmZlY3RQZW5kaW5nIjp0cnVlLCJzdGF0dXMiOiJSdW5uaW5nIiwiaXJyZXZlcnNpYmxlU3RlcCI6MiwiYXR0ZW1wdHMiOjEsImF1dG9tYXRpY1JldHJ5VW50aWwiOiIyMDI2LTExLTI2VDE0OjA1OjI2LjA2ODc4KzAwOjAwIn19fQ==",
+      "sha256": "51d57df249ff4fe93f0d267a0cf873d2b844b3b6cd6eaf370ee24217afce7ff7",
+      "value": {
+        "confirmation": null,
+        "execution": {
+          "expiresAt": "2026-11-26T14:05:10.9330445+00:00",
+          "fence": 1,
+          "owner": "01M8C2RWQWJBGPDAGTTAP6HY4N",
+          "progress": {
+            "attempts": 1,
+            "automaticRetryUntil": "2026-11-26T14:05:26.06878+00:00",
+            "effectPending": true,
+            "irreversibleStep": 2,
+            "receipts": [
+              "receipt-7689b45f26d103d874cd3cc788496ac5c80c605551cc0d5c49feb9797f81fe48"
+            ],
+            "status": "Running"
+          }
+        },
+        "scope": {
+          "actorId": "original-actor",
+          "idempotencyKey": "lost-reply-and-retained-store",
+          "operation": "sample.task@1",
+          "tenantId": "tenant"
+        },
+        "task": {
+          "admittedAt": "2026-11-26T14:04:54.2559639+00:00",
+          "requestSha256": "577ef6423ae7beff488eaddb88dbc91ec99c1332924fb09f7ad0cb3bb4a303fb",
+          "scope": {
+            "actorId": "original-actor",
+            "idempotencyKey": "lost-reply-and-retained-store",
+            "operation": "sample.task@1",
+            "tenantId": "tenant"
+          },
+          "taskId": "01M8C2RV3F9SDZHKWGCD2FDE07"
+        }
+      }
+    },
+    "elapsedSeconds": 17.3564489929704,
+    "keyTtls": {
+      "durable-task-admission-v1-99fb4db5bd4eff95e166671017e7f01ab8f5674b433285be4e4e4007d1039169": -1,
+      "durable-task-admission-v1-d0d67ecfce74b1c104c65177516dce708dbf9e2f2fe0aac2b8ee5e68d8115b59": -1,
+      "durable-task-id-v1-09aa7d223695773fc08d5dc9e16c14847b9a7cc63cd08f5c446e3034778c71b7": -1,
+      "g1-fixture-effect-v1-7689b45f26d103d874cd3cc788496ac5c80c605551cc0d5c49feb9797f81fe48": -1,
+      "g1-fixture-effect-v1-abd96f178cdb0770fd4447f76d00ff108c5ed645e08367d9c2769ed5cbb9d765": -1,
+      "g1-fixture-intent-v1-09aa7d223695773fc08d5dc9e16c14847b9a7cc63cd08f5c446e3034778c71b7": -1,
+      "g1-task-directory-v1-0": -1
+    },
+    "ownerCallsAfter": {
+      "execute": 1,
+      "lookup": 2
+    },
+    "ownerCallsBefore": {
+      "execute": 1,
+      "lookup": 1
+    },
+    "ownerFirstReceipt": {
+      "etag": "1",
+      "key": "g1-fixture-effect-v1-7689b45f26d103d874cd3cc788496ac5c80c605551cc0d5c49feb9797f81fe48",
+      "raw": "eyJrZXkiOiIwMU04QzJSVjNGOVNEWkhLV0dDRDJGREUwNy9zdGVwLzEiLCJ0YXNrSWQiOiIwMU04QzJSVjNGOVNEWkhLV0dDRDJGREUwNyIsInRlbmFudCI6InRlbmFudCIsImFjdG9yIjoib3JpZ2luYWwtYWN0b3IiLCJkaWdlc3QiOiI1NzdlZjY0MjNhZTdiZWZmNDg4ZWFkZGI4OGRiYzkxZWM5OWMxMzMyOTI0ZmIwOWY3YWQwY2IzYmI0YTMwM2ZiIiwicmVjZWlwdCI6InJlY2VpcHQtNzY4OWI0NWYyNmQxMDNkODc0Y2QzY2M3ODg0OTZhYzVjODBjNjA1NTUxY2MwZDVjNDlmZWI5Nzk3ZjgxZmU0OCIsImVmZmVjdHMiOjF9",
+      "sha256": "388bc6a2545768152b7795d62e498d97c87a9d31a95312af7d6c5bd814a6f85e",
+      "value": {
+        "actor": "original-actor",
+        "digest": "577ef6423ae7beff488eaddb88dbc91ec99c1332924fb09f7ad0cb3bb4a303fb",
+        "effects": 1,
+        "key": "01M8C2RV3F9SDZHKWGCD2FDE07/step/1",
+        "receipt": "receipt-7689b45f26d103d874cd3cc788496ac5c80c605551cc0d5c49feb9797f81fe48",
+        "taskId": "01M8C2RV3F9SDZHKWGCD2FDE07",
+        "tenant": "tenant"
+      }
+    },
+    "ownerWithheldAfter": {
+      "etag": "1",
+      "key": "g1-fixture-effect-v1-abd96f178cdb0770fd4447f76d00ff108c5ed645e08367d9c2769ed5cbb9d765",
+      "raw": "eyJrZXkiOiIwMU04QzJSVjNGOVNEWkhLV0dDRDJGREUwNy9zdGVwLzIiLCJ0YXNrSWQiOiIwMU04QzJSVjNGOVNEWkhLV0dDRDJGREUwNyIsInRlbmFudCI6InRlbmFudCIsImFjdG9yIjoib3JpZ2luYWwtYWN0b3IiLCJkaWdlc3QiOiI1NzdlZjY0MjNhZTdiZWZmNDg4ZWFkZGI4OGRiYzkxZWM5OWMxMzMyOTI0ZmIwOWY3YWQwY2IzYmI0YTMwM2ZiIiwicmVjZWlwdCI6InJlY2VpcHQtYWJkOTZmMTc4Y2RiMDc3MGZkNDQ0N2Y3NmQwMGZmMTA4YzVlZDY0NWUwODM2N2Q5YzI3NjllZDVjYmI5ZDc2NSIsImVmZmVjdHMiOjF9",
+      "sha256": "f63ed8103bde3113f2811510252b0f60afe9acd0d1151cbfab819ed9a9b7a702",
+      "value": {
+        "actor": "original-actor",
+        "digest": "577ef6423ae7beff488eaddb88dbc91ec99c1332924fb09f7ad0cb3bb4a303fb",
+        "effects": 1,
+        "key": "01M8C2RV3F9SDZHKWGCD2FDE07/step/2",
+        "receipt": "receipt-abd96f178cdb0770fd4447f76d00ff108c5ed645e08367d9c2769ed5cbb9d765",
+        "taskId": "01M8C2RV3F9SDZHKWGCD2FDE07",
+        "tenant": "tenant"
+      }
+    },
+    "ownerWithheldBefore": {
+      "etag": "1",
+      "key": "g1-fixture-effect-v1-abd96f178cdb0770fd4447f76d00ff108c5ed645e08367d9c2769ed5cbb9d765",
+      "raw": "eyJrZXkiOiIwMU04QzJSVjNGOVNEWkhLV0dDRDJGREUwNy9zdGVwLzIiLCJ0YXNrSWQiOiIwMU04QzJSVjNGOVNEWkhLV0dDRDJGREUwNyIsInRlbmFudCI6InRlbmFudCIsImFjdG9yIjoib3JpZ2luYWwtYWN0b3IiLCJkaWdlc3QiOiI1NzdlZjY0MjNhZTdiZWZmNDg4ZWFkZGI4OGRiYzkxZWM5OWMxMzMyOTI0ZmIwOWY3YWQwY2IzYmI0YTMwM2ZiIiwicmVjZWlwdCI6InJlY2VpcHQtYWJkOTZmMTc4Y2RiMDc3MGZkNDQ0N2Y3NmQwMGZmMTA4YzVlZDY0NWUwODM2N2Q5YzI3NjllZDVjYmI5ZDc2NSIsImVmZmVjdHMiOjF9",
+      "sha256": "f63ed8103bde3113f2811510252b0f60afe9acd0d1151cbfab819ed9a9b7a702",
+      "value": {
+        "actor": "original-actor",
+        "digest": "577ef6423ae7beff488eaddb88dbc91ec99c1332924fb09f7ad0cb3bb4a303fb",
+        "effects": 1,
+        "key": "01M8C2RV3F9SDZHKWGCD2FDE07/step/2",
+        "receipt": "receipt-abd96f178cdb0770fd4447f76d00ff108c5ed645e08367d9c2769ed5cbb9d765",
+        "taskId": "01M8C2RV3F9SDZHKWGCD2FDE07",
+        "tenant": "tenant"
+      }
+    },
+    "reopened": {
+      "etag": "7",
+      "key": "durable-task-admission-v1-e852c992085d978ea5e5ca9c3c08846d7dcae49624f888b1ac78a481bf8bc436",
+      "raw": "eyJzY29wZSI6eyJ0ZW5hbnRJZCI6InRlbmFudCIsImFjdG9ySWQiOiJvcmlnaW5hbC1hY3RvciIsIm9wZXJhdGlvbiI6InNhbXBsZS50YXNrQDEiLCJpZGVtcG90ZW5jeUtleSI6InJlb3BlbmVkLWFkbWlzc2lvbnMifSwiY29uZmlybWF0aW9uIjpudWxsLCJ0YXNrIjp7InRhc2tJZCI6IjAxTThDMlNTOUdLREVTM0s4VlJIUzZXWFNTIiwic2NvcGUiOnsidGVuYW50SWQiOiJ0ZW5hbnQiLCJhY3RvcklkIjoib3JpZ2luYWwtYWN0b3IiLCJvcGVyYXRpb24iOiJzYW1wbGUudGFza0AxIiwiaWRlbXBvdGVuY3lLZXkiOiJyZW9wZW5lZC1hZG1pc3Npb25zIn0sInJlcXVlc3RTaGEyNTYiOiIzN2VkNzVkMDZkMzRhNjBhOWY0NTQ4N2RjNTk3YTk4OTA1MzVlMDBjYmIwM2Q1MTQzMzIwMjVhYjY4Y2E0NTk0IiwiYWRtaXR0ZWRBdCI6IjIwMjYtMTEtMjZUMTQ6MDU6MjUuMTY2NzI0KzAwOjAwIn0sImV4ZWN1dGlvbiI6eyJmZW5jZSI6MSwib3duZXIiOm51bGwsImV4cGlyZXNBdCI6bnVsbCwicHJvZ3Jlc3MiOnsicmVjZWlwdHMiOlsicmVjZWlwdC02OTgxMzVkNzc1M2VmM2Y1YTE2NDExMzZmZTgxM2FjNmIyNTA2YzQ0YTkwNTVmYjVkOTNjNmZhNWY2NzE4YzIzIiwicmVjZWlwdC01MmIwOWM5NjhjZmZiZGQwMzc1MDA1NWZhOTUwMDg5MzliN2Q1M2Y5NGQzOTEzNmUxZmYxYWYxNTA5MmE5YWY2Il0sImVmZmVjdFBlbmRpbmciOmZhbHNlLCJzdGF0dXMiOiJTdWNjZWVkZWQiLCJpcnJldmVyc2libGVTdGVwIjoyLCJhdHRlbXB0cyI6MH19fQ==",
+      "sha256": "d32ca36a26006d49474aa5ddc2c0b598b4f7a2b99abc31bfc2f8b691920bb9d2",
+      "value": {
+        "confirmation": null,
+        "execution": {
+          "expiresAt": null,
+          "fence": 1,
+          "owner": null,
+          "progress": {
+            "attempts": 0,
+            "effectPending": false,
+            "irreversibleStep": 2,
+            "receipts": [
+              "receipt-698135d7753ef3f5a1641136fe813ac6b2506c44a9055fb5d93c6fa5f6718c23",
+              "receipt-52b09c968cffbdd03750055fa95008939b7d53f94d39136e1ff1af15092a9af6"
+            ],
+            "status": "Succeeded"
+          }
+        },
+        "scope": {
+          "actorId": "original-actor",
+          "idempotencyKey": "reopened-admissions",
+          "operation": "sample.task@1",
+          "tenantId": "tenant"
+        },
+        "task": {
+          "admittedAt": "2026-11-26T14:05:25.166724+00:00",
+          "requestSha256": "37ed75d06d34a60a9f45487dc597a9890535e00cbb03d514332025ab68ca4594",
+          "scope": {
+            "actorId": "original-actor",
+            "idempotencyKey": "reopened-admissions",
+            "operation": "sample.task@1",
+            "tenantId": "tenant"
+          },
+          "taskId": "01M8C2SS9GKDES3K8VRHS6WXSS"
+        }
+      }
+    }
+  },
+  "timeout": {
+    "ownerCalls": {
+      "execute": 0,
+      "lookup": 2
+    },
+    "ownerEffects": null,
+    "task": {
+      "etag": "11",
+      "key": "durable-task-admission-v1-90505754b30254c93024743f483e80954a84fe9d897efa6d2c2f806f4d751b58",
+      "raw": "eyJzY29wZSI6eyJ0ZW5hbnRJZCI6InRlbmFudCIsImFjdG9ySWQiOiJvcmlnaW5hbC1hY3RvciIsIm9wZXJhdGlvbiI6InNhbXBsZS50YXNrQDEiLCJpZGVtcG90ZW5jeUtleSI6InRpbWVvdXQifSwiY29uZmlybWF0aW9uIjpudWxsLCJ0YXNrIjp7InRhc2tJZCI6IjAxTThDMlFKNEI0RVg1S0gxQjE3NTRSUEhCIiwic2NvcGUiOnsidGVuYW50SWQiOiJ0ZW5hbnQiLCJhY3RvcklkIjoib3JpZ2luYWwtYWN0b3IiLCJvcGVyYXRpb24iOiJzYW1wbGUudGFza0AxIiwiaWRlbXBvdGVuY3lLZXkiOiJ0aW1lb3V0In0sInJlcXVlc3RTaGEyNTYiOiJmYTZlNmYxMGIyMDU1OTUzNTMwMWRkOWEzZWQ5ZmQwZjBjZWM1OGMxZDM2NDkxY2RiYmYxODgwZjNmMTVlMGMwIiwiYWRtaXR0ZWRBdCI6IjIwMjYtMTEtMjZUMTQ6MDQ6MTIuMjk5MDUyOSswMDowMCJ9LCJleGVjdXRpb24iOnsiZmVuY2UiOjMsIm93bmVyIjpudWxsLCJleHBpcmVzQXQiOm51bGwsInByb2dyZXNzIjp7InJlY2VpcHRzIjpbInJlY2VpcHQtYWRkMmY2ZDJmYjg2MThjYzY4NWQ0ODQ4NjcyYmY0NzgxMzNlZjdiZWQ1NmE4MDU3Y2QzZGRhOWFjN2ZlODI4NyJdLCJlZmZlY3RQZW5kaW5nIjp0cnVlLCJzdGF0dXMiOiJOZWVkc0F0dGVudGlvbiIsImlycmV2ZXJzaWJsZVN0ZXAiOjIsImF0dGVtcHRzIjoyLCJhdXRvbWF0aWNSZXRyeVVudGlsIjoiMjAyNi0xMS0yNlQxNDowNDo0NC41MzAzMzM1KzAwOjAwIn19fQ==",
+      "sha256": "cbbbb57d5ffb406bd9e039af6da8571085313e326742161ce68e3e2380318de1",
+      "value": {
+        "confirmation": null,
+        "execution": {
+          "expiresAt": null,
+          "fence": 3,
+          "owner": null,
+          "progress": {
+            "attempts": 2,
+            "automaticRetryUntil": "2026-11-26T14:04:44.5303335+00:00",
+            "effectPending": true,
+            "irreversibleStep": 2,
+            "receipts": [
+              "receipt-add2f6d2fb8618cc685d4848672bf478133ef7bed56a8057cd3dda9ac7fe8287"
+            ],
+            "status": "NeedsAttention"
+          }
+        },
+        "scope": {
+          "actorId": "original-actor",
+          "idempotencyKey": "timeout",
+          "operation": "sample.task@1",
+          "tenantId": "tenant"
+        },
+        "task": {
+          "admittedAt": "2026-11-26T14:04:12.2990529+00:00",
+          "requestSha256": "fa6e6f10b20559535301dd9a3ed9fd0f0cec58c1d36491cdbbf1880f3f15e0c0",
+          "scope": {
+            "actorId": "original-actor",
+            "idempotencyKey": "timeout",
+            "operation": "sample.task@1",
+            "tenantId": "tenant"
+          },
+          "taskId": "01M8C2QJ4B4EX5KH1B1754RPHB"
+        }
+      }
+    }
+  }
+}

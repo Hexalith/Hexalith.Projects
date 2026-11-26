@@ -32,7 +32,7 @@ Qualify creation on the SDK writer in the isolated host and two-replica lanes. S
 
 ## Open Questions
 
-1. Which immutable G-1/G-2 contract and runtime revisions will the owners and architects accept in the 7.1-P2 pin, and which host candidate will Projects and EventStore accept for DW-63? Matching owner decisions and entry evidence allow this draft to advance when readiness permits. Requalification or a missing decision keeps implementation blocked.
+1. Which SDK host candidate will Projects and EventStore accept for DW-63? This draft also requires the Epic 7 readiness gate.
 
 ## Code Map
 
@@ -64,6 +64,6 @@ Qualify creation on the SDK writer in the isolated host and two-replica lanes. S
 
 ## Verification
 
-- The readiness rerun records `NOT_READY`. The sprint tracker records Story 7.1 `blocked`, P1 `done` and P2 `open`. DW-63 awaits owner acceptance. [Readiness rerun](../planning-artifacts/implementation-readiness-report-2026-11-25.md) · [Sprint tracker](sprint-status.yaml) · [DW-63 ledger](deferred-work.md)
-- At the baseline's committed gitlinks, the isolated G-1 fixture passed 87 focused tests, two Dapr/Redis restart phases and six admission and crash-recovery tests. It recovered the committed receipt under the replacement fence with one persisted synthetic owner effect. The authority index and its 60 guard tests passed. P2 needs the remaining runtime and Folder qualification and owner decisions.
+- The readiness rerun records `NOT_READY`. The sprint tracker records Story 7.1 `blocked` and both prerequisites `done`. The [7.1-P2 capability pin](evidence/epic7/7.1-P2-capability-pin.json) records the accepted Durable Task and Folder inputs. DW-63 awaits owner acceptance. [Readiness rerun](../planning-artifacts/implementation-readiness-report-2026-11-25.md) · [Sprint tracker](sprint-status.yaml) · [DW-63 ledger](deferred-work.md)
+- At the baseline's committed gitlinks, the isolated G-1 fixture passed 87 focused tests, two Dapr/Redis restart phases and six admission and crash-recovery tests. It recovered the committed receipt under the replacement fence with one persisted synthetic owner effect. The authority index and its 60 guard tests passed. The P2 pin records the later runtime and Folder qualification and five owner and architect decisions.
 - After entry acceptance, use the governed `dotnet tool run hexalith-module test --profile durable --filter Story=7.1` lane with Dapr 1.19.2 or later for the claim-race proof, or the recorded owner risk acceptance. Pin the G-4 runner before running this lane.

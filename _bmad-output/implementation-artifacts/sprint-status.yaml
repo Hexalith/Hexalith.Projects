@@ -298,7 +298,7 @@ development_status:
   # Story 7.1 also requires Projects-owned AD-35 cross-replica claim and legacy fencing proof at the first writer gate.
   epic-7: backlog
   7-1-activate-a-project-with-exactly-one-authorized-folder: blocked
-  # requires  7.1-P2
+  # 7.1-P2 is accepted below. Story 7.1 still requires its independent entry gates.
   7-2-update-project-setup-idempotently: backlog
   7-3-link-an-unassigned-conversation: backlog
   7-4-move-a-conversation-between-projects: backlog
@@ -320,7 +320,7 @@ development_status:
   # Epic 8: Operators Run Projects Safely and Release Owners Decide from Evidence
   epic-8: in-progress
   # 8.1 may start before Epic 7 finishes. Acceptance still requires the Epic 8 evidence.
-  # The internal read implementation is awaiting 7.1-P2, 7.15 and the governed acceptance evidence.
+  # 7.1-P2 is accepted below. The internal read implementation awaits 7.15 and the governed acceptance evidence.
   8-1-inspect-task-audit-and-reconciliation-truth: blocked
   8-2-create-a-bounded-safe-diagnostic-export: backlog
   8-3-integrate-conformant-project-maintenance-in-the-web-console: backlog
@@ -559,10 +559,13 @@ action_items:
     action: "Accept the pinned Durable Task admission and Folder provisioning capabilities required by folder-first Project activation."
     repository_authority: "EventStore/platform and Folders owner repositories"
     owner: "EventStore Owner / Platform Owner / Folders Owner / Solution Architect / Test Architect"
-    status: open
+    status: done
     target_date: uncommitted
+    authorized: "2026-11-26T20:35:40Z by Jérôme Piquot in all five accountable roles"
+    result: "Accepted qualification SHA-256 24e379218233c378ea466c58f094bf1777903be3021889f2a38c5b4a1be87059. The retained-store replay qualifies G-1 Durable Task admission and recovery with Folders 2.2.1 provisioning, receipt lookup, and fenced forward recovery. The Project commit used a fixture."
     depends_on: ["Pinned G-1 Durable Task and applicable G-2 Folders owner records at package acceptance"]
     expected_evidence: "Pinned capability versions; deterministic step idempotency; receipt/status lookup; compensation behavior; clean-checkout commands; owner approvals; executable rollback. Include Folders authorization and its owner receipt/status lookup after provisioning. Story 7.1 separately verifies the Projects-owned AD-35 claim, fencing and recovery using those owner inputs."
+    projects_evidence_pin: "evidence/epic7/7.1-P2-capability-pin.json"
     planning_evidence: "_bmad-output/planning-artifacts/sprint-change-proposal-2026-08-01-implementation-readiness-correction.md#43-decompose-story-71"
     routed_to: "Story 7.1 first writer and Story 8.1 durable task and reconciliation acceptance"
   - epic: 8

@@ -529,6 +529,13 @@ def _validate_p2_pin(pin: dict[str, Any], artifacts_root: Path) -> None:
         qualification, ("owners", "contractVersions", "persistedCases", "rollback"),
         f"{context} qualification",
     )
+    versions_context = f"{context} contract versions"
+    contracts = _mapping(qualification["contractVersions"], versions_context)
+    _exact_keys(contracts, tuple(P2_CONTRACT_OWNERS), versions_context)
+    for contract, version in contracts.items():
+        if not isinstance(version, str) or not version.strip():
+            raise GuardViolation(f"{context} {contract} requires a contract version")
+
     owners = _mapping(qualification["owners"], f"{context} owners")
     _exact_keys(owners, P2_OWNERS, f"{context} owners")
     for owner in P2_OWNERS:
@@ -536,14 +543,20 @@ def _validate_p2_pin(pin: dict[str, Any], artifacts_root: Path) -> None:
         source = _mapping(owners[owner], owner_context)
         _exact_keys(source, ("revision", "record"), owner_context)
         _validate_p2_revision(source["revision"], owner_context)
-        _read_p2_artifact(source["record"], artifacts_root, f"{owner_context} record")
-
-    versions_context = f"{context} contract versions"
-    contracts = _mapping(qualification["contractVersions"], versions_context)
-    _exact_keys(contracts, tuple(P2_CONTRACT_OWNERS), versions_context)
-    for contract, version in contracts.items():
-        if not isinstance(version, str) or not version.strip():
-            raise GuardViolation(f"{context} {contract} requires a contract version")
+        data = _read_p2_artifact(source["record"], artifacts_root, f"{owner_context} record")
+        try:
+            record = json.loads(data.decode("utf-8"), object_pairs_hook=_unique_json_object)
+        except (UnicodeError, json.JSONDecodeError, GuardViolation) as error:
+            raise GuardViolation(f"malformed {owner_context} record: {error}") from error
+        record = _mapping(record, f"{owner_context} record")
+        if record.get("owner") != owner or record.get("selectedRevision") != source["revision"]:
+            raise GuardViolation(f"{owner_context} record owner or revision differs")
+        if owner == "Folders" and record.get("contract") != contracts["folderProvisioning"]:
+            raise GuardViolation(f"{owner_context} record contract differs")
+        _read_p2_artifact(record.get("scope"), artifacts_root, f"{owner_context} scope")
+        for field, reference in record.items():
+            if field != "scope" and isinstance(reference, dict) and set(reference) == {"path", "sha256"}:
+                _read_p2_artifact(reference, artifacts_root, f"{owner_context} {field}")
 
     cases = _mapping(qualification["persistedCases"], f"{context} persisted cases")
     _exact_keys(cases, P2_PERSISTED_CASES, f"{context} persisted cases")

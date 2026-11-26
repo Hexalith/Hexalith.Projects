@@ -995,11 +995,20 @@ class ProductionAuthorityGuardTests(unittest.TestCase):
                 "receipts": [artifact(name)],
             }
 
+        def owner_record(owner: str, revision: str, **details: str) -> dict[str, Any]:
+            record = {
+                "owner": owner,
+                "selectedRevision": revision,
+                "scope": artifact(f"{owner}-scope"),
+                **details,
+            }
+            return {"revision": revision, "record": artifact(owner, json.dumps(record).encode())}
+
         qualification = {
             "owners": {
-                "EventStore": {"revision": "a" * 40, "record": artifact("EventStore")},
-                "Platform": {"revision": "b" * 40, "record": artifact("Platform")},
-                "Folders": {"revision": "c" * 40, "record": artifact("Folders")},
+                "EventStore": owner_record("EventStore", "a" * 40),
+                "Platform": owner_record("Platform", "b" * 40),
+                "Folders": owner_record("Folders", "c" * 40, contract="2.0.0"),
             },
             "contractVersions": {"durableTask": "1.0.0", "folderProvisioning": "2.0.0"},
             "persistedCases": {
@@ -1141,6 +1150,7 @@ class ProductionAuthorityGuardTests(unittest.TestCase):
         sprint = self.p2_sprint()
         for section, key, field, value, error in (
             ("owners", "EventStore", "revision", "ae1143bd", "full commit revision"),
+            ("owners", "Platform", "revision", "1" * 40, "record owner or revision differs"),
             ("persistedCases", "admission", "commands", [" "], "verification commands"),
             ("persistedCases", "compensation", "disposition", "delete", "compensation disposition"),
             ("rollback", "durableTask", "result", "failed", "passing result"),
@@ -1184,7 +1194,7 @@ class ProductionAuthorityGuardTests(unittest.TestCase):
                         self.validate_boundary(sprint=sprint, p2_pin=candidate, p2_artifacts=artifacts)
 
         pin, artifacts = self.p2_fixture()
-        pin["qualification"]["owners"]["Platform"]["revision"] = "1" * 40
+        pin["qualification"]["persistedCases"]["recovery"]["commands"] = ["./other-replay.sh"]
         with self.assertRaisesRegex(GUARD.GuardViolation, "qualification SHA-256 differs"):
             self.validate_boundary(sprint=sprint, p2_pin=pin, p2_artifacts=artifacts)
 

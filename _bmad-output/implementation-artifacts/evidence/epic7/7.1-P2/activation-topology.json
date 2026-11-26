@@ -1,0 +1,57 @@
+{
+  "after-restart": {
+    "runnerId": "c327246e4da6ff8513df7f813b84811175990086a8f6925ed26ba8630d8ace5c",
+    "runtimeRemoved": true,
+    "sidecarIds": [
+      "5768e36c02969b6b294d21e8fcd227db28b5fd4e4bf81d42b574628b327bec6d",
+      "ed22b432ae94cd241bd96032f81e33591f993f578ad2c4f4febf44ea3c8544f2",
+      "4460758ed2b3ccb31ec6541c177c45a59e91a337c86f1feb9ee9ea40c103c664"
+    ]
+  },
+  "before-restart": {
+    "runnerId": "f4bbabf75eadfa8c5c35a93e01aaf687ad6a83d0cebb8202fcfd5088ca6fc35e",
+    "runtimeRemoved": true,
+    "sidecarIds": [
+      "38416632539b1ec7b2523810c17ccc7defa7b7eda70947be75854a3846b77e70",
+      "6f334ac83251e6f79fd0e679889e43949e68237b673bda37e82ef15bbc0986da",
+      "c43156d5c3aa77cebd779ee6092956b698db1e23e500588a9c0ab691c0d517ec"
+    ]
+  },
+  "configurationSha256": {
+    "eventstore.yaml": "bd0b2f61d394292c6f48421c4386dbd5bd442ee6b100d3d20ea6d5d6c2c7d3f4",
+    "folders.yaml": "4765545f8a758a0a9cfbe3736e611767aa9f1b8899f9a9d9beb075a734a80c25",
+    "g1-task-state.yaml": "27aaae8e1be9e4acffae186a384cf29ef42e9bb2d50b99701e5cb6925377376c",
+    "projects-fixture.yaml": "d477ce5d1803935e11421c25a2f0a40736f90d9e292589e3dfe1a36766776a45",
+    "statestore.yaml": "8a5a74e9730cbdfe9a86ae3fdc9c7913c29e1f79a64c8de90996d7ef760c2127"
+  },
+  "dapr": {
+    "channelTokensDistinct": true,
+    "peerMtls": true,
+    "placementId": "d872cc34d60e581ddd824b516214ec9ce6c77a1ccd84723be9e357de54a8382e",
+    "schedulerId": "e5c5922f83ce1f369b9205c3d76a074155c72a839dce492017e08ac269f26ec1",
+    "sentryId": "15e88555cf812ec2f7d3c2f45dec6dfb27b5429bc278483a87b545e4830fb8f2"
+  },
+  "images": {
+    "control": "daprio/dapr@sha256:16ca01236a97825e30b19ef9c89c7c9006fabdd9036a6d7e8947662371418851",
+    "daprd": "daprio/daprd@sha256:ed471547b67db50c831d498b8ee861822fb037d9d594c38ac299546b425f575a",
+    "dotnet": "mcr.microsoft.com/dotnet/sdk@sha256:65f3c7c6a25a239ab3e6719f2896147e7b68242ff2d8818dd70498bde6ef8bea",
+    "keycloak": "quay.io/keycloak/keycloak@sha256:0aae0de7fca85525f727d3354df17896092de8bb26ae4c12d89c77e5df8cbce4",
+    "probe": "python@sha256:4766d8b510c428e595d74b9cc5bbb2fae8e26316fffb4adc89908d79aacd58a2",
+    "redis": "redis@sha256:7f7d30b7fdd09467bac58198a1f166dd69789d348d4fe859cccb20e0cf287fbe",
+    "sentry": "daprio/sentry@sha256:9c18a914aa1689935ed264fed38b98baabfe3e4c4b91959912a4d804518d8835"
+  },
+  "privateNetwork": true,
+  "privateScratchRemoved": true,
+  "redis": {
+    "configuration": {
+      "appendfsync": "always",
+      "appendonly": "yes",
+      "maxmemory-policy": "noeviction"
+    },
+    "containerId": "0f28eab425ff9de164b8ac5bd21f2408f220f8d0e31fb993389030ec53e7d5e0",
+    "startedAfter": "2026-11-26T18:56:25.74285007Z",
+    "startedBefore": "2026-11-26T18:55:30.671666899Z",
+    "taskKeyspace": "g1-task-state",
+    "volume": "folders-g2-519fceddb8a674d7-data"
+  }
+}

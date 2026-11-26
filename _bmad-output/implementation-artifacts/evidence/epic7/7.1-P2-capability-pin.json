@@ -1,0 +1,225 @@
+{
+  "schema": "hexalith.projects.7-1-p2-capability-pin.v1",
+  "package": "7.1-P2",
+  "qualification": {
+    "contractVersions": {
+      "durableTask": "EventStore /internal/durable-tasks/v1 with numbered DurableTaskExecution",
+      "folderProvisioning": "hexalith.folders.provision-folder.v1"
+    },
+    "owners": {
+      "EventStore": {
+        "record": {
+          "path": "evidence/epic7/7.1-P2/eventstore-capability.json",
+          "sha256": "a2168c878cfc4534498191b0465080f8af7cb772058267e4faa1ed10f2ef33ed"
+        },
+        "revision": "df6a96ab2a5bae24fe5951eee5429bda223cc675"
+      },
+      "Folders": {
+        "record": {
+          "path": "evidence/epic7/7.1-P2/folders-capability.json",
+          "sha256": "9a8ca18961b6bb8e659773d0ed2b59305de0d6ab76ee8f2855a63986242c1c9b"
+        },
+        "revision": "bf60ba51e7e665cb99db353652c5a5b6112b9b5c"
+      },
+      "Platform": {
+        "record": {
+          "path": "evidence/epic7/7.1-P2/platform-capability.json",
+          "sha256": "8a0ecd1c963fb7c534539a9b4cc0237a6a0b92ff1ce7fcf96c8b9995fcdc73fe"
+        },
+        "revision": "80a60039b46ea6bdccd9eeac5091551bc59643fa"
+      }
+    },
+    "persistedCases": {
+      "admission": {
+        "commands": [
+          "run-with-temp bash \"/home/administrator/.local/state/hexalith-projects/7-1-p2-g1-approved-vySfbsep/replay.sh\" \"$PWD\" \"/home/administrator/.local/state/hexalith-projects/7-1-p2-g1-approved-vySfbsep\" \"<fresh-results-directory>\"",
+          "python3 -B \"/home/administrator/.local/state/hexalith-projects/7-1-p2-g1-approved-vySfbsep/verify-rehearsal.py\" \"/home/administrator/.local/state/hexalith-projects/7-1-p2-g1-approved-vySfbsep/verified-final\"",
+          "run-with-temp bash /home/administrator/.local/state/hexalith-projects/7-1-p2-folders-successor-publication-Mv9itxKM/replay/replay-deployment.sh /home/administrator/projects/hexalith/projects /home/administrator/projects/hexalith/folders /home/administrator/.local/state/hexalith-projects/7-1-p2-folders-successor-publication-Mv9itxKM/published /home/administrator/.local/state/hexalith-projects/7-1-p2-folders-successor-publication-Mv9itxKM/published-activation",
+          "python3 -B \"/home/administrator/.local/state/hexalith-projects/7-1-p2-folders-successor-publication-Mv9itxKM/replay/verify-results.py\" \"/home/administrator/.local/state/hexalith-projects/7-1-p2-folders-successor-publication-Mv9itxKM/published-activation\""
+        ],
+        "receipts": [
+          {
+            "path": "evidence/epic7/7.1-P2/g1-admission.xml",
+            "sha256": "5dca740baf3d70edd8d35038c127bdb6f8e4d4ec072acd75e481768e7bd21b8a"
+          },
+          {
+            "path": "evidence/epic7/7.1-P2/g1-native-state.json",
+            "sha256": "297e54ee60b5f47f0af930f3f14e4d2e831eb7c2ab018dd4478dbb0ae53da842"
+          },
+          {
+            "path": "evidence/epic7/7.1-P2/activation-before-restart.json",
+            "sha256": "22a843b0493debc062fec91f0bef99396efe59d52373dbe15f47686cadd5cf71"
+          },
+          {
+            "path": "evidence/epic7/7.1-P2/activation-before-restart.xml",
+            "sha256": "0605e199ce9c3abbd6ddbc52b4a7c80148b66dabd5eaa2eaf6d987df31f67c4a"
+          }
+        ],
+        "result": "passed"
+      },
+      "compensation": {
+        "commands": [
+          "run-with-temp bash /home/administrator/.local/state/hexalith-projects/7-1-p2-folders-successor-publication-Mv9itxKM/replay/replay-deployment.sh /home/administrator/projects/hexalith/projects /home/administrator/projects/hexalith/folders /home/administrator/.local/state/hexalith-projects/7-1-p2-folders-successor-publication-Mv9itxKM/published /home/administrator/.local/state/hexalith-projects/7-1-p2-folders-successor-publication-Mv9itxKM/published-activation",
+          "python3 -B \"/home/administrator/.local/state/hexalith-projects/7-1-p2-folders-successor-publication-Mv9itxKM/replay/verify-results.py\" \"/home/administrator/.local/state/hexalith-projects/7-1-p2-folders-successor-publication-Mv9itxKM/published-activation\""
+        ],
+        "disposition": "retain",
+        "receipts": [
+          {
+            "path": "evidence/epic7/7.1-P2/activation-after-restart.json",
+            "sha256": "505d15bd99ae413d5971802fbc4af82fef10099fb05092fb16fe637252cec1ff"
+          },
+          {
+            "path": "evidence/epic7/7.1-P2/activation-after-restart.xml",
+            "sha256": "ca740f0b06e2667f0cc03f46fcec4a4affeb48088837ad464db5c5b827903d3a"
+          }
+        ],
+        "result": "passed"
+      },
+      "provisioning": {
+        "commands": [
+          "run-with-temp bash /home/administrator/.local/state/hexalith-projects/7-1-p2-folders-successor-publication-Mv9itxKM/replay/replay-deployment.sh /home/administrator/projects/hexalith/projects /home/administrator/projects/hexalith/folders /home/administrator/.local/state/hexalith-projects/7-1-p2-folders-successor-publication-Mv9itxKM/published /home/administrator/.local/state/hexalith-projects/7-1-p2-folders-successor-publication-Mv9itxKM/published-activation",
+          "python3 -B \"/home/administrator/.local/state/hexalith-projects/7-1-p2-folders-successor-publication-Mv9itxKM/replay/verify-results.py\" \"/home/administrator/.local/state/hexalith-projects/7-1-p2-folders-successor-publication-Mv9itxKM/published-activation\""
+        ],
+        "receipts": [
+          {
+            "path": "evidence/epic7/7.1-P2/folders-published-archives.sha256",
+            "sha256": "6cb4347ca97ed287d7ac90cf57499b3c136c6996b5fddfa6a925ac7126615017"
+          },
+          {
+            "path": "evidence/epic7/7.1-P2/activation-before-restart.json",
+            "sha256": "22a843b0493debc062fec91f0bef99396efe59d52373dbe15f47686cadd5cf71"
+          },
+          {
+            "path": "evidence/epic7/7.1-P2/activation-before-restart.xml",
+            "sha256": "0605e199ce9c3abbd6ddbc52b4a7c80148b66dabd5eaa2eaf6d987df31f67c4a"
+          },
+          {
+            "path": "evidence/epic7/7.1-P2/activation-after-restart.json",
+            "sha256": "505d15bd99ae413d5971802fbc4af82fef10099fb05092fb16fe637252cec1ff"
+          },
+          {
+            "path": "evidence/epic7/7.1-P2/activation-after-restart.xml",
+            "sha256": "ca740f0b06e2667f0cc03f46fcec4a4affeb48088837ad464db5c5b827903d3a"
+          },
+          {
+            "path": "evidence/epic7/7.1-P2/activation-runtime-assemblies.sha256",
+            "sha256": "d5c9d23dd07e75bbd1ed305b4a5a01f96ad319b9561d5739fae7d64c0f334c10"
+          }
+        ],
+        "result": "passed"
+      },
+      "recovery": {
+        "commands": [
+          "run-with-temp bash \"/home/administrator/.local/state/hexalith-projects/7-1-p2-g1-approved-vySfbsep/replay.sh\" \"$PWD\" \"/home/administrator/.local/state/hexalith-projects/7-1-p2-g1-approved-vySfbsep\" \"<fresh-results-directory>\"",
+          "python3 -B \"/home/administrator/.local/state/hexalith-projects/7-1-p2-g1-approved-vySfbsep/verify-rehearsal.py\" \"/home/administrator/.local/state/hexalith-projects/7-1-p2-g1-approved-vySfbsep/verified-final\"",
+          "run-with-temp bash /home/administrator/.local/state/hexalith-projects/7-1-p2-folders-successor-publication-Mv9itxKM/replay/replay-deployment.sh /home/administrator/projects/hexalith/projects /home/administrator/projects/hexalith/folders /home/administrator/.local/state/hexalith-projects/7-1-p2-folders-successor-publication-Mv9itxKM/published /home/administrator/.local/state/hexalith-projects/7-1-p2-folders-successor-publication-Mv9itxKM/published-activation",
+          "python3 -B \"/home/administrator/.local/state/hexalith-projects/7-1-p2-folders-successor-publication-Mv9itxKM/replay/verify-results.py\" \"/home/administrator/.local/state/hexalith-projects/7-1-p2-folders-successor-publication-Mv9itxKM/published-activation\""
+        ],
+        "receipts": [
+          {
+            "path": "evidence/epic7/7.1-P2/g1-native-state.json",
+            "sha256": "297e54ee60b5f47f0af930f3f14e4d2e831eb7c2ab018dd4478dbb0ae53da842"
+          },
+          {
+            "path": "evidence/epic7/7.1-P2/g1-retained-runtime.xml",
+            "sha256": "1fbd2ad53d865d8a0e475580e9393ad4ee2a46acb95886f2a2879ee6fc3bdc9f"
+          },
+          {
+            "path": "evidence/epic7/7.1-P2/activation-before-restart.json",
+            "sha256": "22a843b0493debc062fec91f0bef99396efe59d52373dbe15f47686cadd5cf71"
+          },
+          {
+            "path": "evidence/epic7/7.1-P2/activation-after-restart.json",
+            "sha256": "505d15bd99ae413d5971802fbc4af82fef10099fb05092fb16fe637252cec1ff"
+          },
+          {
+            "path": "evidence/epic7/7.1-P2/activation-after-restart.xml",
+            "sha256": "ca740f0b06e2667f0cc03f46fcec4a4affeb48088837ad464db5c5b827903d3a"
+          }
+        ],
+        "result": "passed"
+      }
+    },
+    "rollback": {
+      "durableTask": {
+        "commands": [
+          "run-with-temp bash \"/home/administrator/.local/state/hexalith-projects/7-1-p2-g1-approved-vySfbsep/replay.sh\" \"$PWD\" \"/home/administrator/.local/state/hexalith-projects/7-1-p2-g1-approved-vySfbsep\" \"<fresh-results-directory>\"",
+          "python3 -B \"/home/administrator/.local/state/hexalith-projects/7-1-p2-g1-approved-vySfbsep/verify-rehearsal.py\" \"/home/administrator/.local/state/hexalith-projects/7-1-p2-g1-approved-vySfbsep/verified-final\""
+        ],
+        "receipts": [
+          {
+            "path": "evidence/epic7/7.1-P2/g1-native-state.json",
+            "sha256": "297e54ee60b5f47f0af930f3f14e4d2e831eb7c2ab018dd4478dbb0ae53da842"
+          },
+          {
+            "path": "evidence/epic7/7.1-P2/g1-retained-runtime.xml",
+            "sha256": "1fbd2ad53d865d8a0e475580e9393ad4ee2a46acb95886f2a2879ee6fc3bdc9f"
+          },
+          {
+            "path": "evidence/epic7/7.1-P2/g1-candidate-binaries.sha256",
+            "sha256": "601f0d0a50cc40d1c7aca9240c49cadca222cd5b2dab2c37fa2ec2819ccd277a"
+          }
+        ],
+        "result": "passed",
+        "revisions": {
+          "EventStore": "df6a96ab2a5bae24fe5951eee5429bda223cc675",
+          "Platform": "80a60039b46ea6bdccd9eeac5091551bc59643fa"
+        }
+      },
+      "folderProvisioning": {
+        "commands": [
+          "run-with-temp bash /home/administrator/.local/state/hexalith-projects/7-1-p2-folders-successor-publication-Mv9itxKM/replay/replay-deployment.sh /home/administrator/projects/hexalith/projects /home/administrator/projects/hexalith/folders /home/administrator/.local/state/hexalith-projects/7-1-p2-folders-successor-publication-Mv9itxKM/published /home/administrator/.local/state/hexalith-projects/7-1-p2-folders-successor-publication-Mv9itxKM/published-activation",
+          "python3 -B \"/home/administrator/.local/state/hexalith-projects/7-1-p2-folders-successor-publication-Mv9itxKM/replay/verify-results.py\" \"/home/administrator/.local/state/hexalith-projects/7-1-p2-folders-successor-publication-Mv9itxKM/published-activation\""
+        ],
+        "receipts": [
+          {
+            "path": "evidence/epic7/7.1-P2/activation-before-restart.json",
+            "sha256": "22a843b0493debc062fec91f0bef99396efe59d52373dbe15f47686cadd5cf71"
+          },
+          {
+            "path": "evidence/epic7/7.1-P2/activation-after-restart.json",
+            "sha256": "505d15bd99ae413d5971802fbc4af82fef10099fb05092fb16fe637252cec1ff"
+          },
+          {
+            "path": "evidence/epic7/7.1-P2/activation-after-restart-wire.json",
+            "sha256": "34fdb28f99b4932255c21772d73ffa75f2a2b0f2001e9670c8e0bc432df3edf2"
+          },
+          {
+            "path": "evidence/epic7/7.1-P2/activation-after-restart.xml",
+            "sha256": "ca740f0b06e2667f0cc03f46fcec4a4affeb48088837ad464db5c5b827903d3a"
+          },
+          {
+            "path": "evidence/epic7/7.1-P2/activation-topology.json",
+            "sha256": "434aa6771cee7d8f52a27dcd8ff74171604f6c20584d43bff4c77b9935c5e82c"
+          }
+        ],
+        "result": "passed",
+        "revisions": {
+          "Folders": "bf60ba51e7e665cb99db353652c5a5b6112b9b5c"
+        }
+      }
+    }
+  },
+  "decisions": {
+    "EventStore Owner": {
+      "path": "evidence/epic7/7.1-P2/decisions/eventstore-owner.json",
+      "sha256": "22740d261b90187a3e982c548321d75dffd41557ce71ed02249b16899d5db083"
+    },
+    "Platform Owner": {
+      "path": "evidence/epic7/7.1-P2/decisions/platform-owner.json",
+      "sha256": "f1a9d888229b300b405ae5eb8f95f4178dfe60e48e5ba99ecc47331754dfaba2"
+    },
+    "Folders Owner": {
+      "path": "evidence/epic7/7.1-P2/decisions/folders-owner.json",
+      "sha256": "42cb351f548be1dbe82656a056d30e76864089a165eb86a5cf15a2e71ad10b0d"
+    },
+    "Solution Architect": {
+      "path": "evidence/epic7/7.1-P2/decisions/solution-architect.json",
+      "sha256": "04624177bc6d64572316f1257a4cae942636b0636f1ea8338848c3dc76ff7603"
+    },
+    "Test Architect": {
+      "path": "evidence/epic7/7.1-P2/decisions/test-architect.json",
+      "sha256": "b6a8dd7d9378ca19ea9cd2fea5eb5305ae4daba30135b292d6f07db4511ff829"
+    }
+  }
+}
