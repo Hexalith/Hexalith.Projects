@@ -43,6 +43,16 @@ context: []
   - Folders `d56e868fd38c1c84f447180b8bfbe525235220f7` has `src/Hexalith.Folders.Contracts/Commands/CreateFolder.cs` and `FoldersDomainServiceEndpoints.CreateFolderAsync`. Generic creation lacks the expected version and sole-manager access mode. `FolderOwnerReadQueryHandler` supplies delegated metadata read authority. Folders workspace task status covers workspace operations. Provisioning still needs its own authoritative receipt, read/manage proof and compensation disposition.
 - `evidence/epic7/7.1-P1-creation-contract-pin.json` shows how to record revisions, commands, hashes and dated decisions. Its HTTP acceptance covers the creation contract and submitter call.
 
+## Authenticated lookup slice (2026-11-26)
+
+The user approved `DurableTaskExecution` for the G-1 authenticated host and requested this slice stop after the committed-step lookup is verified. The broader package below stays open.
+
+- [x] Update [the EventStore G-1 decision](../../references/Hexalith.EventStore/docs/architecture/g1-durable-task-scope-decision.md) with the approval, numbered step model, lookup contract and remaining G-1 work.
+- [x] In EventStore `src/Hexalith.EventStore.DomainService/DurableTasks/`, expose an opt-in, versioned POST owned by the G-1 host using the existing EventStore workload assertion and Dapr channel authentication. Use a dedicated workload operation and exact signed Tenant and target domain. Require a host-registered grant keyed by workload, admission operation, step number and target domain. Bind the concrete target to the committed step by checking it against host-owned target derivation, using the committed admission and canonical step. Never select a grant or actor from a caller's unverified identity. Keep Folder-specific identity derivation in the registering host/owner.
+- [x] Use `DurableTaskAdmission.ResolveStepAsync` to return only the relevant committed Tenant, original actor, admission operation, request digest, task, canonical step key and receipt/state. Require the presented normalized digest to match the admission and withhold the binding if the scope, target or digest does not match. Check the presented positive fence against the current persisted fence after scoping. Stale fence refusal must disclose no binding or current fence. A committed receipt is recoverable under the current fence without authorizing execution again. A pending step only authorizes execution where the committed state accepts it. Ensure the numbered lookup does not reinterpret a legacy named `DurableTaskRecovery` step. Folders must independently re-evaluate the original actor's current authority and deduplicate the effect by task-step key.
+- [x] In EventStore `tests/Hexalith.EventStore.DomainService.Tests/DurableTasks/`, exercise the real opt-in HTTP route with signed assertions against the existing Platform `probe_state_store.py --native-execution` phases. Given a persisted pending step and a scoped caller, the route returns the original admission and accepts only the current fence. Given a wrong workload, Tenant, target, operation, step or digest, it discloses no binding. Given takeover after restart, the stale fence is refused, the replacement fence recovers the same receipt with execution disabled once checkpointed, and the owner row shows no duplicate effect. Keep the existing local crash-recovery assertion patch byte-for-byte. Retain the native XML and exact source overlay and command receipts.
+- [x] Record the exact revisions, commands, results and receipt hashes in this spec. End this slice with the spec in progress and 7.1-P2 open for runtime qualification, Folder provisioning, rollback evidence and owner acceptance. Preserve the package matrix below as outstanding acceptance criteria.
+
 ## Tasks & Acceptance
 
 **Execution**
@@ -71,12 +81,12 @@ context: []
 - The G-1 execution candidate is committed at EventStore `be511806116666bb0a6d6b374f461b23449b2a4f` and Platform `7b4cc72203cf4dd4ab5f31e33b9fc5f981e30dc5`, which Projects `602816fc5f3bb206beafcbf5a61eed0a43b75416` pins. EventStore persists the lease fence, checkpoint, pending owner step and receipt identifiers on the admission row. It resolves the stable task-step key through the owner before invoking a step and fences automatic execution when the owner reports an unresolved partial effect. Current authority gates scoped progress reads. Platform runs the two execution phases as separate native test processes and restarts Redis and both Dapr sidecars between them.
 - The reviewed G-1 lifecycle candidate is committed at EventStore `388b0ad679d7f9404e10669dd1238381157259c9`. The admission row records the eight-state lifecycle, and a persisted state outside it fails closed. Owner failures record `WaitingForDependency`. A terminal outcome requires the current lease and no pending step, and it stays immutable. Cancellation fences the worker and keeps committed receipts. It is refused once an irreversible step may have reached its owner, and while another step is in flight unless the task is in `NeedsAttention`. Status and cancellation by task ID reauthorize the original scope, and a worker can acquire its lease from a scheduled task ID. [EventStore lifecycle candidate](../../references/Hexalith.EventStore/docs/architecture/g1-durable-task-scope-decision.md#execution-and-lifecycle-candidate)
 - The next G-1 slice is committed at EventStore `ea3ca6ec2457e88765ac90060952039fdf4d6402` over `8e205908765dac0358c92f65058ea05b231287a0`. Projects pins its merge with EventStore main, `a0026dc8caaa4aac50fd010cf831f2376aba15f9`. An owner can report an authoritative refusal, which ends the task as `Rejected` with no pending step. Each attempt at a pending step is charged against the runtime's budget when it starts, including attempts that outlive their lease or are abandoned. A spent budget moves the task to `NeedsAttention`, so it can be cancelled before its irreversible checkpoint. `ResolveStepAsync` implements the committed step lookup selected for delegated steps. It returns the admission, fence, status and receipt of a started step and accepts execution only under the current fence. `IDurableTaskEffect.ExecuteAsync` now returns the same outcome and receipt pair as the lookup. Race tests cover cancellation against step start, lease acquisition and completion. [EventStore lifecycle candidate](../../references/Hexalith.EventStore/docs/architecture/g1-durable-task-scope-decision.md#execution-and-lifecycle-candidate)
-- G-1 still needs authenticated task routing, including the route for the committed step lookup, a scheduler with durable discovery, reconciliation from `NeedsAttention`, admission and index retention, an owner-selected operating envelope with the failure budget value, and exercised rollback. G-2 can reuse the Folder stream's absent-stream commit, ACL projection and current owner-read seams. On 2026-11-25 EventStore, Platform and Folders selected the committed admission lookup to bind the original actor for delegated steps. Folders kept display names non-unique, so a collision is an existing Folder at the derived identity or a changed request under the same step key. Its rollback after restricted provisioning is forward-only. [EventStore](../../references/Hexalith.EventStore/docs/architecture/g1-durable-task-scope-decision.md#original-actor-binding-2026-11-25) · [Platform](../../references/Hexalith.Platform/docs/implementation/g1-durable-task-scope-decision.md#original-actor-binding-2026-11-25) · [Folders](../../references/Hexalith.Folders/docs/governance/g2-folder-provisioning-scope-decision.md#decisions-2026-11-25) The approved scope specifies retaining the Folder and receipt for unresolved activation.
+- G-1 still needs authenticated admission, confirmation, task status and cancellation routes, a scheduler with durable discovery, reconciliation from `NeedsAttention`, admission and index retention, an owner-selected operating envelope with the failure budget value, and exercised rollback. G-2 can reuse the Folder stream's absent-stream commit, ACL projection and current owner-read seams. On 2026-11-25 EventStore, Platform and Folders selected the committed admission lookup to bind the original actor for delegated steps. Folders kept display names non-unique, so a collision is an existing Folder at the derived identity or a changed request under the same step key. Its rollback after restricted provisioning is forward-only. [EventStore](../../references/Hexalith.EventStore/docs/architecture/g1-durable-task-scope-decision.md#original-actor-binding-2026-11-25) · [Platform](../../references/Hexalith.Platform/docs/implementation/g1-durable-task-scope-decision.md#original-actor-binding-2026-11-25) · [Folders](../../references/Hexalith.Folders/docs/governance/g2-folder-provisioning-scope-decision.md#decisions-2026-11-25) The approved scope specifies retaining the Folder and receipt for unresolved activation.
 - The package requires immutable owner capability records, the full persisted matrix and rollback, and all five hash-bound acceptance decisions before linking a pin.
 
 - EventStore main also carries a parallel one-task crash recovery slice, `3475b097857b71d4cc25d53f0dce810e7a7fc928`, with `DurableTaskRecovery` and a prepared step on the same admission row. Its live test `WorkerCrashResumesCommittedCheckpointWithOneOwnerEffect` already fails at EventStore `9d24e05d8` before the merge, because it compares `ImmutableArray` receipts by reference. The merged tree builds with zero warnings, all 87 non-live Durable Task tests pass, and the five other admission live tests and both execution phases pass. The decision record lists the choice of one step-execution path as still open.
 
-- The live crash rehearsal now passes with an EventStore test assertion change. `DurableTaskRecovery` prepares a named step with a hashed key. `ResolveStepAsync` parses the numbered keys used by `DurableTaskExecution` and reads progress from the shared task row. G-2 needs a selected step model and authenticated lookup to derive the stable Folder identity and verify the admitted actor and request. The owner entry point needs a create-only commit that retains the restricted ACL and receipt with the Folder history. [EventStore crash test](../../references/Hexalith.EventStore/tests/Hexalith.EventStore.DomainService.Tests/DurableTasks/DurableTaskAdmissionLiveTests.Recovery.cs) · [Folders scope decision](../../references/Hexalith.Folders/docs/governance/g2-folder-provisioning-scope-decision.md)
+- The live crash rehearsal now passes with an EventStore test assertion change. `DurableTaskRecovery` prepares a named step with a hashed key. `ResolveStepAsync` parses the numbered keys used by `DurableTaskExecution` and reads progress from the shared task row. The 2026-11-26 lookup slice selects the numbered step model and exposes the authenticated lookup for G-2 to verify the admitted actor and request. The owner entry point needs a create-only commit that retains the restricted ACL and receipt with the Folder history. [EventStore crash test](../../references/Hexalith.EventStore/tests/Hexalith.EventStore.DomainService.Tests/DurableTasks/DurableTaskAdmissionLiveTests.Recovery.cs) · [Folders scope decision](../../references/Hexalith.Folders/docs/governance/g2-folder-provisioning-scope-decision.md)
 
 ## Spec Change Log
 
@@ -175,3 +185,155 @@ Design gaps whose fix needs new contract surface went to the G-1 Still open list
 - With that slice applied to EventStore `8e205908765dac0358c92f65058ea05b231287a0` in the umbrella checkout and an isolated NuGet cache, the Debug source-mode build had zero warnings and errors. The five focused classes passed 70 tests: 4 admission, 4 execution, 44 lifecycle, 13 step-binding and 5 cancellation-race tests. The probe passed 5 live admission tests, including the new step-binding case, and both execution phases with zero skips. The full DomainService.Tests assembly ran 1,521 tests with the same 11 `DomainModuleAuthoringGuardrailTests` failures and 8 skips; the eighth skip is the new live case outside the fixture. Native XML is in `~/.local/state/hexalith-projects/7-1-p2-g1-binding-htx5pzy8/`.
 - After the review fixes, the six focused classes passed 83 tests, adding 7 failure-budget tests and 6 off-graph rows. The probe again passed 5 live admission tests and both execution phases with zero skips. Native XML is in `~/.local/state/hexalith-projects/7-1-p2-g1-budget-ny0k27ag/`. The full assembly was not rerun.
 - In two detached `run-with-temp` checkouts of Projects `928f66f552c041efa306a445587a6ae9a9fb5486`, Platform's `probe_state_store.py --native-execution` exited 1 on the clean EventStore `a0026dc8caaa4aac50fd010cf831f2376aba15f9` test build at the final receipt comparison, then passed with the assertion patch applied. The patched build had zero warnings and errors. All 87 focused Durable Task tests, 6 live admission and crash cases, and both execution phases around a Redis and Dapr restart passed with zero skips. The fixture used a test owner and test authority. Its persisted rows show one owner effect, a byte-identical task row and ETag after a stale attempt, and a matching receipt recovered through lookup. The test patch SHA-256 is `4def9a247bf42cb5da0b7a3d688b2e37502f309fe1890db0d40254ed4fd566ed` and the persisted recovery receipt SHA-256 is `e55ae8d61ca6a6ae9dbc53e62f85d29a98a85b247eeb792c4915388d83cdba20`. Native XML, the patch and its retained receipt are in `~/.local/state/hexalith-projects/7-1-p2-g1-crash-fix-aJNdrmHb/`. The active index and the isolated open tracker passed. The isolated tracker marked done with no pin was rejected with exit 1. The guard suite passed 60 tests and 442 subtests.
+
+
+### Authenticated lookup verification (2026-11-26)
+
+The opt-in EventStore route `POST /internal/durable-tasks/v1/steps/lookup` requires a signed workload assertion, the Dapr application-channel token and a host grant for the committed operation, numbered step and target domain. It checks the asserted Tenant, the request digest and the derived target against the committed admission before checking the persisted fence. It returns the original actor from the admission. Valid-workload scope mismatches and stale fences return an empty HTTP 404. [EventStore decision](../../references/Hexalith.EventStore/docs/architecture/g1-durable-task-scope-decision.md#authenticated-committed-step-lookup-2026-11-26)
+
+| Source input | Verified revision |
+| --- | --- |
+| Projects | `4d740a889787bb095b16303ed749ec7f165e5683` |
+| EventStore gitlink at that Projects revision | `a0026dc8caaa4aac50fd010cf831f2376aba15f9` |
+| EventStore compiled source | `521bc1b75f84a24fd5e12f0029221f1e34e2c4de` plus the retained lookup patch |
+| Platform | `3e83dfb961f4da617cc41f0f3a3bb453717c9d45` |
+| Builds | `a6abb7908ec38dcb3fbd99d69e7ed29ae25794d2` |
+| Commons | `0a1d70723b2d112690aa06e6e6a207459cfa2e0f` |
+| Tenants | `d34f353abb59213ac021e81da6885b78ee3231fd` |
+
+EventStore `521bc1b75f84a24fd5e12f0029221f1e34e2c4de` contains the previously local crash assertion fix. Its diff from the Projects gitlink for the crash test has the original SHA-256 `4def9a247bf42cb5da0b7a3d688b2e37502f309fe1890db0d40254ed4fd566ed`. The lookup patch leaves that test file byte-identical. Its source SHA-256 is `aa929c75be5142940ad9a70e2e5b70e05dccbf8fb5103dca33eaa705afc74a96`.
+
+The fixture script SHA-256 is `33f8607bb9b7005760ae588883c80c649c80a393473fbe413ab89c0b0e789ce7`. The .NET SDK was `11.0.100`. The two Dapr 1.19.2 sidecars used `daprio/daprd@sha256:ed471547b67db50c831d498b8ee861822fb037d9d594c38ac299546b425f575a` and shared append-only Redis using `redis@sha256:7f7d30b7fdd09467bac58198a1f166dd69789d348d4fe859cccb20e0cf287fbe`. The native runner image was `mcr.microsoft.com/dotnet/sdk@sha256:65f3c7c6a25a239ab3e6719f2896147e7b68242ff2d8818dd70498bde6ef8bea`. The provider probe used `python@sha256:4766d8b510c428e595d74b9cc5bbb2fae8e26316fffb4adc89908d79aacd58a2`.
+
+From the Projects root, the retained replay script cloned the exact coordinates into `$TMPDIR`, applied the EventStore patch, built the test project and ran the focused and persisted lanes. All commands below exited 0. The retained directory is local to the verification workspace. Use a copy of the script and patch in a fresh evidence directory to preserve the original receipts during a replay.
+
+```bash
+evidence="$HOME/.local/state/hexalith-projects/7-1-p2-g1-auth-5rgAIUbf"
+run-with-temp bash "$evidence/replay.sh" "$PWD" "$evidence"
+python3 "$evidence/verify-receipts.py" "$evidence"
+run-with-temp env PYTHONDONTWRITEBYTECODE=1 python3 tools/planning/validate_production_authority.py --validate-index
+run-with-temp env PYTHONDONTWRITEBYTECODE=1 python3 -m pytest tests/tools/test_production_authority_guard.py -q -p no:cacheprovider
+```
+
+The replay ran these checks from the detached EventStore checkout.
+
+```bash
+project=tests/Hexalith.EventStore.DomainService.Tests/Hexalith.EventStore.DomainService.Tests.csproj
+dotnet build "$project" --configuration Debug --artifacts-path "$TMPDIR/artifacts" -p:UseHexalithProjectReferences=true -m:1
+assembly="$TMPDIR/artifacts/bin/Hexalith.EventStore.DomainService.Tests/debug/Hexalith.EventStore.DomainService.Tests.dll"
+dotnet "$assembly" -class "*DurableTaskAdmissionTests" -class "*DurableTaskExecutionTests" \
+    -class "*DurableTaskLifecycleTests" -class "*DurableTaskStepBindingTests" \
+    -class "*DurableTaskCancellationRaceTests" -class "*DurableTaskFailureBudgetTests" \
+    -class "*DurableTaskRecoveryTests" -failSkips -result-xml "$evidence/focused.xml"
+python3 ../Hexalith.Platform/eng/durable-task-qualification/probe_state_store.py --native-execution "$assembly" --evidence-directory "$evidence"
+```
+
+The Debug build had zero warnings and errors. The focused lane passed 87 tests. The persisted lane passed six admission and crash cases and both restart phases, with zero skips. The real endpoint used ASP.NET TestServer with fixture-signed workload assertions and the application-channel token. Its task and owner reads used the persisted Dapr/Redis store. The Projects index returned `[6, 7, 8]` with 7.1-P2 open, and its guard suite passed 60 tests and 442 subtests.
+
+| Persisted lookup | Verified result |
+| --- | --- |
+| Committed binding | Tenant `tenant`, actor `original-actor`, operation `sample.provision@1`, request SHA-256 `aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa`, task `01M8AH0AXBMS3SAX5FZHFPG761`, step `01M8AH0AXBMS3SAX5FZHFPG761/step/2`. |
+| Before restart | Fence `1` returned HTTP 200 and accepted the pending step. Wrong workload scope, Tenant, target, operation, step and digest returned empty HTTP 404 responses. The named recovery step remained inaccessible to the numbered route both before and after its receipt was committed. |
+| After takeover, step still pending | Fence `1` returned an empty HTTP 404. Fence `2` returned HTTP 200 with the same committed binding and accepted execution. |
+| After receipt recovery | Fence `2` returned `receipt-2` with execution disabled. The owner row and ETag `1` matched across both replicas and across restart. The replacement worker recovered the committed owner reply by lookup and executed no duplicate effect. |
+
+| Retained artifact | SHA-256 |
+| --- | --- |
+| `eventstore-lookup.patch` | `b75fe1681d0b515ba53c027ee095306a97d7c0af9acadcec4e0a3896560c198d` |
+| `replay.sh` | `9009ca6f07a52a8dc3677918c93b8431c1b4b56c71521aa4a7cda1b6b7976e8e` |
+| `verify-receipts.py` | `126a395338e39431cd6dc70ec345f5bb26cde9671d265d836b8b1a25053f3b7b` |
+| `authenticated-lookup-receipt.json` | `1143fef1e2dc167f39a1e5fbc7d6156b6cc42874aeb218e50401bdfd531e007b` |
+| `execution-before-restart.xml` | `1e0a773b40972b0e172e4a0b2dde48640f3cfe5dcf88104d206039ce0c6fa3a3` |
+| `execution-after-restart.xml` | `548ce1259e2df98aea2cc6c91452af42d7ac9fac9cfce8d0e2cc8681cc40da70` |
+| `admission.xml` | `6c2316bd6cc0b8d72a0f0fb3323626705664c11b6161d4ff6c869a41a5221202` |
+| `focused.xml` | `52101da96fc80b046636e8d9ec6af2b17cef8105b1010cd969fc763069176e9e` |
+| `recovery-receipt.json` | `f4b3f19eae0c594d01804f62723f46b07c59b9b199eb47cf03a5c843bd6b3d43` |
+| `probe.log` | `88d78bad4840ce395365723a10b62c5a3c839970dbf1cad082dc43cada6794e7` |
+
+The replay bundle also retains `build.log`, `revisions.txt`, the Projects guard logs and `sha256.txt`. The lookup slice is verified. 7.1-P2 stays in progress and its tracker remains open for runtime qualification, Folder provisioning, exercised rollback and owner acceptance.
+
+### Authenticated lookup through Dapr service invocation (2026-11-26)
+
+The isolated G-1 lookup host uses the EventStore decision's numbered `DurableTaskExecution` lookup, the shared HTTP security boundary and a single synthetic owner domain. The Platform runner places the lookup host, issuer, Redis and both Dapr sidecars on a private Docker network with no published ports. The owner sidecar `sample-owner` calls `POST /v1.0/invoke/g1-tasks/method/internal/durable-tasks/v1/steps/lookup`. The `g1-tasks` sidecar supplies its configured `APP_API_TOKEN` to the lookup application. The client obtains RS256 assertions from the separate HTTPS EventStore workload-binding issuer at `https://g1-issuer:8443/workload-authority`, using client credentials and exact resource claims. The client and receiver trust the fixture CA and independently validate the issuer's signing key. [G-1 lookup host](../../references/Hexalith.EventStore/tests/Hexalith.EventStore.DurableTaskLookupHost/Program.cs) · [Platform runner](../../references/Hexalith.Platform/eng/durable-task-qualification/probe_state_store.py)
+
+The fixture used a synthetic owner and a 30-second lease on a controlled UTC clock. Both sidecars shared a component-name Redis keyspace with append-only persistence and synchronous fsync. Dapr peer mTLS was disabled inside the private network.
+
+| Source input | Verified revision |
+| --- | --- |
+| Projects | `4d740a889787bb095b16303ed749ec7f165e5683` |
+| Projects EventStore gitlink | `a0026dc8caaa4aac50fd010cf831f2376aba15f9` |
+| EventStore | `521bc1b75f84a24fd5e12f0029221f1e34e2c4de` |
+| Builds | `a6abb7908ec38dcb3fbd99d69e7ed29ae25794d2` |
+| Commons | `0a1d70723b2d112690aa06e6e6a207459cfa2e0f` |
+| Tenants | `d34f353abb59213ac021e81da6885b78ee3231fd` |
+| Platform | `3e83dfb961f4da617cc41f0f3a3bb453717c9d45` |
+
+The replay applied the existing `eventstore-lookup.patch` byte-for-byte, then the retained EventStore runtime overlay and the Platform runtime overlay. The crash-recovery assertion source matched SHA-256 `aa929c75be5142940ad9a70e2e5b70e05dccbf8fb5103dca33eaa705afc74a96`. Its diff from the Projects-pinned EventStore gitlink still hashes to `4def9a247bf42cb5da0b7a3d688b2e37502f309fe1890db0d40254ed4fd566ed`.
+
+| Runtime | Version and image |
+| --- | --- |
+| Dapr sidecars | `1.19.2`, `daprio/daprd@sha256:ed471547b67db50c831d498b8ee861822fb037d9d594c38ac299546b425f575a` |
+| Redis | `7.4.12`, `redis@sha256:7f7d30b7fdd09467bac58198a1f166dd69789d348d4fe859cccb20e0cf287fbe` |
+| .NET build and native host | SDK `11.0.100`, .NET and ASP.NET Core `11.0.0`, `mcr.microsoft.com/dotnet/sdk@sha256:65f3c7c6a25a239ab3e6719f2896147e7b68242ff2d8818dd70498bde6ef8bea` |
+| Provider probe container | Python 3.12.13, `python@sha256:4766d8b510c428e595d74b9cc5bbb2fae8e26316fffb4adc89908d79aacd58a2` |
+
+Host tools were Docker client and server `29.8.2`, Python `3.14.4` and OpenSSL `3.5.5`. The effective Platform runner SHA-256 was `3fd2bb7a131ee5754262fe0c4cf6b2a7125305687832f4e8b96dbbaa1169e76b`.
+
+The commands ran from the Projects root. For a repeat run, set `results` to a fresh directory to retain these receipts.
+
+```bash
+bundle="$HOME/.local/state/hexalith-projects/7-1-p2-g1-runtime-bIZ3ZPFD"
+results="$bundle/verified"
+run-with-temp bash "$bundle/replay-runtime.sh" "$PWD" "$bundle" "$results"
+python3 "$bundle/verify-runtime-receipts.py" "$results"
+docker run --rm --pull never --network none python@sha256:4766d8b510c428e595d74b9cc5bbb2fae8e26316fffb4adc89908d79aacd58a2 python --version
+run-with-temp env PYTHONDONTWRITEBYTECODE=1 python3 tools/planning/validate_production_authority.py --validate-index
+run-with-temp env PYTHONDONTWRITEBYTECODE=1 python3 -m pytest tests/tools/test_production_authority_guard.py -q -p no:cacheprovider
+```
+
+The replay applied the overlays in detached local checkouts and ran the following commands from EventStore. The runner evidence retains each sidecar's container identifier, Redis start timestamps, HTTPS discovery and the results of the named Dapr health invocation before and after restart.
+
+```bash
+for name in Hexalith.EventStore.DurableTaskLookupHost Hexalith.EventStore.DomainService.Tests; do
+    dotnet build "tests/$name/$name.csproj" --configuration Debug --artifacts-path "$TMPDIR/artifacts" \
+        -p:UseHexalithProjectReferences=true -m:1
+done
+tests=Hexalith.EventStore.DomainService.Tests
+host=Hexalith.EventStore.DurableTaskLookupHost
+assembly="$TMPDIR/artifacts/bin/$tests/debug/$tests.dll"
+lookup_host="$TMPDIR/artifacts/bin/$host/debug/$host.dll"
+dotnet "$assembly" -class "*DurableTaskAdmissionTests" -class "*DurableTaskExecutionTests" \
+    -class "*DurableTaskLifecycleTests" -class "*DurableTaskStepBindingTests" \
+    -class "*DurableTaskCancellationRaceTests" -class "*DurableTaskFailureBudgetTests" \
+    -class "*DurableTaskRecoveryTests" -failSkips -result-xml "$results/focused.xml"
+python3 ../Hexalith.Platform/eng/durable-task-qualification/probe_state_store.py \
+    --authenticated-lookup "$assembly" --lookup-host "$lookup_host" --evidence-directory "$results"
+```
+
+Both builds reported zero warnings and errors. The replay passed 87 focused tests, two native execution phases and six native admission and crash-recovery tests, with zero failures or skips. The Projects authority index passed with `[6, 7, 8]`, and its guard suite passed 60 tests and 442 subtests.
+
+| Runtime check | Verified result |
+| --- | --- |
+| Authorized owner before the effect | HTTP 200 returned Tenant `tenant`, original actor `original-actor`, operation `sample.provision@1`, request SHA-256 `aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa`, task `01M8AJJBDA94DA9GXDSN2K0RZX` and step `01M8AJJBDA94DA9GXDSN2K0RZX/step/2`. Fence 1 accepted execution with a pending step and no task-side receipt. |
+| Scope and credential refusals | A signed workload that disagreed with Dapr's attributed caller and a workload outside the receiver's allow-list each returned empty 401. Wrong Tenant, signed domain, target domain and concrete target ID each returned empty 404. Missing app-channel token and missing assertion each returned empty 401. The wrong assertion operation returned empty 403. The runtime also refused wrong admission operation, step and digest and the legacy named recovery binding. |
+| Redis restart and takeover | Redis restarted on the same retained store and both sidecar container identities changed. The replacement worker acquired fence 2. While the step was still pending, fence 1 returned empty 404 and fence 2 returned HTTP 200 with the same binding and execution permitted. |
+| Receipt recovery | The replacement worker resolved `receipt-2` through the owner lookup and made zero owner execution calls. Both sidecars read the same owner row, with the same value and ETag `1` before and after restart. The lookup then returned that receipt under fence 2 with execution disabled. SHA-256 of the UTF-8 receipt ID is `774ad7ab1a3d41b114b5f4a34e2d8fc19c2ee8d83dfc133f1d80068ed205597f`. |
+
+| Retained artifact | SHA-256 |
+| --- | --- |
+| `eventstore-lookup.patch` | `b75fe1681d0b515ba53c027ee095306a97d7c0af9acadcec4e0a3896560c198d` |
+| `eventstore-runtime.patch` | `23cbc3ff130600be1329441e67b5deb4210818de30e96ef9adf9852abadec77b` |
+| `platform-runtime.patch` | `6df5220f4f4755711c71a52673e87b58ede51ac18b7c20c5043818e6eacc08ec` |
+| `replay-runtime.sh` | `d0a83906f40e9b60efda1286e5b27d18769e5debd2638334c6b925874dcadba2` |
+| `verify-runtime-receipts.py` | `9188416f33ebd5063098b3ddeb487cc3cbe32874c8738aaf5bc2f674ee4ecbb9` |
+| `verified/runtime-lookup-receipt.json` | `93842e6a4ea69932a323f08889939524b53c7dc41f6748d86f8715369b0edaeb` |
+| `verified/runtime-topology.json` | `fa1f6f724a644c1735460ae30c98c2f454b2e9d95c4a28a0fbe368543f36df51` |
+| `verified/crash-recovery-receipt.json` | `6fecd1dd32751b90c90a1bbb957f9be81a18504926d740523713a7a1ff5dcddd` |
+| `verified/execution-before-restart.xml` | `803e87e9d0d0c8035b0eb0c4ae542ffb647cd2b3ca9248e4a179096e79159de5` |
+| `verified/execution-after-restart.xml` | `a2d4fb069c301fdd8bf8bcb8966d6241a059ac4dc98e3c65ca860f93f3488d27` |
+| `verified/admission.xml` | `5efac0a2a5f60539128b4dfda9b7ead88c1181127b7e5a27c72cde8ec4a756f5` |
+| `verified/focused.xml` | `f7fcd56000eba01b62ba81517ade6088404f25e653b25fed660accf9e156f2c5` |
+| `verified/lookup-host.log` | `501da059648a95c7fc1988acdf44de8ad7c6582a976df671bb1ad6a26717310e` |
+| `verified/probe.log` | `1b7fdf81e8e208485ecf8895bba8d3f889db0db8b81ef0e6bb08215cf0f8a834` |
+
+The replay bundle retains the build logs, process logs, tool versions and full hash manifest. The authenticated lookup runtime slice is verified. 7.1-P2 stays in progress and its tracker stays open for the remaining G-1 runtime work, Folder provisioning, exercised rollback and owner acceptance.
