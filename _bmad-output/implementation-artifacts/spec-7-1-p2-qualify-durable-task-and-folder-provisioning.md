@@ -629,3 +629,68 @@ The evidence bundle is `~/.local/state/hexalith-projects/7-1-p2-g2-candidate-8ga
 | `deployment/native/topology.json` | `16a11ed8566f1e70237ad04f8524a039f1b4dd3c3b12cff267e0032c38fb624e` |
 
 The released provisioning artifact, deployed workload enrollment, combined capability pin and five acceptance records are pending. **7.1-P2 remains open and Story 7.1 remains blocked pending package acceptance.**
+
+### G-2 requalification on the landed corrections (2026-11-26)
+
+Projects `ae081d712fda9426f4b81da2734c631a2a8a14e2` now pins the landed EventStore and Folders corrections. The isolated replay selected those commits and EventStore's Builds, Commons and Tenants inputs from local Git objects, with the other inputs from the documented Projects base. The full tuple is in `source/revisions.txt`.
+
+| Input | Replay revision |
+| --- | --- |
+| Projects | `685eb6c3476c472573f9e223e37e3fd61859a25c` |
+| EventStore | `df6a96ab2a5bae24fe5951eee5429bda223cc675` |
+| Folders | `c00bad4d364dc25800cf9dc41220c1eba512fed9` |
+| Builds | `deccbc3bcf4ed687ecf4d556ebe356fe57148777` |
+| Commons | `59c22162e6b54a39864dbc5f0ba76056045a411f` |
+| Tenants | `067ac3fec62b0a607bb512bd75cb1ca0fd780ae7` |
+| Platform | `80a60039b46ea6bdccd9eeac5091551bc59643fa` |
+
+The replay ran from the Projects root. For another run, copy the scripts, `source/` and `harness/` to a fresh evidence directory as described in `README.md`.
+
+```bash
+bundle="$HOME/.local/state/hexalith-projects/7-1-p2-g2-reviewed-4VVV9gV0/landed"
+run-with-temp bash "$bundle/replay-package.sh" "$PWD" "$bundle"
+run-with-temp bash "$bundle/replay-gateway.sh" "$PWD" "$bundle/gateway"
+run-with-temp bash "$bundle/replay-pushed.sh" "$PWD" "$bundle/persisted"
+run-with-temp bash "$bundle/replay-deployment.sh" "$PWD" "$bundle/deployment"
+run-with-temp bash "$bundle/replay-index.sh" "$PWD"
+python3 "$bundle/verify-results.py" "$bundle"
+(cd "$bundle" && sha256sum --check sha256.txt)
+```
+
+The EventStore Debug build passed with zero warnings and errors. All 162 focused EventStore tests, 106 focused Folders Server tests, one direct mutation freeze test, 43 Folders catalog tests and four native restart phases passed with zero skips. The Folders Release package-mode build passed. The active and isolated authority indices returned `[6, 7, 8]`, and the guard passed 60 tests and 442 subtests. The two Release packages at `2.2.0-g2.c00bad4d` name the landed Folders revision in their NuGet manifests, and the deployed extension and Contracts assemblies match the package archives.
+
+Each native lane recovered its original Folder receipt and preserved the version-3 Folder history, native proof, ACL and incumbent Folder history across the Redis restart. Fence 1 was refused with 404 and fence 2 recovered the receipt with zero new owner executions. In the packaged lane, the frozen owner callback and signed workload submission both returned 503. The gateway body used the canonical `service-unavailable` problem type, with `read_model_unavailable`, `metadata_only` and no `detail`. The fixtures used the prior pinned .NET, Dapr and Redis images on private networks with fixture-signed workload assertions.
+
+| Retained artifact | SHA-256 |
+| --- | --- |
+| `gateway/focused.xml` | `ff235a6b760e87e6757b7a026b46a0383bea82aa5c7c12b73edad97d511d5b5e` |
+| `persisted/native/before-restart.json` | `807ffc454d416de72d239a78aa603b40d662477a80873e488de9f7666b3ae5d9` |
+| `persisted/native/after-restart.json` | `3fee2c1adc07db92144499bd389bef77b2c7dfcc1e660cac5de2e49fd4a6ab13` |
+| `deployment/native/before-restart.json` | `cb20423d281d9d583a0355d2bca929ec50c450448a7e843f45a6fc97dc8d3d23` |
+| `deployment/native/after-restart.json` | `7b2d52ad740961ef2a3a04cfb68a7b1416182d88bf5cb00b20505ae2d9521645` |
+
+The 86-file manifest verified at SHA-256 `623f69e759ec76475b72c1916a07bef58b4cf76c4f572d5f7dc9f86449c0c801`. It includes the package archives, full source tuple, replay commands, native XML, topology, runtime assembly hashes and wire receipts.
+
+**7.1-P2 remains open.** Package acceptance still needs the owner-selected G-1 runtime and exercised retained-store rollback, the released G-2 artifact and approved workload enrollment, the Projects activation operation and digest binding, and all five hash-bound owner and architect acceptances.
+
+### G-1 fixture replay on the landed EventStore revision (2026-11-26)
+
+The authenticated Dapr lookup and persisted admission and recovery replay used the same source tuple as the landed G-2 run above, with EventStore at `df6a96ab2a5bae24fe5951eee5429bda223cc675` and Platform at `80a60039b46ea6bdccd9eeac5091551bc59643fa`. The disposable checkouts used committed sources. The crash-recovery assertion source matched its previously recorded SHA-256 byte for byte.
+
+```bash
+bundle="$HOME/.local/state/hexalith-projects/7-1-p2-g1-landed-EXuH8kJO"
+run-with-temp bash "$bundle/replay.sh" "$PWD" "$bundle" "$bundle/native"
+python3 "$bundle/verify-runtime-receipts.py" "$bundle/native"
+(cd "$bundle" && sha256sum --check sha256.txt)
+```
+
+Use a fresh evidence directory for a repeat run. The two Debug builds each reported zero warnings and errors. All 87 focused tests, six native admission and crash tests, and both execution phases passed with zero skips. After Redis and both Dapr sidecars restarted, the replacement fence recovered the same receipt through the signed lookup and the stale fence returned 404. The persisted crash receipt records one committed owner effect, only an owner lookup during recovery, and identical task row bytes and ETag before and after the stale attempt.
+
+| Retained artifact | SHA-256 |
+| --- | --- |
+| `native/runtime-lookup-receipt.json` | `f54feff8eb9070e848a2cefda407c239d7a905b4e8c1f6390b2c55403fa5b173` |
+| `native/crash-recovery-receipt.json` | `c8f3f49943a66986841f9f8f21f41e148de99098435c59f19c301b1eb159aedc` |
+| `native/runtime-topology.json` | `be81868cb5a14a685d5abcf600f8f6f0ed8e4a6e9ea675fc1b83271a94896a55` |
+| `sha256.txt` | `12a986573218dacedb34e0da2f80371cd6c9f420fe8a03910f0c2b68ef9e6018` |
+
+The 26-file manifest covers the exact source tuple, replay scripts, build logs, native XML and receipts. The owner-selected G-1 runtime and retained-store rollback remain required for package acceptance.
