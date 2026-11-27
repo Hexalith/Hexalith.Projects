@@ -1,19 +1,19 @@
 {
   "schema": "hexalith.projects.7-1-folder-first-writer-capability.v1",
   "story": "7.1",
-  "status": "candidate_pending_owner_decisions",
-  "candidateCommit": null,
+  "status": "accepted",
+  "candidateCommit": "540f3f65ecbd43b561e429fbb48ec6aac5d35833",
   "baseCommit": "2067b57d8c72af9f83a404eefd80d33033d51268",
   "cutoverBoundary": {
     "deployedWriterUnchanged": true,
     "deployedWriterType": "Hexalith.Projects.Server.Domain.ProjectsDomainProcessor",
+    "deployedWriterCutoverStory": "7.17",
     "testOnlySdkWriterProject": "tests/Hexalith.Projects.SdkWriter/Hexalith.Projects.SdkWriter.csproj",
     "productionAuthorityIndex": [6, 7, 8],
     "remainingWholeStoryGates": [
       "DW-63 + READY gate before setting 7-1-activate-a-project-with-exactly-one-authorized-folder to done",
-      "Story 7.16 live positive Folder-selection integration against Folders selection contract",
-      "Story 7.17 deployed runtime cutover replacing ProjectsDomainProcessor with EventStoreAggregate<ProjectSdkState>",
-      "Named owner decisions (Projects Owner, Solution Architect, Test Architect) and final candidateCommit pin after commit"
+      "Governed G-4 durable qualification after entry acceptance",
+      "Story 7.16 live positive Folder-selection integration against Folders selection contract"
     ]
   },
   "pinnedDependencies": {
@@ -106,19 +106,19 @@
   },
   "decisions": {
     "Projects Owner": {
-      "status": "pending",
-      "path": null,
-      "sha256": null
+      "status": "accepted",
+      "path": "evidence/epic7/7.1-folder-first-writer-decision.json",
+      "sha256": "9d4087414fb36093ce8b3a2849f80f63d850d84de93fe87148756eff6eb14540"
     },
     "Solution Architect": {
-      "status": "pending",
-      "path": null,
-      "sha256": null
+      "status": "accepted",
+      "path": "evidence/epic7/7.1-folder-first-writer-decision.json",
+      "sha256": "9d4087414fb36093ce8b3a2849f80f63d850d84de93fe87148756eff6eb14540"
     },
     "Test Architect": {
-      "status": "pending",
-      "path": null,
-      "sha256": null
+      "status": "accepted",
+      "path": "evidence/epic7/7.1-folder-first-writer-decision.json",
+      "sha256": "9d4087414fb36093ce8b3a2849f80f63d850d84de93fe87148756eff6eb14540"
     }
   }
 }
