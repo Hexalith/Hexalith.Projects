@@ -1,0 +1,124 @@
+{
+  "schema": "hexalith.projects.7-1-folder-first-writer-capability.v1",
+  "story": "7.1",
+  "status": "candidate_pending_owner_decisions",
+  "candidateCommit": null,
+  "baseCommit": "2067b57d8c72af9f83a404eefd80d33033d51268",
+  "cutoverBoundary": {
+    "deployedWriterUnchanged": true,
+    "deployedWriterType": "Hexalith.Projects.Server.Domain.ProjectsDomainProcessor",
+    "testOnlySdkWriterProject": "tests/Hexalith.Projects.SdkWriter/Hexalith.Projects.SdkWriter.csproj",
+    "productionAuthorityIndex": [6, 7, 8],
+    "remainingWholeStoryGates": [
+      "DW-63 + READY gate before setting 7-1-activate-a-project-with-exactly-one-authorized-folder to done",
+      "Story 7.16 live positive Folder-selection integration against Folders selection contract",
+      "Story 7.17 deployed runtime cutover replacing ProjectsDomainProcessor with EventStoreAggregate<ProjectSdkState>",
+      "Named owner decisions (Projects Owner, Solution Architect, Test Architect) and final candidateCommit pin after commit"
+    ]
+  },
+  "pinnedDependencies": {
+    "EventStore": {
+      "submodule": "references/Hexalith.EventStore",
+      "revision": "df6a96ab2a5bae24fe5951eee5429bda223cc675",
+      "contract": "EventStore /internal/durable-tasks/v1 with numbered DurableTaskExecution"
+    },
+    "Folders": {
+      "submodule": "references/Hexalith.Folders",
+      "revision": "bf60ba51e7e665cb99db353652c5a5b6112b9b5c",
+      "tag": "v2.2.1",
+      "contract": "hexalith.folders.provision-folder.v1"
+    },
+    "Platform": {
+      "submodule": "references/Hexalith.Platform",
+      "revision": "80a60039b46ea6bdccd9eeac5091551bc59643fa"
+    },
+    "claimRaceRuntime": {
+      "daprImage": "daprio/daprd:1.19.2",
+      "daprDigest": "daprio/daprd@sha256:ed471547b67db50c831d498b8ee861822fb037d9d594c38ac299546b425f575a",
+      "redisImage": "redis:7.4-alpine",
+      "redisDigest": "redis@sha256:7f7d30b7fdd09467bac58198a1f166dd69789d348d4fe859cccb20e0cf287fbe",
+      "observedRedisServerVersion": "Redis server v=7.4.12 sha=00000000:0 malloc=jemalloc-5.3.0 bits=64 build=97c9b7ac751c8f00",
+      "stateStoreConfig": "state.redis with actorStateStore=true, keyPrefix=none, two independent daprd sidecars on shared Docker bridge network"
+    }
+  },
+  "qualification": {
+    "ciPackageModeBuild": {
+      "command": "CI=true dotnet build Hexalith.Projects.CI.slnx -c Release -p:UseHexalithProjectReferences=false -m:1",
+      "result": "passed",
+      "warnings": 0,
+      "errors": 0
+    },
+    "sdkWriterPackageModeBuild": {
+      "command": "CI=true dotnet build tests/Hexalith.Projects.SdkWriter/Hexalith.Projects.SdkWriter.csproj -c Release -p:UseHexalithProjectReferences=false -m:1",
+      "result": "passed",
+      "warnings": 0,
+      "errors": 0
+    },
+    "unitAndWorkflowSourceMode": {
+      "command": "dotnet build tests/Hexalith.Projects.Tests/Hexalith.Projects.Tests.csproj -c Debug -m:1 && dotnet tests/Hexalith.Projects.Tests/bin/Debug/net11.0/Hexalith.Projects.Tests.dll",
+      "result": "passed",
+      "total": 722,
+      "failed": 0,
+      "skipped": 0,
+      "warnings": 0,
+      "errors": 0
+    },
+    "unitPackageMode": {
+      "command": "CI=true dotnet build tests/Hexalith.Projects.Tests/Hexalith.Projects.Tests.csproj -c Release -p:UseHexalithProjectReferences=false -m:1 && dotnet tests/Hexalith.Projects.Tests/bin/Release/net11.0/Hexalith.Projects.Tests.dll",
+      "result": "passed",
+      "total": 712,
+      "failed": 0,
+      "skipped": 0,
+      "warnings": 0,
+      "errors": 0
+    },
+    "serverTestsPackageMode": {
+      "command": "CI=true dotnet build tests/Hexalith.Projects.Server.Tests/Hexalith.Projects.Server.Tests.csproj -c Release -p:UseHexalithProjectReferences=false -m:1 && dotnet tests/Hexalith.Projects.Server.Tests/bin/Release/net11.0/Hexalith.Projects.Server.Tests.dll -class Hexalith.Projects.Server.Tests.Queries.SupportedProjectProjectionTests -class Hexalith.Projects.Server.Tests.ProjectsRuntimeCatalogTests -class Hexalith.Projects.Server.Tests.CreateProjectEndpointTests -class Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests -class Hexalith.Projects.Server.Tests.Queries.ProjectOperatorQueryTests -class Hexalith.Projects.Server.Tests.Projections.ConversationStartSetup.ConversationStartSetupProjectionHandlerTests",
+      "result": "passed",
+      "total": 395,
+      "failed": 0,
+      "skipped": 0,
+      "warnings": 0,
+      "errors": 0
+    },
+    "twoReplicaClaimRaceRedisDapr": {
+      "command": "dotnet build tests/Hexalith.Projects.Integration.Tests/Hexalith.Projects.Integration.Tests.csproj -c Debug -p:UseHexalithProjectReferences=true -p:HexalithConversationsFromSource=false -m:1 && dotnet tests/Hexalith.Projects.Integration.Tests/bin/Debug/net11.0/Hexalith.Projects.Integration.Tests.dll -class Hexalith.Projects.Integration.Tests.Story71.Story71FolderFirstTwoReplicaTests",
+      "result": "passed",
+      "total": 4,
+      "failed": 0,
+      "skipped": 0,
+      "warnings": 0,
+      "errors": 0,
+      "leakedContainers": 0,
+      "leakedNetworks": 0,
+      "casesVerified": [
+        "TwoReplicaClaimRace_WithLostReplyAndFailover_ConvergesToSingleActiveHolderOnRedis",
+        "RestartAndProjectionLag_AcrossTwoReplicas_ConfirmsSupportedRetainedAndSafeMetadataAuditOnRedis",
+        "AbandonmentOnRedis_CommitsFenceBeforeReleaseRecordsAuditStaysInvisibleAndAllowsNextHolder",
+        "IsolatedHostTestComposition_EnforcesSingleWriterAndAd17ProcessAsyncEquivalence"
+      ]
+    },
+    "productionAuthorityIndex": {
+      "command": "python3 tools/planning/validate_production_authority.py --validate-index",
+      "result": "passed",
+      "output": "PASS: production-authority index is [6, 7, 8]"
+    }
+  },
+  "decisions": {
+    "Projects Owner": {
+      "status": "pending",
+      "path": null,
+      "sha256": null
+    },
+    "Solution Architect": {
+      "status": "pending",
+      "path": null,
+      "sha256": null
+    },
+    "Test Architect": {
+      "status": "pending",
+      "path": null,
+      "sha256": null
+    }
+  }
+}

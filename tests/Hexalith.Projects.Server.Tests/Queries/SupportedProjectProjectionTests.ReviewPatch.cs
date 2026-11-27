@@ -6,6 +6,7 @@ using Hexalith.EventStore.Contracts.Projections;
 using Hexalith.Projects.Contracts.Events;
 using Hexalith.Projects.Contracts.Identifiers;
 using Hexalith.Projects.Contracts.Models;
+using Hexalith.Projects.Projections.ProjectReads;
 using Hexalith.Projects.Server.Projections.ProjectReads;
 using Shouldly;
 using Xunit;

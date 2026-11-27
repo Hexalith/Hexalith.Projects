@@ -12,6 +12,7 @@ using Hexalith.EventStore.Testing.Fakes;
 using Hexalith.Projects.Contracts.Events;
 using Hexalith.Projects.Contracts.Queries;
 using Hexalith.Projects.Server.Projections.ConversationStartSetup;
+using Hexalith.Projects.Projections.ProjectReads;
 using Hexalith.Projects.Server.Projections.ProjectReads;
 
 using Microsoft.AspNetCore.Builder;

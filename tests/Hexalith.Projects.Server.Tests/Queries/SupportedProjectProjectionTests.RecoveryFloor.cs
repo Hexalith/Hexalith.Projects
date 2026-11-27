@@ -5,7 +5,7 @@ using Hexalith.EventStore.Client.Projections;
 using Hexalith.EventStore.Contracts.Projections;
 using Hexalith.EventStore.DomainService;
 using Hexalith.Projects.Contracts.Models;
-using Hexalith.Projects.Server.Projections.ProjectReads;
+using Hexalith.Projects.Projections.ProjectReads;
 using Shouldly;
 using Xunit;
 

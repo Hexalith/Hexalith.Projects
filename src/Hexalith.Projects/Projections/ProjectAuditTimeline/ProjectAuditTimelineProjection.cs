@@ -117,6 +117,7 @@ public sealed record ProjectAuditTimelineProjection
         string? outcome = row.OperationType switch
         {
             "project.created" or "project.restored" => "Active",
+            "project.creation_abandoned" => "Abandoned",
             "project.archived" => "Archived",
             "project.setup_updated" => "Updated",
             "project.folder_set" or "file_reference.linked" or "memory.linked" => "Included",
@@ -146,7 +147,30 @@ public sealed record ProjectAuditTimelineProjection
     private static ProjectAuditTimelineItem ToTimelineItem(ProjectProjectionEnvelope envelope)
         => envelope.Event switch
         {
-            ProjectCreated created => Item(envelope, created, created.ActorPrincipalId, "project.created", null, null, null, created.Lifecycle.ToString(), null, null, null),
+            ProjectCreated created => Item(
+                envelope,
+                created,
+                created.ActorPrincipalId,
+                "project.created",
+                string.IsNullOrWhiteSpace(created.FolderId) ? null : FolderReferenceKind,
+                string.IsNullOrWhiteSpace(created.FolderId) ? null : created.FolderId,
+                null,
+                created.Lifecycle.ToString(),
+                null,
+                null,
+                null),
+            ProjectCreationAbandoned abandoned => Item(
+                envelope,
+                abandoned,
+                abandoned.ActorPrincipalId,
+                "project.creation_abandoned",
+                string.IsNullOrWhiteSpace(abandoned.FolderId) ? null : FolderReferenceKind,
+                string.IsNullOrWhiteSpace(abandoned.FolderId) ? null : abandoned.FolderId,
+                null,
+                "Abandoned",
+                abandoned.ReasonCode,
+                null,
+                null),
             ProjectSetupUpdated updated => Item(envelope, updated, updated.ActorPrincipalId, "project.setup_updated", null, null, null, "Updated", null, null, null),
             ProjectArchived archived => Item(envelope, archived, archived.ActorPrincipalId, "project.archived", null, null, ProjectLifecycle.Active.ToString(), archived.Lifecycle.ToString(), null, null, null),
             ProjectRestored restored => Item(envelope, restored, restored.ActorPrincipalId, "project.restored", null, null, ProjectLifecycle.Archived.ToString(), restored.Lifecycle.ToString(), null, null, null),

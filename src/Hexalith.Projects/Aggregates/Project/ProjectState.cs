@@ -53,6 +53,18 @@ public sealed record ProjectState(
 
     /// <summary>Gets every used issuance id, including revoked issuances.</summary>
     public ImmutableHashSet<string> ChatBotGrantIssuanceIds { get; init; } = ImmutableHashSet.Create<string>(StringComparer.Ordinal);
+
+    /// <summary>Gets a value indicating whether creation on this reserved stream was terminally abandoned.</summary>
+    public bool IsCreationAbandoned { get; init; }
+
+    /// <summary>Gets the Safe Metadata abandonment reason code when <see cref="IsCreationAbandoned"/> is <see langword="true"/>.</summary>
+    public string? CreationAbandonedReasonCode { get; init; }
+
+    /// <summary>Gets the optional durable Folder provisioning receipt recorded on bound creation.</summary>
+    public string? FolderProvisioningReceiptId { get; init; }
+
+    /// <summary>Gets the optional AD-35 claim generation recorded on bound creation or abandonment.</summary>
+    public long? FolderClaimGeneration { get; init; }
     /// <summary>The maximum number of bounded optional File References a single Project may hold.</summary>
     public const int MaxFileReferences = 100;
 

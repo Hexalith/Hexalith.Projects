@@ -61,6 +61,9 @@ public enum ProjectResultCode
     /// <summary>A project already exists on this stream; a second create is rejected.</summary>
     DuplicateProject,
 
+    /// <summary>The reserved project stream was terminally abandoned before creation; late creation is rejected.</summary>
+    CreationAbandoned,
+
     /// <summary>The command requires an existing project but none has been created on this stream.</summary>
     ProjectNotFound,
 

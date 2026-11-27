@@ -176,6 +176,7 @@ public sealed record ProjectResult(
         ProjectResultCode.Unauthorized => ReferenceState.Unauthorized,
         ProjectResultCode.TenantMismatch => ReferenceState.TenantMismatch,
         ProjectResultCode.DuplicateProject => ReferenceState.Conflict,
+        ProjectResultCode.CreationAbandoned => ReferenceState.Conflict,
         ProjectResultCode.ProjectAlreadyArchived => ReferenceState.Archived,
         ProjectResultCode.ProjectAlreadyActive => ReferenceState.Conflict,
         ProjectResultCode.ProjectIsArchived => ReferenceState.Archived,

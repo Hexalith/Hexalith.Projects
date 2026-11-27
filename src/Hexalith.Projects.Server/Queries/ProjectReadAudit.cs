@@ -5,7 +5,7 @@ using System.Security.Cryptography;
 using System.Text.Json;
 using Hexalith.EventStore.Client.Projections;
 using Hexalith.EventStore.Contracts.Queries;
-using Hexalith.Projects.Server.Projections.ProjectReads;
+using Hexalith.Projects.Projections.ProjectReads;
 
 /// <summary>Thin Projects audit adapter over platform persistence; an audit failure prevents disclosure.</summary>
 public sealed class ProjectReadAudit(IReadModelStore store, TimeProvider clock)

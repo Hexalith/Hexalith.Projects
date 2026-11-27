@@ -27,16 +27,23 @@ using Hexalith.Projects.Projections.ProjectList;
 /// </summary>
 public sealed record ProjectDetailProjection
 {
-    private ProjectDetailProjection(IReadOnlyDictionary<string, ProjectDetailItem> projects)
+    private readonly FrozenSet<string> _abandonedProjects;
+
+    private ProjectDetailProjection(
+        IReadOnlyDictionary<string, ProjectDetailItem> projects,
+        FrozenSet<string>? abandonedProjects = null)
     {
         Projects = projects;
+        _abandonedProjects = abandonedProjects ?? FrozenSet<string>.Empty;
     }
 
     /// <summary>Gets the projected project details keyed by canonical identity.</summary>
     public IReadOnlyDictionary<string, ProjectDetailItem> Projects { get; }
 
     /// <summary>Gets the empty starting projection.</summary>
-    public static ProjectDetailProjection Empty { get; } = new(FrozenDictionary<string, ProjectDetailItem>.Empty);
+    public static ProjectDetailProjection Empty { get; } = new(
+        FrozenDictionary<string, ProjectDetailItem>.Empty,
+        FrozenSet<string>.Empty);
 
     /// <summary>
     /// Rebuilds the projection from a full event stream (FS-6, AR-8, NFR-7) — the explicit, repeatable
@@ -84,6 +91,7 @@ public sealed record ProjectDetailProjection
         ArgumentNullException.ThrowIfNull(envelopes);
 
         Dictionary<string, ProjectDetailItem> projects = new(Projects, StringComparer.Ordinal);
+        HashSet<string> abandoned = new(_abandonedProjects, StringComparer.Ordinal);
 
         IEnumerable<ProjectProjectionEnvelope> ordered = envelopes
             .Where(static envelope => envelope is not null)
@@ -108,6 +116,11 @@ public sealed record ProjectDetailProjection
             switch (envelope.Event)
             {
                 case ProjectCreated created:
+                    if (abandoned.Contains(key))
+                    {
+                        break;
+                    }
+
                     projects[key] = new ProjectDetailItem(
                         created.TenantId,
                         created.ProjectId,
@@ -115,13 +128,30 @@ public sealed record ProjectDetailProjection
                         created.Description,
                         created.SetupMetadata,
                         null,
-                        null,
+                        string.IsNullOrWhiteSpace(created.FolderId)
+                            ? null
+                            : new ProjectFolderReference(
+                                created.FolderId,
+                                created.FolderDisplayName,
+                                ReferenceState.Included,
+                                null,
+                                created.OccurredAt),
                         [],
                         [],
                         created.Lifecycle,
                         created.OccurredAt,
                         created.OccurredAt,
                         envelope.Sequence);
+                    break;
+
+                case ProjectCreationAbandoned:
+                    if (projects.ContainsKey(key))
+                    {
+                        throw new InvalidOperationException(
+                            $"ProjectDetailProjection cannot apply ProjectCreationAbandoned after ProjectCreated at sequence {envelope.Sequence}.");
+                    }
+
+                    abandoned.Add(key);
                     break;
 
                 case ProjectSetupUpdated updated:
@@ -286,7 +316,9 @@ public sealed record ProjectDetailProjection
             }
         }
 
-        return new ProjectDetailProjection(projects.ToFrozenDictionary(StringComparer.Ordinal));
+        return new ProjectDetailProjection(
+            projects.ToFrozenDictionary(StringComparer.Ordinal),
+            abandoned.ToFrozenSet(StringComparer.Ordinal));
     }
 
     /// <summary>Gets the projected detail for the given tenant/project, or null when absent.</summary>

@@ -32,16 +32,27 @@ public sealed record ProjectReferenceIndexProjection
     private const string MemoryReferenceKind = "memory";
     private const string PendingFolderReferenceKey = "_pending_project_folder";
 
-    private ProjectReferenceIndexProjection(IReadOnlyDictionary<string, ProjectReferenceIndexItem> references)
+    private readonly FrozenSet<string> _createdProjects;
+    private readonly FrozenSet<string> _abandonedProjects;
+
+    private ProjectReferenceIndexProjection(
+        IReadOnlyDictionary<string, ProjectReferenceIndexItem> references,
+        FrozenSet<string>? createdProjects = null,
+        FrozenSet<string>? abandonedProjects = null)
     {
         References = references;
+        _createdProjects = createdProjects ?? FrozenSet<string>.Empty;
+        _abandonedProjects = abandonedProjects ?? FrozenSet<string>.Empty;
     }
 
     /// <summary>Gets the indexed references keyed by tenant/project/kind/reference.</summary>
     public IReadOnlyDictionary<string, ProjectReferenceIndexItem> References { get; }
 
     /// <summary>Gets the empty starting projection.</summary>
-    public static ProjectReferenceIndexProjection Empty { get; } = new(FrozenDictionary<string, ProjectReferenceIndexItem>.Empty);
+    public static ProjectReferenceIndexProjection Empty { get; } = new(
+        FrozenDictionary<string, ProjectReferenceIndexItem>.Empty,
+        FrozenSet<string>.Empty,
+        FrozenSet<string>.Empty);
 
     /// <summary>Folds reference events into the index.</summary>
     /// <param name="envelopes">The projection envelopes.</param>
@@ -51,6 +62,8 @@ public sealed record ProjectReferenceIndexProjection
         ArgumentNullException.ThrowIfNull(envelopes);
 
         Dictionary<string, ProjectReferenceIndexItem> references = new(References, StringComparer.Ordinal);
+        HashSet<string> createdProjects = new(_createdProjects, StringComparer.Ordinal);
+        HashSet<string> abandonedProjects = new(_abandonedProjects, StringComparer.Ordinal);
         IEnumerable<ProjectProjectionEnvelope> ordered = envelopes
             .Where(static envelope => envelope is not null)
             .Where(static envelope => envelope.Event is not null)
@@ -65,12 +78,57 @@ public sealed record ProjectReferenceIndexProjection
                 continue;
             }
 
+            string? projectKey = TryProjectKey(envelope.Event.TenantId, envelope.Event.ProjectId);
+            if (projectKey is null)
+            {
+                continue;
+            }
+
             switch (envelope.Event)
             {
-                case ProjectCreated or ProjectSetupUpdated or ProjectArchived or ProjectRestored or ProjectResolutionConfirmed:
+                case ProjectCreated created:
+                    if (abandonedProjects.Contains(projectKey))
+                    {
+                        break;
+                    }
+
+                    createdProjects.Add(projectKey);
+                    if (!string.IsNullOrWhiteSpace(created.FolderId))
+                    {
+                        RemoveReferences(references, created.TenantId, created.ProjectId, FolderReferenceKind);
+                        references[Key(created.TenantId, created.ProjectId, FolderReferenceKind, created.FolderId)] = new ProjectReferenceIndexItem(
+                            created.TenantId,
+                            created.ProjectId,
+                            FolderReferenceKind,
+                            created.FolderId,
+                            ReferenceState.Included,
+                            created.FolderDisplayName,
+                            null,
+                            created.OccurredAt,
+                            envelope.Sequence);
+                    }
+
+                    break;
+
+                case ProjectCreationAbandoned abandoned:
+                    if (createdProjects.Contains(projectKey) || HasAnyProjectReference(references, abandoned.TenantId, abandoned.ProjectId))
+                    {
+                        throw new InvalidOperationException(
+                            $"ProjectReferenceIndexProjection cannot apply ProjectCreationAbandoned after ProjectCreated at sequence {envelope.Sequence}.");
+                    }
+
+                    abandonedProjects.Add(projectKey);
+                    break;
+
+                case ProjectSetupUpdated or ProjectArchived or ProjectRestored or ProjectResolutionConfirmed:
                     break;
 
                 case ProjectFolderSet folderSet:
+                    if (abandonedProjects.Contains(projectKey))
+                    {
+                        break;
+                    }
+
                     RemoveReferences(references, folderSet.TenantId, folderSet.ProjectId, FolderReferenceKind);
                     references[Key(folderSet.TenantId, folderSet.ProjectId, FolderReferenceKind, folderSet.FolderId)] = new ProjectReferenceIndexItem(
                         folderSet.TenantId,
@@ -85,6 +143,11 @@ public sealed record ProjectReferenceIndexProjection
                     break;
 
                 case ProjectFolderCreationPending pending:
+                    if (abandonedProjects.Contains(projectKey))
+                    {
+                        break;
+                    }
+
                     if (!HasIncludedProjectFolder(references, pending.TenantId, pending.ProjectId))
                     {
                         RemoveReferences(references, pending.TenantId, pending.ProjectId, FolderReferenceKind);
@@ -103,6 +166,11 @@ public sealed record ProjectReferenceIndexProjection
                     break;
 
                 case FileReferenceLinked linked:
+                    if (abandonedProjects.Contains(projectKey))
+                    {
+                        break;
+                    }
+
                     references[Key(linked.TenantId, linked.ProjectId, FileReferenceKind, linked.FileReferenceId)] = new ProjectReferenceIndexItem(
                         linked.TenantId,
                         linked.ProjectId,
@@ -116,10 +184,20 @@ public sealed record ProjectReferenceIndexProjection
                     break;
 
                 case FileReferenceUnlinked unlinked:
+                    if (abandonedProjects.Contains(projectKey))
+                    {
+                        break;
+                    }
+
                     references.Remove(Key(unlinked.TenantId, unlinked.ProjectId, FileReferenceKind, unlinked.FileReferenceId));
                     break;
 
                 case MemoryLinked memoryLinked:
+                    if (abandonedProjects.Contains(projectKey))
+                    {
+                        break;
+                    }
+
                     references[Key(memoryLinked.TenantId, memoryLinked.ProjectId, MemoryReferenceKind, memoryLinked.MemoryReferenceId)] = new ProjectReferenceIndexItem(
                         memoryLinked.TenantId,
                         memoryLinked.ProjectId,
@@ -133,6 +211,11 @@ public sealed record ProjectReferenceIndexProjection
                     break;
 
                 case MemoryUnlinked memoryUnlinked:
+                    if (abandonedProjects.Contains(projectKey))
+                    {
+                        break;
+                    }
+
                     references.Remove(Key(memoryUnlinked.TenantId, memoryUnlinked.ProjectId, MemoryReferenceKind, memoryUnlinked.MemoryReferenceId));
                     break;
 
@@ -143,7 +226,10 @@ public sealed record ProjectReferenceIndexProjection
             }
         }
 
-        return new ProjectReferenceIndexProjection(references.ToFrozenDictionary(StringComparer.Ordinal));
+        return new ProjectReferenceIndexProjection(
+            references.ToFrozenDictionary(StringComparer.Ordinal),
+            createdProjects.ToFrozenSet(StringComparer.Ordinal),
+            abandonedProjects.ToFrozenSet(StringComparer.Ordinal));
     }
 
     /// <summary>Lists references for a tenant/project.</summary>
@@ -251,16 +337,31 @@ public sealed record ProjectReferenceIndexProjection
         return projectPrefix is null ? null : projectPrefix + referenceKind + ":";
     }
 
-    private static string? TryProjectReferencesPrefix(string tenantId, string projectId)
+    private static bool HasAnyProjectReference(
+        IReadOnlyDictionary<string, ProjectReferenceIndexItem> references,
+        string tenantId,
+        string projectId)
+    {
+        string? prefix = TryProjectReferencesPrefix(tenantId, projectId);
+        return prefix is not null
+            && references.Keys.Any(key => key.StartsWith(prefix, StringComparison.Ordinal));
+    }
+
+    private static string? TryProjectKey(string tenantId, string projectId)
     {
         try
         {
-            string identity = new ProjectIdentity(tenantId, new ProjectId(projectId)).GlobalId;
-            return identity + ":references:";
+            return new ProjectIdentity(tenantId, new ProjectId(projectId)).GlobalId;
         }
         catch (Exception exception) when (exception is ArgumentException or ArgumentNullException)
         {
             return null;
         }
+    }
+
+    private static string? TryProjectReferencesPrefix(string tenantId, string projectId)
+    {
+        string? identity = TryProjectKey(tenantId, projectId);
+        return identity is null ? null : identity + ":references:";
     }
 }

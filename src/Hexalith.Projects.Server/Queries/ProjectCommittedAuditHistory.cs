@@ -16,7 +16,7 @@ internal static class ProjectCommittedAuditHistory
 {
     private static readonly IReadOnlyDictionary<string, Type> EventTypes = new[]
     {
-        typeof(ProjectCreated), typeof(ProjectSetupUpdated), typeof(ProjectArchived), typeof(ProjectRestored),
+        typeof(ProjectCreated), typeof(ProjectCreationAbandoned), typeof(ProjectSetupUpdated), typeof(ProjectArchived), typeof(ProjectRestored),
         typeof(ProjectFolderSet), typeof(FileReferenceLinked), typeof(FileReferenceUnlinked),
         typeof(MemoryLinked), typeof(MemoryUnlinked), typeof(ProjectResolutionConfirmed),
         typeof(ProjectChatBotAuthorityGranted), typeof(ProjectChatBotAuthorityRevoked),

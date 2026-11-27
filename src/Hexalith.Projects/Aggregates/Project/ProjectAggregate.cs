@@ -57,6 +57,11 @@ public static partial class ProjectAggregate
                 : ProjectResult.Rejected(command, ProjectResultCode.IdempotencyConflict);
         }
 
+        if (state.IsCreationAbandoned)
+        {
+            return ProjectResult.Rejected(command, ProjectResultCode.CreationAbandoned);
+        }
+
         if (state.IsCreated)
         {
             return ProjectResult.Rejected(command, ProjectResultCode.DuplicateProject);

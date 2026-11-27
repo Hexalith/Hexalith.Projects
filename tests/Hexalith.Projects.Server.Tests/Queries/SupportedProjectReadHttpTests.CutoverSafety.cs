@@ -21,6 +21,7 @@ using Hexalith.Projects.Infrastructure;
 using Hexalith.Projects.Projections.TenantAccess;
 using Hexalith.Projects.Server.Conversations;
 using Hexalith.Projects.Server.Projections.ConversationStartSetup;
+using Hexalith.Projects.Projections.ProjectReads;
 using Hexalith.Projects.Server.Projections.ProjectReads;
 using Hexalith.Projects.Testing.Reads;
 using Microsoft.AspNetCore.Builder;

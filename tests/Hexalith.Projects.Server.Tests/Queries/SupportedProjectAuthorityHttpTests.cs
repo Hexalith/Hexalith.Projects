@@ -120,7 +120,7 @@ public sealed class SupportedProjectAuthorityHttpTests(ITestOutputHelper output)
         var before = await fixture.SnapshotAsync();
         if (fault == "tenant")
         {
-            var foreign = before.Single(item => item.Key == Hexalith.Projects.Server.Projections.ProjectReads.ProjectReadModelKeys.Detail(fixture.ForeignTenant, "project-a"));
+            var foreign = before.Single(item => item.Key == Hexalith.Projects.Projections.ProjectReads.ProjectReadModelKeys.Detail(fixture.ForeignTenant, "project-a"));
             System.Text.Encoding.UTF8.GetString(foreign.Bytes).ShouldContain("Foreign project project-a");
             System.Text.Encoding.UTF8.GetString(foreign.Bytes).ShouldContain("Foreign private description");
         }

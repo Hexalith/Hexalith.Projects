@@ -14,7 +14,7 @@ using Hexalith.Projects.Contracts.Queries;
 using Hexalith.Projects.Contracts.Ui;
 using Hexalith.Projects.Projections.ProjectDetail;
 using Hexalith.Projects.Projections.ProjectList;
-using Hexalith.Projects.Server.Projections.ProjectReads;
+using Hexalith.Projects.Projections.ProjectReads;
 using Hexalith.Projects.Testing.Reads;
 using Shouldly;
 using Xunit;

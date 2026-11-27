@@ -7,7 +7,8 @@
     <StaticWebAssetsEnabled>false</StaticWebAssetsEnabled>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Hexalith.Folders" />
+    <PackageReference Include="Hexalith.Folders" Condition="'$(UseHexalithProjectReferences)' != 'true'" />
+    <ProjectReference Include="$(HexalithFoldersRoot)/src/Hexalith.Folders/Hexalith.Folders.csproj" Condition="'$(UseHexalithProjectReferences)' == 'true'" />
     <InternalsVisibleTo Include="Hexalith.Projects.Integration.Tests" />
     <ProjectReference Include="../Hexalith.Projects.E2E.Fixtures/Hexalith.Projects.E2E.Fixtures.csproj" />
     <ProjectReference Include="../../src/Hexalith.Projects.Workers/Hexalith.Projects.Workers.csproj" />

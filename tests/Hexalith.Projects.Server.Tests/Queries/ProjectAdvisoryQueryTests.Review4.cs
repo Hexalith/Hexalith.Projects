@@ -7,7 +7,7 @@ using Hexalith.Projects.Authorization;
 using Hexalith.Projects.Contracts.Models;
 using Hexalith.Projects.Contracts.Queries;
 using Hexalith.Projects.Contracts.Ui;
-using Hexalith.Projects.Server.Projections.ProjectReads;
+using Hexalith.Projects.Projections.ProjectReads;
 using Hexalith.Projects.Server.Queries;
 using Shouldly;
 using Xunit;
@@ -142,6 +142,7 @@ public sealed partial class ProjectAdvisoryQueryTests
     [InlineData("sequence")]
     [InlineData("freshness-default")]
     [InlineData("freshness-undefined")]
+    [InlineData("abandoned")]
     public async Task MalformedReadIdentityAndSequenceNeverDiscloseForeignIds(string mutation)
     {
         var f = await SupportedProjectReadFixture.CreateAsync(); await f.SeedAsync("project-a");
@@ -155,6 +156,7 @@ public sealed partial class ProjectAdvisoryQueryTests
             "detail-project" => model with { Detail = model.Detail! with { ProjectId = "foreign-project" } },
             "sequence" => model with { Sequence = model.Sequence + 1 },
             "freshness-default" => model with { Freshness = default },
+            "abandoned" => model with { IsCreationAbandoned = true },
             _ => model with { Freshness = (EvidenceFreshnessState)999 },
         };
         f.Store.SeedRaw("statestore", key, model);

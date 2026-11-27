@@ -13,6 +13,7 @@ using Hexalith.EventStore.Testing.Fakes;
 using Hexalith.Projects.Contracts.Events;
 using Hexalith.Projects.Contracts.Models;
 using Hexalith.Projects.Contracts.Queries;
+using Hexalith.Projects.Projections.ProjectReads;
 using Hexalith.Projects.Server.Projections.ProjectReads;
 using Shouldly;
 using Xunit;
@@ -393,5 +394,152 @@ public sealed partial class SupportedProjectProjectionTests
     private static ProjectionRequest ArchiveRequest(SupportedProjectReadFixture fixture)
         => new("tenant-a", "projects", "project-a", [SupportedProjectReadFixture.Event(new ProjectArchived("tenant-a", "project-a", ProjectLifecycle.Archived,
             "actor-1", "archive", "task", "archive", "archive", fixture.Clock.Now), 3, 150)]);
+
+    [Fact]
+    public async Task ProjectCreationAbandonedPreCreationFenceIsInvisibleAndFencesLateCreation()
+    {
+        SupportedProjectReadFixture fixture = await SupportedProjectReadFixture.CreateAsync();
+        await fixture.SeedAsync("project-a");
+
+        ProjectCreationAbandoned abandoned = new(
+            "tenant-a",
+            "project-abandoned",
+            "folder-abandoned",
+            1,
+            "claim_released",
+            "actor-1",
+            "corr-abandon",
+            "task-abandon",
+            "idem-abandon",
+            "sha256:abandon",
+            SupportedProjectReadFixture.EventTime.AddSeconds(5))
+        {
+            TaskStepKey = "task-abandon/abandon",
+        };
+        ProjectionRequest abandonRequest = new("tenant-a", "projects", "project-abandoned", [SupportedProjectReadFixture.Event(abandoned, 1, 200)]);
+        (await fixture.Projection.ProjectAsync(abandonRequest, "abandon-fence", TestContext.Current.CancellationToken))
+            .Status.ShouldBe(ProjectionDispatchStatus.Completed);
+
+        ProjectReadModel model = fixture.Store.Snapshot<ProjectReadModel>(
+            ProjectReadModelKeys.StoreName,
+            ProjectReadModelKeys.Detail("tenant-a", "project-abandoned"))!;
+        model.IsCreationAbandoned.ShouldBeTrue();
+        model.Detail.ShouldBeNull();
+        model.Freshness.ShouldBe(EvidenceFreshnessState.Current);
+
+        ProjectReadIndex index = fixture.Store.Snapshot<ProjectReadIndex>(
+            ProjectReadModelKeys.StoreName,
+            ProjectReadModelKeys.Index("tenant-a"))!;
+        index.ProjectIds.ShouldNotContain("project-abandoned");
+        index.UnavailableProjectIds.ShouldNotContain("project-abandoned");
+
+        // Late ProjectCreated after abandonment must fail closed as Unavailable.
+        ProjectCreated lateCreated = new(
+            "tenant-a",
+            "project-abandoned",
+            "Late Project",
+            null,
+            null,
+            ProjectLifecycle.Active,
+            "actor-1",
+            "corr-late",
+            "task-late",
+            "idem-late",
+            "sha256:late",
+            SupportedProjectReadFixture.EventTime.AddSeconds(6));
+        ProjectionRequest lateRequest = new("tenant-a", "projects", "project-abandoned", [SupportedProjectReadFixture.Event(lateCreated, 2, 201)]);
+        (await fixture.Projection.ProjectAsync(lateRequest, "late-create", TestContext.Current.CancellationToken))
+            .Status.ShouldBe(ProjectionDispatchStatus.Failed);
+        fixture.Store.Snapshot<ProjectReadModel>(ProjectReadModelKeys.StoreName, ProjectReadModelKeys.Detail("tenant-a", "project-abandoned"))!
+            .Freshness.ShouldBe(EvidenceFreshnessState.Unavailable);
+    }
+
+    [Fact]
+    public async Task ProjectCreationAbandonedAfterProjectCreatedFailsClosedAsUnavailable()
+    {
+        SupportedProjectReadFixture fixture = await SupportedProjectReadFixture.CreateAsync();
+        await fixture.SeedAsync("project-a");
+
+        ProjectCreationAbandoned invalidAbandon = new(
+            "tenant-a",
+            "project-a",
+            "folder-a",
+            1,
+            "late_abandon",
+            "actor-1",
+            "corr-abandon",
+            "task-abandon",
+            "idem-abandon",
+            "sha256:abandon",
+            SupportedProjectReadFixture.EventTime.AddSeconds(10));
+        ProjectionRequest request = new("tenant-a", "projects", "project-a", [SupportedProjectReadFixture.Event(invalidAbandon, 3, 250)]);
+        (await fixture.Projection.ProjectAsync(request, "abandon-after-create", TestContext.Current.CancellationToken))
+            .Status.ShouldBe(ProjectionDispatchStatus.Failed);
+
+        ProjectReadModel model = fixture.Store.Snapshot<ProjectReadModel>(
+            ProjectReadModelKeys.StoreName,
+            ProjectReadModelKeys.Detail("tenant-a", "project-a"))!;
+        model.Freshness.ShouldBe(EvidenceFreshnessState.Unavailable);
+        fixture.Store.Snapshot<ProjectReadIndex>(ProjectReadModelKeys.StoreName, ProjectReadModelKeys.Index("tenant-a"))!
+            .UnavailableProjectIds.ShouldContain("project-a");
+    }
+
+    [Fact]
+    public async Task ProjectReadQueryExecutorRejectsCorruptAbandonedModelWithDetail()
+    {
+        SupportedProjectReadFixture fixture = await SupportedProjectReadFixture.CreateAsync(chatbot: true);
+        await fixture.SeedAsync("project-a");
+        string detailKey = ProjectReadModelKeys.Detail("tenant-a", "project-a");
+        ProjectReadModel existing = fixture.Store.Snapshot<ProjectReadModel>(ProjectReadModelKeys.StoreName, detailKey)!;
+        fixture.Store.SeedRaw(ProjectReadModelKeys.StoreName, detailKey, existing with { IsCreationAbandoned = true });
+
+        (await fixture.Executor.GetAsync(fixture.Query(new GetProjectQuery(), "project-a"), TestContext.Current.CancellationToken))
+            .Success.ShouldBeFalse();
+        SupportedProjectReadFixture.Payload<ProjectListPage>(
+            await fixture.Executor.ListAsync(fixture.Query(new ListProjectsQuery()), TestContext.Current.CancellationToken))
+            .Snapshot.ResponseState.ShouldBe(AdmissionResponseState.Unavailable);
+    }
+
+    [Fact]
+    public async Task BoundProjectCreatedProjectsFolderAndRejectsMalformedBindingFields()
+    {
+        InMemoryReadModelStore store = new();
+        ProjectReadProjectionHandler handler = new(store, store);
+        ProjectCreated bound = new(
+            "tenant-a",
+            "project-bound",
+            "Bound Project",
+            "Safe description",
+            "setup-ref",
+            ProjectLifecycle.Active,
+            "actor-1",
+            "corr-bound",
+            "task-bound",
+            "idem-bound",
+            "sha256:bound",
+            SupportedProjectReadFixture.EventTime)
+        {
+            FolderId = "fld-p-bound001",
+            FolderDisplayName = "Bound Folder",
+            FolderProvisioningReceiptId = "prov-bound001",
+            FolderClaimGeneration = 1,
+            TaskStepKey = "task-bound/step/3",
+        };
+        ProjectionRequest validRequest = new("tenant-a", "projects", "project-bound", [SupportedProjectReadFixture.Event(bound, 1, 300)]);
+        (await handler.ProjectAsync(validRequest, "bound-valid", TestContext.Current.CancellationToken))
+            .Status.ShouldBe(ProjectionDispatchStatus.Completed);
+        ProjectReadModel persisted = store.Snapshot<ProjectReadModel>(ProjectReadModelKeys.StoreName, ProjectReadModelKeys.Detail("tenant-a", "project-bound"))!;
+        persisted.Detail.ShouldNotBeNull();
+        persisted.Detail!.ProjectFolder.ShouldNotBeNull();
+        persisted.Detail.ProjectFolder!.FolderId.ShouldBe("fld-p-bound001");
+        persisted.Detail.ProjectFolder.DisplayName.ShouldBe("Bound Folder");
+        persisted.Detail.ProjectFolder.ReferenceState.ShouldBe(ReferenceState.Included);
+
+        // Malformed FolderProvisioningReceiptId must fail closed.
+        ProjectCreated malformedReceipt = bound with { ProjectId = "project-bad-receipt", FolderProvisioningReceiptId = "prov-bad\nline" };
+        ProjectionRequest badReceiptReq = new("tenant-a", "projects", "project-bad-receipt", [SupportedProjectReadFixture.Event(malformedReceipt, 1, 301)]);
+        (await handler.ProjectAsync(badReceiptReq, "bad-receipt", TestContext.Current.CancellationToken))
+            .Status.ShouldBe(ProjectionDispatchStatus.Failed);
+    }
 
 }

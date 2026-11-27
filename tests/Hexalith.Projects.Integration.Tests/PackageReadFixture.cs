@@ -29,7 +29,7 @@ using Hexalith.EventStore.ServiceDefaults.Authentication;
 using Hexalith.Projects.Contracts.Queries;
 using Hexalith.Tenants.Contracts.Identity;
 using Hexalith.EventStore.Contracts.Identity;
-using Hexalith.Projects.Server.Projections.ProjectReads;
+using Hexalith.Projects.Projections.ProjectReads;
 using Microsoft.IdentityModel.Tokens;
 using Shouldly;
 using Xunit;

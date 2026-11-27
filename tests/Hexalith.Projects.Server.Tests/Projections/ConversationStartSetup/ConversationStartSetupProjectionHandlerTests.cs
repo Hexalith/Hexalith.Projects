@@ -92,6 +92,98 @@ public sealed class ConversationStartSetupProjectionHandlerTests
         result.ReasonCode.ShouldBe("invalid-event-payload");
     }
 
+    [Fact]
+    [Trait("Story", "7.1")]
+    public async Task ProjectAsync_PreCreationAbandonmentFencesSubsequentIncrementalProjectCreated()
+    {
+        InMemoryReadModelStore store = new();
+        ConversationStartSetupProjectionHandler handler = new(store);
+        string key = ConversationStartSetupProjectionHandler.Key(TenantId, ProjectId);
+
+        ProjectCreationAbandoned abandoned = new(
+            TenantId,
+            ProjectId,
+            "fld-1",
+            1,
+            "caller_abandoned",
+            "actor-1",
+            "corr-1",
+            "task-1",
+            "idem-abn",
+            "fp-abn",
+            CreatedAt);
+        DomainProjectionHandlerResult first = await handler.ProjectAsync(
+            new ProjectionRequest(TenantId, "projects", ProjectId, [EventDto(abandoned, sequenceNumber: 1)]),
+            "dispatch-abn",
+            TestContext.Current.CancellationToken);
+        first.Status.ShouldBe(ProjectionDispatchStatus.Completed);
+
+        ProjectCreated lateCreated = new(
+            TenantId,
+            ProjectId,
+            "Late Project",
+            null,
+            null,
+            ProjectLifecycle.Active,
+            "actor-1",
+            "corr-2",
+            "task-2",
+            "idem-late",
+            "fp-late",
+            UpdatedAt);
+        DomainProjectionHandlerResult second = await handler.ProjectAsync(
+            new ProjectionRequest(TenantId, "projects", ProjectId, [EventDto(lateCreated, sequenceNumber: 2)]),
+            "dispatch-late",
+            TestContext.Current.CancellationToken);
+        second.Status.ShouldBe(ProjectionDispatchStatus.Completed);
+        store.Snapshot<ProjectDetailItem>(ConversationStartSetupProjectionHandler.StoreName, key).ShouldBeNull();
+    }
+
+    [Fact]
+    [Trait("Story", "7.1")]
+    public async Task ProjectAsync_PostCreationAbandonmentFailsClosed()
+    {
+        InMemoryReadModelStore store = new();
+        ConversationStartSetupProjectionHandler handler = new(store);
+        ProjectCreated created = new(
+            TenantId,
+            ProjectId,
+            "Created Project",
+            null,
+            null,
+            ProjectLifecycle.Active,
+            "actor-1",
+            "corr-1",
+            "task-1",
+            "idem-1",
+            "fp-1",
+            CreatedAt);
+        DomainProjectionHandlerResult createdRes = await handler.ProjectAsync(
+            new ProjectionRequest(TenantId, "projects", ProjectId, [EventDto(created, sequenceNumber: 1)]),
+            "dispatch-created",
+            TestContext.Current.CancellationToken);
+        createdRes.Status.ShouldBe(ProjectionDispatchStatus.Completed);
+
+        ProjectCreationAbandoned postAbandoned = new(
+            TenantId,
+            ProjectId,
+            "fld-1",
+            1,
+            "corrupt_post_create",
+            "actor-1",
+            "corr-2",
+            "task-2",
+            "idem-abn",
+            "fp-abn",
+            UpdatedAt);
+        DomainProjectionHandlerResult failed = await handler.ProjectAsync(
+            new ProjectionRequest(TenantId, "projects", ProjectId, [EventDto(postAbandoned, sequenceNumber: 2)]),
+            "dispatch-abn",
+            TestContext.Current.CancellationToken);
+        failed.Status.ShouldBe(ProjectionDispatchStatus.Failed);
+        failed.ReasonCode.ShouldBe("invalid-projection-state");
+    }
+
     private static ProjectionEventDto EventDto(IProjectEvent projectEvent, long sequenceNumber)
         => new(
             projectEvent.GetType().FullName!,

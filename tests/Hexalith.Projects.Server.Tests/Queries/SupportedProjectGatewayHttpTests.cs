@@ -18,7 +18,7 @@ using Hexalith.Conversations.Server.Queries;
 using Hexalith.Conversations.Server.TenantAccess;
 using Hexalith.Tenants.Client.Projections;
 using Hexalith.Tenants.Contracts.Enums;
-using Hexalith.Projects.Server.Projections.ProjectReads;
+using Hexalith.Projects.Projections.ProjectReads;
 using Microsoft.AspNetCore.Http;
 using Hexalith.EventStore.Authentication;
 using Hexalith.EventStore.Authorization;

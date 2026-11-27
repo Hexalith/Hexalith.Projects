@@ -16,8 +16,8 @@ using Hexalith.Projects.Contracts.Models;
 using Hexalith.Projects.Contracts.Queries;
 using Hexalith.Projects.Contracts.Ui;
 using Hexalith.Projects.Projections.ProjectDetail;
+using Hexalith.Projects.Projections.ProjectReads;
 using Hexalith.Projects.Server.Folders;
-using Hexalith.Projects.Server.Projections.ProjectReads;
 
 /// <summary>Read-only, authorization-first list/open assembly over supported persisted models.</summary>
 public sealed class ProjectReadQueryExecutor(
@@ -78,7 +78,7 @@ public sealed class ProjectReadQueryExecutor(
             {
                 if (!SafeIdentity(query.TenantId, projectId)) { return Success(new ProjectListPage([], null, false, Unavailable(index.LastVerifiedAt))); }
                 ProjectReadModel? model = await ReadAsync(query.TenantId, projectId, cancellationToken).ConfigureAwait(false);
-                if (model?.Detail is not { } detail || model.TenantId != query.TenantId || model.ProjectId != projectId
+                if (model?.Detail is not { } detail || model.IsCreationAbandoned || model.TenantId != query.TenantId || model.ProjectId != projectId
                     || detail.TenantId != query.TenantId || detail.ProjectId != projectId || !Enum.IsDefined(detail.Lifecycle)
                     || !ValidObservation(model))
                 {
@@ -188,7 +188,7 @@ public sealed class ProjectReadQueryExecutor(
         ProjectReadModel? model;
         try { model = await ReadAsync(query.TenantId, query.AggregateId, cancellationToken).ConfigureAwait(false); }
         catch (Exception) when (!cancellationToken.IsCancellationRequested) { return await DenyAsync(query, cancellationToken).ConfigureAwait(false); }
-        if (model?.Detail is not { } detail || model.TenantId != query.TenantId || model.ProjectId != query.AggregateId
+        if (model?.Detail is not { } detail || model.IsCreationAbandoned || model.TenantId != query.TenantId || model.ProjectId != query.AggregateId
             || detail.TenantId != query.TenantId || detail.ProjectId != query.AggregateId
             || !Enum.IsDefined(detail.Lifecycle))
         {

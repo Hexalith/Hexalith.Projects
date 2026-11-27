@@ -56,23 +56,17 @@ public static class ProjectStateApply
             return state;
         }
 
+        if (state.IsCreationAbandoned)
+        {
+            throw new InvalidOperationException(
+                $"Cannot apply project event after terminal creation abandonment: result code {ProjectResultCode.StateTransitionInvalid}.");
+        }
+
         return projectEvent switch
         {
-            ProjectCreated created => state with
-            {
-                IsCreated = true,
-                TenantId = created.TenantId,
-                ProjectId = created.ProjectId,
-                Name = created.Name,
-                Description = created.Description,
-                SetupMetadata = created.SetupMetadata,
-                Setup = null,
-                ProjectFolder = null,
-                FileReferences = FrozenDictionary<string, ProjectFileReference>.Empty,
-                MemoryReferences = FrozenDictionary<string, ProjectMemoryReference>.Empty,
-                Lifecycle = created.Lifecycle,
-                IdempotencyFingerprints = RecordIdempotency(state.IdempotencyFingerprints, projectEvent),
-            },
+            ProjectCreated created => ApplyCreated(state, created),
+
+            ProjectCreationAbandoned abandoned => ApplyCreationAbandoned(state, abandoned),
 
             ProjectSetupUpdated updated => state with
             {
@@ -171,6 +165,61 @@ public static class ProjectStateApply
             // the idempotency ledger on cold replay against an older code path (mirrors Folders).
             _ => throw new InvalidOperationException(
                 $"Unhandled project event type: result code {ProjectResultCode.StateTransitionInvalid}."),
+        };
+    }
+
+    private static ProjectState ApplyCreated(ProjectState state, ProjectCreated created)
+    {
+        if (state.IsCreated || state.IsCreationAbandoned)
+        {
+            throw new InvalidOperationException(
+                $"Duplicate or fenced ProjectCreated in Apply: result code {ProjectResultCode.StateTransitionInvalid}.");
+        }
+
+        ProjectFolderReference? projectFolder = string.IsNullOrWhiteSpace(created.FolderId)
+            ? null
+            : new ProjectFolderReference(
+                created.FolderId,
+                created.FolderDisplayName,
+                ReferenceState.Included,
+                null,
+                created.OccurredAt);
+
+        return state with
+        {
+            IsCreated = true,
+            TenantId = created.TenantId,
+            ProjectId = created.ProjectId,
+            Name = created.Name,
+            Description = created.Description,
+            SetupMetadata = created.SetupMetadata,
+            Setup = null,
+            ProjectFolder = projectFolder,
+            FolderProvisioningReceiptId = created.FolderProvisioningReceiptId,
+            FolderClaimGeneration = created.FolderClaimGeneration,
+            FileReferences = FrozenDictionary<string, ProjectFileReference>.Empty,
+            MemoryReferences = FrozenDictionary<string, ProjectMemoryReference>.Empty,
+            Lifecycle = created.Lifecycle,
+            IdempotencyFingerprints = RecordIdempotency(state.IdempotencyFingerprints, created),
+        };
+    }
+
+    private static ProjectState ApplyCreationAbandoned(ProjectState state, ProjectCreationAbandoned abandoned)
+    {
+        if (state.IsCreated || state.IsCreationAbandoned)
+        {
+            throw new InvalidOperationException(
+                $"Invalid ProjectCreationAbandoned in Apply: result code {ProjectResultCode.StateTransitionInvalid}.");
+        }
+
+        return state with
+        {
+            IsCreationAbandoned = true,
+            TenantId = abandoned.TenantId,
+            ProjectId = abandoned.ProjectId,
+            CreationAbandonedReasonCode = abandoned.ReasonCode,
+            FolderClaimGeneration = abandoned.FolderClaimGeneration,
+            IdempotencyFingerprints = RecordIdempotency(state.IdempotencyFingerprints, abandoned),
         };
     }
 

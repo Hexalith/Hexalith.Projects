@@ -36,6 +36,7 @@ using Hexalith.Folders.Server.Authentication;
 using Hexalith.Projects.Contracts.Queries;
 using Hexalith.Projects.Projections.TenantAccess;
 using Hexalith.Projects.Server.Authentication;
+using Hexalith.Projects.Projections.ProjectReads;
 using Hexalith.Projects.Server.Projections.ProjectReads;
 using Hexalith.Projects.Server.Queries;
 using Microsoft.AspNetCore.Authentication.JwtBearer;

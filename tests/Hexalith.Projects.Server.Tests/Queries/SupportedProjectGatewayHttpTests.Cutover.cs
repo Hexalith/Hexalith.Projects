@@ -28,7 +28,7 @@ using Hexalith.Projects.Infrastructure;
 using Hexalith.Projects.Projections.TenantAccess;
 using Hexalith.Projects.Server;
 using Hexalith.Projects.Server.Projections.ConversationStartSetup;
-using Hexalith.Projects.Server.Projections.ProjectReads;
+using Hexalith.Projects.Projections.ProjectReads;
 using Hexalith.Tenants.Client.Projections;
 using Hexalith.Tenants.Contracts.Enums;
 using Microsoft.AspNetCore.Authentication.JwtBearer;

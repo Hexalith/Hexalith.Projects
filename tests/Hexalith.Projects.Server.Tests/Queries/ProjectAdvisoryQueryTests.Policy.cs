@@ -8,7 +8,7 @@ using Hexalith.Projects.Authorization;
 using Hexalith.Projects.Contracts.Models;
 using Hexalith.Projects.Contracts.Queries;
 using Hexalith.Projects.Contracts.Ui;
-using Hexalith.Projects.Server.Projections.ProjectReads;
+using Hexalith.Projects.Projections.ProjectReads;
 using Shouldly;
 using Xunit;
 

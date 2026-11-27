@@ -6,6 +6,7 @@
 namespace Hexalith.Projects.Contracts.Events;
 
 using System;
+using System.Text.Json.Serialization;
 
 using Hexalith.Projects.Contracts.Ui;
 
@@ -55,4 +56,25 @@ public sealed record ProjectCreated(
     string TaskId,
     string IdempotencyKey,
     string IdempotencyFingerprint,
-    DateTimeOffset OccurredAt) : IProjectEvent;
+    DateTimeOffset OccurredAt) : IProjectEvent
+{
+    /// <summary>Gets the optional bound Project Folder identifier established before activation (Story 7.1).</summary>
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    public string? FolderId { get; init; }
+
+    /// <summary>Gets the optional safe metadata-only display name of the bound Project Folder (Story 7.1).</summary>
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    public string? FolderDisplayName { get; init; }
+
+    /// <summary>Gets the optional durable Folders provisioning receipt identifier (Story 7.1).</summary>
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    public string? FolderProvisioningReceiptId { get; init; }
+
+    /// <summary>Gets the optional AD-35 claim generation that fenced the Folder binding at creation (Story 7.1).</summary>
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    public long? FolderClaimGeneration { get; init; }
+
+    /// <summary>Gets the optional deterministic Durable Task step key for creation (Story 7.1).</summary>
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    public string? TaskStepKey { get; init; }
+}

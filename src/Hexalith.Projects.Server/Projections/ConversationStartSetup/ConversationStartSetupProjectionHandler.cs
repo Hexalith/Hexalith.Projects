@@ -88,6 +88,7 @@ public sealed class ConversationStartSetupProjectionHandler(IReadModelStore read
         }
 
         string key = Key(request.TenantId, request.AggregateId);
+        string abandonedKey = key + ":abandoned";
 
         // Fold this slice onto whatever is already persisted (Seed), not from Empty (Rebuild) --
         // request.Events is an incremental slice, and folding from Empty would discard every field
@@ -95,31 +96,66 @@ public sealed class ConversationStartSetupProjectionHandler(IReadModelStore read
         ReadModelEntry<ProjectDetailItem> existing = await _readModelStore
             .GetAsync<ProjectDetailItem>(StoreName, key, cancellationToken)
             .ConfigureAwait(false);
+        ReadModelEntry<string> abandonedMarker = await _readModelStore
+            .GetAsync<string>(StoreName, abandonedKey, cancellationToken)
+            .ConfigureAwait(false);
+        if (abandonedMarker.Value is not null)
+        {
+            return existing.Value is not null
+                ? DomainProjectionHandlerResult.Failed("invalid-projection-state")
+                : DomainProjectionHandlerResult.Completed();
+        }
+
         ProjectDetailProjection seeded = existing.Value is null
             ? ProjectDetailProjection.Empty
             : ProjectDetailProjection.Seed(existing.Value);
-        ProjectDetailItem? detail = seeded.Apply(envelopes).Get(request.TenantId, request.AggregateId);
+        ProjectDetailItem? detail;
+        try
+        {
+            detail = seeded.Apply(envelopes).Get(request.TenantId, request.AggregateId);
+        }
+        catch (InvalidOperationException)
+        {
+            return DomainProjectionHandlerResult.Failed("invalid-projection-state");
+        }
+
+        bool sawAbandonment = envelopes.Any(static e => e.Event is ProjectCreationAbandoned);
+        if (sawAbandonment)
+        {
+            await _readModelStore
+                .SaveAsync(StoreName, abandonedKey, "abandoned", cancellationToken)
+                .ConfigureAwait(false);
+            return DomainProjectionHandlerResult.Completed();
+        }
+
         if (detail is null)
         {
             return DomainProjectionHandlerResult.Completed();
         }
 
-        await ReadModelWritePolicy.UpdateAsync<ProjectDetailItem>(
-            _readModelStore,
-            StoreName,
-            key,
-            current =>
-            {
-                if (current is null)
+        try
+        {
+            await ReadModelWritePolicy.UpdateAsync<ProjectDetailItem>(
+                _readModelStore,
+                StoreName,
+                key,
+                current =>
                 {
-                    return detail;
-                }
+                    if (current is null)
+                    {
+                        return detail;
+                    }
 
-                ProjectDetailItem? refolded = ProjectDetailProjection.Seed(current).Apply(envelopes).Get(request.TenantId, request.AggregateId);
-                return refolded is null || current.Sequence >= refolded.Sequence ? current : refolded;
-            },
-            new ReadModelWriteContext("projection", ProjectionType, dispatchId),
-            cancellationToken: cancellationToken).ConfigureAwait(false);
+                    ProjectDetailItem? refolded = ProjectDetailProjection.Seed(current).Apply(envelopes).Get(request.TenantId, request.AggregateId);
+                    return refolded is null || current.Sequence >= refolded.Sequence ? current : refolded;
+                },
+                new ReadModelWriteContext("projection", ProjectionType, dispatchId),
+                cancellationToken: cancellationToken).ConfigureAwait(false);
+        }
+        catch (InvalidOperationException)
+        {
+            return DomainProjectionHandlerResult.Failed("invalid-projection-state");
+        }
 
         return DomainProjectionHandlerResult.Completed();
     }

@@ -29,16 +29,23 @@ using Hexalith.Projects.Contracts.Identifiers;
 /// </remarks>
 public sealed record ProjectListProjection
 {
-    private ProjectListProjection(IReadOnlyDictionary<string, ProjectListItem> projects)
+    private readonly FrozenSet<string> _abandonedProjects;
+
+    private ProjectListProjection(
+        IReadOnlyDictionary<string, ProjectListItem> projects,
+        FrozenSet<string>? abandonedProjects = null)
     {
         Projects = projects;
+        _abandonedProjects = abandonedProjects ?? FrozenSet<string>.Empty;
     }
 
     /// <summary>Gets the projected projects keyed by canonical identity.</summary>
     public IReadOnlyDictionary<string, ProjectListItem> Projects { get; }
 
     /// <summary>Gets the empty starting projection.</summary>
-    public static ProjectListProjection Empty { get; } = new(FrozenDictionary<string, ProjectListItem>.Empty);
+    public static ProjectListProjection Empty { get; } = new(
+        FrozenDictionary<string, ProjectListItem>.Empty,
+        FrozenSet<string>.Empty);
 
     /// <summary>
     /// Rebuilds the projection from a full event stream (FS-6, AR-8, NFR-7) — the explicit, repeatable
@@ -71,6 +78,7 @@ public sealed record ProjectListProjection
         ArgumentNullException.ThrowIfNull(envelopes);
 
         Dictionary<string, ProjectListItem> projects = new(Projects, StringComparer.Ordinal);
+        HashSet<string> abandoned = new(_abandonedProjects, StringComparer.Ordinal);
 
         IEnumerable<ProjectProjectionEnvelope> ordered = envelopes
             .Where(static envelope => envelope is not null)
@@ -99,6 +107,11 @@ public sealed record ProjectListProjection
             switch (envelope.Event)
             {
                 case ProjectCreated created:
+                    if (abandoned.Contains(key))
+                    {
+                        break;
+                    }
+
                     projects[key] = new ProjectListItem(
                         created.TenantId,
                         created.ProjectId,
@@ -107,6 +120,16 @@ public sealed record ProjectListProjection
                         envelope.Sequence,
                         created.OccurredAt,
                         created.OccurredAt);
+                    break;
+
+                case ProjectCreationAbandoned:
+                    if (projects.ContainsKey(key))
+                    {
+                        throw new InvalidOperationException(
+                            $"ProjectListProjection cannot apply ProjectCreationAbandoned after ProjectCreated at sequence {envelope.Sequence}.");
+                    }
+
+                    abandoned.Add(key);
                     break;
 
                 case ProjectSetupUpdated updated:
@@ -201,7 +224,9 @@ public sealed record ProjectListProjection
             }
         }
 
-        return new ProjectListProjection(projects.ToFrozenDictionary(StringComparer.Ordinal));
+        return new ProjectListProjection(
+            projects.ToFrozenDictionary(StringComparer.Ordinal),
+            abandoned.ToFrozenSet(StringComparer.Ordinal));
     }
 
     /// <summary>Determines whether the projection contains a project for the given tenant/project.</summary>

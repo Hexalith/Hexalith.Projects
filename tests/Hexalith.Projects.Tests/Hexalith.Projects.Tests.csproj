@@ -1,11 +1,13 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <IsPackable>false</IsPackable>
+    <DefineConstants Condition="'$(UseHexalithProjectReferences)' == 'true'">$(DefineConstants);SUPPORTED_PROJECT_READ_SOURCE</DefineConstants>
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\src\Hexalith.Projects\Hexalith.Projects.csproj" />
     <ProjectReference Include="..\..\src\Hexalith.Projects.Testing\Hexalith.Projects.Testing.csproj" />
     <ProjectReference Include="..\..\src\Hexalith.Projects.UI.Contracts\Hexalith.Projects.UI.Contracts.csproj" />
+    <ProjectReference Include="..\Hexalith.Projects.SdkWriter\Hexalith.Projects.SdkWriter.csproj" />
   </ItemGroup>
   <ItemGroup>
     <!-- FS-5 schema-evolution golden corpus: frozen serialized samples round-tripped in CI. -->

@@ -13,7 +13,7 @@ using Hexalith.McpCli.Abstractions;
 using Hexalith.Projects.Contracts.Models;
 using Hexalith.Projects.Contracts.Queries;
 using Hexalith.Projects.Contracts.Ui;
-using Hexalith.Projects.Server.Projections.ProjectReads;
+using Hexalith.Projects.Projections.ProjectReads;
 using Hexalith.Projects.Server.Queries;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;

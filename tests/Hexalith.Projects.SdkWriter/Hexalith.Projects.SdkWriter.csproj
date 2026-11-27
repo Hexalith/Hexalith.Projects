@@ -1,0 +1,28 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <IsPackable>false</IsPackable>
+    <IsPublishable>false</IsPublishable>
+    <DefineConstants Condition="'$(UseHexalithProjectReferences)' == 'true'">$(DefineConstants);SUPPORTED_PROJECT_READ_SOURCE</DefineConstants>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="..\..\src\Hexalith.Projects.Server\SensitiveMetadataTierValidator.cs" Link="Admission\SensitiveMetadataTierValidator.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\Hexalith.Projects\Hexalith.Projects.csproj" />
+    <ProjectReference Include="..\..\src\Hexalith.Projects.Contracts\Hexalith.Projects.Contracts.csproj" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(UseHexalithProjectReferences)' == 'true'">
+    <ProjectReference Include="$(HexalithEventStoreRoot)\src\Hexalith.EventStore.Client\Hexalith.EventStore.Client.csproj" />
+    <ProjectReference Include="$(HexalithEventStoreRoot)\src\Hexalith.EventStore.Contracts\Hexalith.EventStore.Contracts.csproj" />
+    <ProjectReference Include="$(HexalithEventStoreRoot)\src\Hexalith.EventStore.DomainService\Hexalith.EventStore.DomainService.csproj" />
+    <ProjectReference Include="$(HexalithFoldersRoot)\src\Hexalith.Folders\Hexalith.Folders.csproj" />
+    <ProjectReference Include="$(HexalithFoldersRoot)\src\Hexalith.Folders.Contracts\Hexalith.Folders.Contracts.csproj" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(UseHexalithProjectReferences)' != 'true'">
+    <PackageReference Include="Hexalith.EventStore.Client" />
+    <PackageReference Include="Hexalith.EventStore.Contracts" />
+    <PackageReference Include="Hexalith.EventStore.DomainService" />
+    <PackageReference Include="Hexalith.Folders.Contracts" />
+    <PackageReference Include="Hexalith.Commons.UniqueIds" />
+  </ItemGroup>
+</Project>

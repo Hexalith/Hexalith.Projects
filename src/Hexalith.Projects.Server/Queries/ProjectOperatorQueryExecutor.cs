@@ -10,7 +10,7 @@ using Hexalith.Projects.Authorization;
 using Hexalith.Projects.Contracts.Models;
 using Hexalith.Projects.Contracts.Queries;
 using Hexalith.Projects.Projections.ProjectAuditTimeline;
-using Hexalith.Projects.Server.Projections.ProjectReads;
+using Hexalith.Projects.Projections.ProjectReads;
 
 /// <summary>Reads committed operator facts under the current identity and exact target authority.</summary>
 public sealed class ProjectOperatorQueryExecutor(IReadModelStore store, ProjectAuthorizationGate gate,
@@ -177,6 +177,7 @@ public sealed class ProjectOperatorQueryExecutor(IReadModelStore store, ProjectA
                 ProjectReadModel? model = (await store.GetAsync<ProjectReadModel>(ProjectReadModelKeys.StoreName,
                     ProjectReadModelKeys.Detail(tenantId, projectId), ct).ConfigureAwait(false)).Value;
                 return model is { Freshness: EvidenceFreshnessState.Current, Detail: { } detail }
+                    && !model.IsCreationAbandoned
                     && model.TenantId == tenantId && model.ProjectId == projectId && detail.TenantId == tenantId
                     && detail.ProjectId == projectId ? detail : null;
             }, token).ConfigureAwait(false);

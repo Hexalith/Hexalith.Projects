@@ -12,9 +12,9 @@ using Hexalith.Projects.Contracts.Models;
 using Hexalith.Projects.Contracts.Queries;
 using Hexalith.Projects.Contracts.Ui;
 using Hexalith.Projects.Projections.ProjectDetail;
+using Hexalith.Projects.Projections.ProjectReads;
 using Hexalith.Projects.Resolution;
 using Hexalith.Projects.Server.Folders;
-using Hexalith.Projects.Server.Projections.ProjectReads;
 
 /// <summary>Composes bounded advisory observations without persisting inference or granting authority.</summary>
 /// <param name="store">The committed supported read models.</param>
@@ -229,6 +229,7 @@ public sealed partial class ProjectAdvisoryQueryExecutor(IReadModelStore store, 
         if (entry.Value is not { Detail: { } detail } model || string.IsNullOrEmpty(entry.ETag)
             || model.TenantId != query.TenantId || model.ProjectId != id || detail.TenantId != query.TenantId || detail.ProjectId != id
             || !ProjectPersistedDetailValidator.IsAdvisoryHeaderValid(detail) || model.Sequence <= 0 || detail.Sequence != model.Sequence
+            || model.IsCreationAbandoned
             || !Enum.IsDefined(model.Freshness) || model.Freshness is EvidenceFreshnessState.Unavailable or EvidenceFreshnessState.Rebuilding)
         { omitted(); return null; }
         return ProjectReadQueryExecutor.IsQuarantined(detail) || detail.Lifecycle == ProjectLifecycle.Archived && !includeArchived

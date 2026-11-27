@@ -1041,9 +1041,9 @@ public sealed class SupportedProjectReadEvidenceTests
         string[] tenants = ["primary-secret", "foreign-secret"];
         SupportedProjectReadStateSnapshot[] before = tenants.SelectMany(tenant => new[]
         {
-            Hexalith.Projects.Server.Projections.ProjectReads.ProjectReadModelKeys.Index(tenant),
-            Hexalith.Projects.Server.Projections.ProjectReads.ProjectReadModelKeys.Detail(tenant, "project-a"),
-            Hexalith.Projects.Server.Projections.ProjectReads.ProjectReadModelKeys.Detail(tenant, "project-b"),
+            Hexalith.Projects.Projections.ProjectReads.ProjectReadModelKeys.Index(tenant),
+            Hexalith.Projects.Projections.ProjectReads.ProjectReadModelKeys.Detail(tenant, "project-a"),
+            Hexalith.Projects.Projections.ProjectReads.ProjectReadModelKeys.Detail(tenant, "project-b"),
         }).Select((key, index) => new SupportedProjectReadStateSnapshot(key,
             JsonSerializer.SerializeToUtf8Bytes(new { globalPosition = index + 1, description = "protected-secret-payload" }), "secret-etag")).ToArray();
         DirectoryInfo directory = Directory.CreateTempSubdirectory("restart-state-control-");
@@ -1521,9 +1521,9 @@ public sealed class SupportedProjectReadEvidenceTests
     private static SupportedProjectReadStateSnapshot[] ReplayState(string[] tenants)
         => tenants.SelectMany(tenant => new[]
         {
-            Hexalith.Projects.Server.Projections.ProjectReads.ProjectReadModelKeys.Index(tenant),
-            Hexalith.Projects.Server.Projections.ProjectReads.ProjectReadModelKeys.Detail(tenant, "project-a"),
-            Hexalith.Projects.Server.Projections.ProjectReads.ProjectReadModelKeys.Detail(tenant, "project-b"),
+            Hexalith.Projects.Projections.ProjectReads.ProjectReadModelKeys.Index(tenant),
+            Hexalith.Projects.Projections.ProjectReads.ProjectReadModelKeys.Detail(tenant, "project-a"),
+            Hexalith.Projects.Projections.ProjectReads.ProjectReadModelKeys.Detail(tenant, "project-b"),
         }).Select((key, index) => new SupportedProjectReadStateSnapshot(key,
             JsonSerializer.SerializeToUtf8Bytes(new { globalPosition = index + 1, description = "protected-secret-payload" }), "secret-etag"))
             .Concat(tenants.Select(tenant => new SupportedProjectReadStateSnapshot("journal:" + tenant, "protected-secret-journal"u8.ToArray(), "secret-etag"))).ToArray();

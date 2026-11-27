@@ -206,6 +206,69 @@ public sealed class ProjectOperatorQueryTests
         SupportedProjectReadFixture.Payload<ProjectTaskStatusResponse>(malformed).State.ShouldBe("Unavailable");
     }
 
+    [Fact]
+    [Trait("Story", "7.1")]
+    public async Task AbandonedReadModelIsDeniedAndCommittedAuditProjectsAbandonment()
+    {
+        var fixture = await SupportedProjectReadFixture.CreateAsync();
+        var token = TestContext.Current.CancellationToken;
+        const string project = "alpha";
+        await fixture.SeedAsync(project);
+
+        // 1. Corrupt persisted ProjectReadModel with IsCreationAbandoned == true and non-null Detail must be denied!
+        string key = Hexalith.Projects.Projections.ProjectReads.ProjectReadModelKeys.Detail("tenant-a", project);
+        var model = fixture.Store.Snapshot<Hexalith.Projects.Projections.ProjectReads.ProjectReadModel>("statestore", key)!;
+        fixture.Store.SeedRaw("statestore", key, model with { IsCreationAbandoned = true });
+        var query = fixture.Query(new GetProjectAuditQuery(), project) with { QueryType = GetProjectAuditQuery.QueryType };
+        (await Executor(fixture, new()).AuditAsync(query, token)).ErrorMessage.ShouldBe("safe-denial");
+
+        // 2. ProjectCommittedAuditHistory.ReadAsync projects committed ProjectCreationAbandoned to Safe Metadata fact.
+        ProjectCreationAbandoned abandoned = new(
+            "tenant-a",
+            project,
+            "fld-private",
+            1,
+            "caller_abandoned",
+            "Private actor",
+            "Private corr",
+            "Private task",
+            "idem-abn",
+            "fp-abn",
+            SupportedProjectReadFixture.EventTime);
+        StreamReadEvent streamEvent = new(
+            1,
+            typeof(ProjectCreationAbandoned).FullName!,
+            JsonSerializer.SerializeToUtf8Bytes(abandoned, SupportedProjectReadFixture.Json),
+            "json",
+            1,
+            "idem-abn",
+            "Private corr",
+            null,
+            SupportedProjectReadFixture.EventTime,
+            "Private actor")
+        {
+            GlobalPosition = 10,
+        };
+        AuthoritativeEventStream stream = new(
+            new AggregateIdentity("tenant-a", "projects", project),
+            1,
+            fixture.Clock.Now,
+            [streamEvent],
+            "observation");
+        IReadOnlyList<ProjectAuditFact>? facts = await ProjectCommittedAuditHistory.ReadAsync(
+            new ProjectAuthorityReaderFixture(new(stream, null)),
+            "tenant-a",
+            project,
+            1,
+            fixture.Clock,
+            token);
+        facts.ShouldNotBeNull();
+        ProjectAuditFact fact = facts.ShouldHaveSingleItem();
+        fact.Operation.ShouldBe("project.creation_abandoned");
+        fact.Outcome.ShouldBe("Abandoned");
+        JsonSerializer.Serialize(fact).ShouldNotContain("Private");
+    }
+
     private static ProjectOperatorQueryExecutor Executor(SupportedProjectReadFixture fixture,
         InMemoryProjectAuditTimelineReadModel journal, IProjectTaskStatusAuthority? tasks = null, IAuthoritativeEventStreamReader? streams = null)
         => new(fixture.Store, fixture.Gate, fixture.Binding, journal, new ProjectReadAudit(fixture.Store, fixture.Clock),

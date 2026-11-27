@@ -2,7 +2,7 @@ namespace Hexalith.Projects.Server.Tests.Queries;
 
 using System.Collections.Concurrent;
 using Hexalith.EventStore.Client.Projections;
-using Hexalith.Projects.Server.Projections.ProjectReads;
+using Hexalith.Projects.Projections.ProjectReads;
 
 internal sealed class AdvisoryGuardedReadStore(IReadModelStore inner) : IReadModelStore
 {
