@@ -1117,13 +1117,139 @@ class SupportedReadRestartDeadlineControls(unittest.TestCase):
     def test_regressions_use_the_refreshed_endpoint_file(self):
         with tempfile.TemporaryDirectory() as directory:
             path = Path(directory) / "endpoints.json"
-            path.write_text(json.dumps({"eventstore-dapr-cli": "http://localhost:1111", "state-grpc": "http://localhost:2222"}))
+            path.write_text(json.dumps({
+                "eventstore-dapr-cli": "http://localhost:1111",
+                "state-grpc": "http://localhost:2222",
+                "projects-dapr-cli": "http://localhost:5111",
+                "projects-state-grpc": "http://localhost:5222",
+            }))
             original = LAUNCHER.regression_environment({"preserved": "value"}, path)
-            path.write_text(json.dumps({"eventstore-dapr-cli": "http://localhost:3333", "state-grpc": "http://localhost:4444"}))
+            self.assertEqual(original["Projects__SupportedReads__Enabled"], "false")
+            self.assertEqual(original["STORY61_DAPR_HTTP_ENDPOINT"], "http://localhost:5111")
+            self.assertEqual(original["STORY61_DAPR_GRPC_ENDPOINT"], "http://localhost:5222")
+            path.write_text(json.dumps({
+                "eventstore-dapr-cli": "http://localhost:3333",
+                "state-grpc": "http://localhost:4444",
+                "projects-dapr-cli": "http://localhost:6333",
+                "projects-state-grpc": "http://localhost:6444",
+            }))
             refreshed = LAUNCHER.regression_environment(original, path)
-            self.assertEqual(refreshed["STORY61_DAPR_HTTP_ENDPOINT"], "http://localhost:3333")
-            self.assertEqual(refreshed["STORY61_DAPR_GRPC_ENDPOINT"], "http://localhost:4444")
+            self.assertEqual(refreshed["Projects__SupportedReads__Enabled"], "false")
+            self.assertEqual(refreshed["STORY61_DAPR_HTTP_ENDPOINT"], "http://localhost:6333")
+            self.assertEqual(refreshed["STORY61_DAPR_GRPC_ENDPOINT"], "http://localhost:6444")
             self.assertEqual(refreshed["preserved"], "value")
+            for missing in ("projects-dapr-cli", "projects-state-grpc"):
+                incomplete = {
+                    "eventstore-dapr-cli": "http://localhost:3333",
+                    "state-grpc": "http://localhost:4444",
+                    "projects-dapr-cli": "http://localhost:6333",
+                    "projects-state-grpc": "http://localhost:6444",
+                }
+                del incomplete[missing]
+                path.write_text(json.dumps(incomplete))
+                with self.subTest(missing=missing), self.assertRaises(KeyError):
+                    LAUNCHER.regression_environment({"preserved": "value"}, path)
+
+    def test_refresh_owned_endpoints_updates_projects_state_grpc_and_preserves_state_grpc(self):
+        with tempfile.TemporaryDirectory() as directory:
+            private = Path(directory)
+            endpoints_path = private / "endpoints.json"
+            initial = {
+                "eventstore": "http://localhost:1001",
+                "projects": "http://localhost:1002",
+                "folders": "http://localhost:1003",
+                "eventstore-dapr-cli": "http://localhost:1101",
+                "projects-dapr-cli": "http://localhost:1102",
+                "folders-dapr-cli": "http://localhost:1103",
+                "broker": "https://localhost:1200/workload-authority",
+                "state-grpc": "http://localhost:1301",
+                "projects-state-grpc": "http://localhost:1302",
+                "ownership": str(private / "apphost-session.json"),
+                "redis-container-id": "redis-id",
+            }
+            endpoints_path.write_text(json.dumps(initial))
+            os.chmod(endpoints_path, 0o600)
+            owned = {"_configuration": str(private / "fixture.json"), "_isolation": "iso-test"}
+            graph = {"resources": [
+                {"displayName": "eventstore", "urls": [{"name": "http", "url": "http://localhost:2001"}]},
+                {"displayName": "projects", "urls": [{"name": "http", "url": "http://localhost:2002"}]},
+                {"displayName": "folders", "urls": [{"name": "http", "url": "http://localhost:2003"}]},
+                {"displayName": "eventstore-dapr-cli", "urls": [
+                    {"name": "http", "url": "http://localhost:2101"},
+                    {"name": "grpc", "url": "http://localhost:2301"},
+                ]},
+                {"displayName": "projects-dapr-cli", "urls": [
+                    {"name": "http", "url": "http://localhost:2102"},
+                    {"name": "grpc", "url": "http://localhost:2302"},
+                ]},
+                {"displayName": "folders-dapr-cli", "urls": [{"name": "http", "url": "http://localhost:2103"}]},
+                {"displayName": "supported-read-authority", "urls": [{"name": "https", "url": "https://localhost:2200"}]},
+            ]}
+            with patch.object(LAUNCHER, "verify_discovery", return_value={"resolver": "sqlite"}):
+                discovery = LAUNCHER.refresh_owned_endpoints(owned, graph)
+            self.assertEqual(discovery, {"resolver": "sqlite"})
+            updated = json.loads(endpoints_path.read_text())
+            self.assertEqual(updated["projects-dapr-cli"], "http://localhost:2102")
+            self.assertEqual(updated["projects-state-grpc"], "http://localhost:2302")
+            self.assertEqual(updated["state-grpc"], "http://localhost:2301")
+            self.assertEqual(updated["eventstore-dapr-cli"], "http://localhost:2101")
+            self.assertEqual(updated["broker"], "https://localhost:2200/workload-authority")
+            self.assertEqual(updated["ownership"], initial["ownership"])
+            self.assertEqual(updated["redis-container-id"], "redis-id")
+            self.assertEqual(endpoints_path.stat().st_mode & 0o777, 0o600)
+
+            broken_graph = {"resources": [
+                item if item["displayName"] != "projects-dapr-cli"
+                else {"displayName": "projects-dapr-cli", "urls": [{"name": "http", "url": "http://localhost:3102"}]}
+                for item in graph["resources"]
+            ]}
+            with patch.object(LAUNCHER, "verify_discovery", return_value={"resolver": "sqlite"}), \
+                    self.assertRaises(RuntimeError):
+                LAUNCHER.refresh_owned_endpoints(owned, broken_graph)
+            self.assertEqual(json.loads(endpoints_path.read_text()), updated)
+            self.assertEqual(endpoints_path.stat().st_mode & 0o777, 0o600)
+
+    def test_initial_endpoint_capture_writes_projects_state_grpc_preserves_state_grpc_and_fails_if_missing(self):
+        with tempfile.TemporaryDirectory() as directory:
+            private = Path(directory)
+            endpoints_path = private / "endpoints.json"
+            ownership_path = private / "apphost-session.json"
+            graph = {"resources": [
+                {"displayName": "eventstore", "urls": [{"name": "http", "url": "http://localhost:2001"}]},
+                {"displayName": "projects", "urls": [{"name": "http", "url": "http://localhost:2002"}]},
+                {"displayName": "folders", "urls": [{"name": "http", "url": "http://localhost:2003"}]},
+                {"displayName": "eventstore-dapr-cli", "urls": [
+                    {"name": "http", "url": "http://localhost:2101"},
+                    {"name": "grpc", "url": "http://localhost:2301"},
+                ]},
+                {"displayName": "projects-dapr-cli", "urls": [
+                    {"name": "http", "url": "http://localhost:2102"},
+                    {"name": "grpc", "url": "http://localhost:2302"},
+                ]},
+                {"displayName": "folders-dapr-cli", "urls": [{"name": "http", "url": "http://localhost:2103"}]},
+                {"displayName": "supported-read-authority", "urls": [{"name": "https", "url": "https://localhost:2200"}]},
+            ]}
+            captured = LAUNCHER.write_owned_endpoints(endpoints_path, graph, ownership_path, "redis-id")
+            written = json.loads(endpoints_path.read_text())
+            self.assertEqual(written, captured)
+            self.assertEqual(written["projects-dapr-cli"], "http://localhost:2102")
+            self.assertEqual(written["projects-state-grpc"], "http://localhost:2302")
+            self.assertEqual(written["state-grpc"], "http://localhost:2301")
+            self.assertEqual(written["eventstore-dapr-cli"], "http://localhost:2101")
+            self.assertEqual(written["broker"], "https://localhost:2200/workload-authority")
+            self.assertEqual(written["ownership"], str(ownership_path))
+            self.assertEqual(written["redis-container-id"], "redis-id")
+            self.assertEqual(endpoints_path.stat().st_mode & 0o777, 0o600)
+
+            missing_grpc_path = private / "missing.json"
+            broken_graph = {"resources": [
+                item if item["displayName"] != "projects-dapr-cli"
+                else {"displayName": "projects-dapr-cli", "urls": [{"name": "http", "url": "http://localhost:3102"}]}
+                for item in graph["resources"]
+            ]}
+            with self.assertRaises(RuntimeError):
+                LAUNCHER.write_owned_endpoints(missing_grpc_path, broken_graph, ownership_path, "redis-id")
+            self.assertFalse(missing_grpc_path.exists())
 
 
     def test_regressions_do_not_reseed_an_already_initialized_store(self):

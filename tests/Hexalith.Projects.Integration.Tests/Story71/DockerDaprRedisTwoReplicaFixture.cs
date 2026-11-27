@@ -114,26 +114,7 @@ public sealed class DockerDaprRedisTwoReplicaFixture : IAsyncLifetime
 
         try
         {
-            Directory.CreateDirectory(_componentsDir);
-            string componentYaml = """
-                apiVersion: dapr.io/v1alpha1
-                kind: Component
-                metadata:
-                  name: statestore
-                spec:
-                  type: state.redis
-                  version: v1
-                  metadata:
-                    - name: redisHost
-                      value: "redis:6379"
-                    - name: redisPassword
-                      value: ""
-                    - name: actorStateStore
-                      value: "true"
-                    - name: keyPrefix
-                      value: "none"
-                """;
-            await File.WriteAllTextAsync(Path.Combine(_componentsDir, "statestore.yaml"), componentYaml, ct).ConfigureAwait(false);
+            _ = await WriteStatestoreComponentAsync(_componentsDir, ct).ConfigureAwait(false);
 
             await RunDockerAsync($"network create {_networkName}", ct).ConfigureAwait(false);
             await RunDockerAsync(
@@ -233,6 +214,56 @@ public sealed class DockerDaprRedisTwoReplicaFixture : IAsyncLifetime
                 // Best-effort temp cleanup.
             }
         }
+    }
+
+    /// <summary>
+    /// Creates the bind-mounted Dapr component directory and non-secret <c>statestore.yaml</c> file,
+    /// ensuring non-Windows permissions remain readable by the nonroot <c>daprio/daprd</c> container user.
+    /// </summary>
+    /// <param name="componentsDir">The target directory to create and populate.</param>
+    /// <param name="cancellationToken">The cancellation token.</param>
+    /// <returns>The full path to the written <c>statestore.yaml</c> file.</returns>
+    internal static async Task<string> WriteStatestoreComponentAsync(string componentsDir, CancellationToken cancellationToken)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(componentsDir);
+        _ = Directory.CreateDirectory(componentsDir);
+        const string componentYaml = """
+            apiVersion: dapr.io/v1alpha1
+            kind: Component
+            metadata:
+              name: statestore
+            spec:
+              type: state.redis
+              version: v1
+              metadata:
+                - name: redisHost
+                  value: "redis:6379"
+                - name: redisPassword
+                  value: ""
+                - name: actorStateStore
+                  value: "true"
+                - name: keyPrefix
+                  value: "none"
+            """;
+        string componentPath = Path.Combine(componentsDir, "statestore.yaml");
+        await File.WriteAllTextAsync(componentPath, componentYaml, cancellationToken).ConfigureAwait(false);
+        if (!OperatingSystem.IsWindows())
+        {
+            // daprio/daprd runs as nonroot (65532:65532), so the non-secret component file
+            // must remain readable even when the test runner inherits a restrictive umask (0077).
+            File.SetUnixFileMode(
+                componentsDir,
+                UnixFileMode.UserRead | UnixFileMode.UserWrite | UnixFileMode.UserExecute
+                | UnixFileMode.GroupRead | UnixFileMode.GroupExecute
+                | UnixFileMode.OtherRead | UnixFileMode.OtherExecute);
+            File.SetUnixFileMode(
+                componentPath,
+                UnixFileMode.UserRead | UnixFileMode.UserWrite
+                | UnixFileMode.GroupRead
+                | UnixFileMode.OtherRead);
+        }
+
+        return componentPath;
     }
 
     private async Task WaitForRedisReadyAsync(CancellationToken cancellationToken)

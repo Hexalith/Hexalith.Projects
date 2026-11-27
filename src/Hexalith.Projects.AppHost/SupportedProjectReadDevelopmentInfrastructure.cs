@@ -46,12 +46,7 @@ internal static class SupportedProjectReadDevelopmentInfrastructure
             .Single(resource => resource.Name == "projects-workers"));
         IResourceBuilder<DotnetProjectResource> foldersWorkers = builder.CreateResourceBuilder(builder.Resources.OfType<DotnetProjectResource>()
             .Single(resource => resource.Name == "folders-workers"));
-        Assembly projectOwner = Load(projects.Resource, "Hexalith.Projects.Contracts.dll");
-        Assembly projectAdapters = Load(projects.Resource, "Hexalith.Projects.EventStoreExtensions.dll");
-        Assembly folderOwner = Load(folders.Resource, "Hexalith.Folders.Server.dll");
-        Assembly folderAdapters = typeof(Hexalith.Folders.EventStore.FoldersCatalogAdapterSource).Assembly;
-        Assembly tenantOwner = Load(tenants.Resource, "Hexalith.Tenants.Contracts.dll");
-        Assembly tenantAdapters = Load(tenants.Resource, "Hexalith.Tenants.Server.dll");
+        DevelopmentRouteCatalogOwner<DotnetProjectResource>[] catalogOwners = LoadCatalogOwners(projects, tenants, folders);
         string digestKey = builder.Configuration["Projects:SupportedReads:CatalogDigestKey"]
             ?? throw new InvalidOperationException("The fresh disposable backend requires its private catalog digest key.");
         var options = new DevelopmentRouteCatalogCompositionOptions(Path.Combine(privateDirectory, "catalog-custody"),
@@ -104,7 +99,7 @@ internal static class SupportedProjectReadDevelopmentInfrastructure
         _ = projects.WithEnvironment("Projects__SupportedReads__Enabled", "true");
         _ = projectsWorkers.WithEnvironment("Projects__SupportedReads__Enabled", "true");
         DevelopmentRouteCatalogComposition catalog = builder.AddEventStoreDevelopmentRouteCatalog(gateway,
-            [new(projects, projectOwner, projectAdapters), new(tenants, tenantOwner, tenantAdapters), new(folders, folderOwner, folderAdapters)],
+            catalogOwners,
             receivers, statePath, options, isolation);
         builder.AddEventStoreDevelopmentSqliteStartupOrdering(tenants, gateway, projects, projectsWorkers, folders, foldersWorkers);
         _ = tenants.WithEnvironment("Tenants__BootstrapBoundWorkloadReceiptPath", Path.Combine(catalog.Directory, "tenants.bootstrap.json"));
@@ -124,10 +119,43 @@ internal static class SupportedProjectReadDevelopmentInfrastructure
     }
 
 #if SUPPORTED_PROJECT_READ_SOURCE
+    /// <summary>Loads the compiled route-catalog owner and adapter assemblies for the distributed fixture owners.</summary>
+    /// <param name="projects">The Projects server resource.</param>
+    /// <param name="tenants">The Tenants server resource.</param>
+    /// <param name="folders">The Folders server resource.</param>
+    /// <returns>The enrolled route-catalog owner descriptors for Projects, Tenants, and Folders.</returns>
+    internal static DevelopmentRouteCatalogOwner<DotnetProjectResource>[] LoadCatalogOwners(
+        IResourceBuilder<DotnetProjectResource> projects,
+        IResourceBuilder<DotnetProjectResource> tenants,
+        IResourceBuilder<DotnetProjectResource> folders)
+    {
+        Assembly projectOwner = Load(projects.Resource, "Hexalith.Projects.Contracts.dll");
+        Assembly projectAdapters = Load(projects.Resource, "Hexalith.Projects.EventStoreExtensions.dll");
+        Assembly folderOwner = Load(folders.Resource, "Hexalith.Folders.Contracts.dll");
+        Assembly folderAdapters = typeof(Hexalith.Folders.EventStore.FoldersCatalogAdapterSource).Assembly;
+        Assembly tenantOwner = Load(tenants.Resource, "Hexalith.Tenants.Contracts.dll");
+        Assembly tenantAdapters = Load(tenants.Resource, "Hexalith.Tenants.Server.dll");
+        return
+        [
+            new(projects, projectOwner, projectAdapters),
+            new(tenants, tenantOwner, tenantAdapters),
+            new(folders, folderOwner, folderAdapters),
+        ];
+    }
+
     private static Assembly Load(DotnetProjectResource project, string artifact)
     {
-        string directory = Path.GetDirectoryName(project.GetProjectMetadata().ProjectPath)!;
-        string path = Path.Combine(directory, "bin", "Debug", "net11.0", artifact);
+        string projectPath = project.GetProjectMetadata().ProjectPath;
+        string directory = Path.GetDirectoryName(projectPath)!;
+        var currentOutput = new DirectoryInfo(AppContext.BaseDirectory);
+        DirectoryInfo? artifactsBin = currentOutput.Parent?.Parent;
+        string? artifactsPath = artifactsBin?.Name == "bin"
+            ? Path.Combine(artifactsBin.FullName, Path.GetFileNameWithoutExtension(projectPath), currentOutput.Name, artifact)
+            : null;
+        string path = artifactsPath is not null && File.Exists(artifactsPath)
+            ? artifactsPath
+            : Path.Combine(directory, "bin", "Debug", "net11.0", artifact);
+
         if (!File.Exists(path)) throw new InvalidOperationException("Build the selected Debug/source owner before composing its catalog: " + path);
         Assembly loaded = Assembly.LoadFrom(path);
         if (!SHA256.HashData(File.ReadAllBytes(loaded.Location)).AsSpan().SequenceEqual(SHA256.HashData(File.ReadAllBytes(path))))

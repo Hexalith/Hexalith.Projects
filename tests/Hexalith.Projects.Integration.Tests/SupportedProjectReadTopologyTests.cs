@@ -419,6 +419,44 @@ public sealed class SupportedProjectReadTopologyTests : IDisposable
         TestContext.Current.TestOutputHelper!.WriteLine(System.Text.Json.JsonSerializer.Serialize(new { SubscriberOrder = order, NativeRewrites = peers.Length }));
     }
 
+#if SUPPORTED_PROJECT_READ_SOURCE
+    /// <summary>Verifies that the distributed fixture enrolls compiled route-catalog owner assemblies for Projects, Tenants, and Folders.</summary>
+    [Fact]
+    public void SupportedProjectReadDevelopmentInfrastructureLoadsDeclaredCatalogOwners()
+    {
+        IDistributedApplicationBuilder builder = DistributedApplication.CreateBuilder();
+        string root = TestRepositoryRoot.Find();
+        string tenantsRoot = Path.Combine(root, "references", "Hexalith.Tenants");
+        string siblingTenants = Path.GetFullPath(Path.Combine(root, "..", "Hexalith.Tenants"));
+        if (!File.Exists(Path.Combine(tenantsRoot, "src", "Hexalith.Tenants", "Hexalith.Tenants.csproj"))
+            && File.Exists(Path.Combine(siblingTenants, "src", "Hexalith.Tenants", "Hexalith.Tenants.csproj")))
+        {
+            tenantsRoot = siblingTenants;
+        }
+
+        string foldersRoot = Path.Combine(root, "references", "Hexalith.Folders");
+        string siblingFolders = Path.GetFullPath(Path.Combine(root, "..", "Hexalith.Folders"));
+        if (!File.Exists(Path.Combine(foldersRoot, "src", "Hexalith.Folders.Server", "Hexalith.Folders.Server.csproj"))
+            && File.Exists(Path.Combine(siblingFolders, "src", "Hexalith.Folders.Server", "Hexalith.Folders.Server.csproj")))
+        {
+            foldersRoot = siblingFolders;
+        }
+
+        var projects = builder.AddDotnetProject("projects", Path.Combine(root, "src", "Hexalith.Projects.Server", "Hexalith.Projects.Server.csproj"));
+        var tenants = builder.AddDotnetProject("tenants", Path.Combine(tenantsRoot, "src", "Hexalith.Tenants", "Hexalith.Tenants.csproj"));
+        var folders = builder.AddDotnetProject("folders", Path.Combine(foldersRoot, "src", "Hexalith.Folders.Server", "Hexalith.Folders.Server.csproj"));
+
+        DevelopmentRouteCatalogOwner<DotnetProjectResource>[] owners =
+            SupportedProjectReadDevelopmentInfrastructure.LoadCatalogOwners(projects, tenants, folders);
+        owners.Select(owner => owner.Project.Resource.Name).ShouldBe(["projects", "tenants", "folders"]);
+        foreach (DevelopmentRouteCatalogOwner<DotnetProjectResource> owner in owners)
+        {
+            var routes = Hexalith.EventStore.ServiceDefaults.Routing.CompiledRouteCatalogDeclarations.Read([owner.Contracts]);
+            routes.Count.ShouldBeGreaterThan(0);
+        }
+    }
+#endif
+
     private Dictionary<string, string?> ValidInputs()
     {
         string directory = Directory.CreateTempSubdirectory("supported-read-topology-").FullName;

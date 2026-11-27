@@ -359,8 +359,8 @@ def regression_environment(env: dict, endpoints_path: Path) -> dict:
     endpoints = json.loads(endpoints_path.read_text())
     result = env.copy()
     result["Projects__SupportedReads__Enabled"] = "false"
-    result["STORY61_DAPR_HTTP_ENDPOINT"] = endpoints["eventstore-dapr-cli"]
-    result["STORY61_DAPR_GRPC_ENDPOINT"] = endpoints["state-grpc"]
+    result["STORY61_DAPR_HTTP_ENDPOINT"] = endpoints["projects-dapr-cli"]
+    result["STORY61_DAPR_GRPC_ENDPOINT"] = endpoints["projects-state-grpc"]
     return result
 
 
@@ -907,14 +907,29 @@ def projects_processes_gone(identity: dict) -> bool:
                (("pid", "startTicks"), ("launcherPid", "launcherStartTicks")))
 
 
+def populate_owned_endpoints(endpoints: dict, graph: dict, *, lookup=resource_endpoint) -> dict:
+    for name in ("eventstore", "projects", "folders", "eventstore-dapr-cli", "projects-dapr-cli", "folders-dapr-cli"):
+        endpoints[name] = lookup(graph, name)
+    endpoints["broker"] = lookup(graph, "supported-read-authority", "https") + "/workload-authority"
+    endpoints["state-grpc"] = lookup(graph, "eventstore-dapr-cli", "grpc")
+    endpoints["projects-state-grpc"] = lookup(graph, "projects-dapr-cli", "grpc")
+    return endpoints
+
+
+def write_owned_endpoints(endpoints_path: Path, graph: dict, ownership_path: Path, redis_container_id: str, *, lookup=resource_endpoint) -> dict:
+    endpoints = populate_owned_endpoints({}, graph, lookup=lookup)
+    endpoints["ownership"] = str(ownership_path)
+    endpoints["redis-container-id"] = redis_container_id
+    endpoints_path.write_text(json.dumps(endpoints))
+    os.chmod(endpoints_path, 0o600)
+    return endpoints
+
+
 def refresh_owned_endpoints(owned: dict, graph: dict) -> dict:
     private = Path(owned["_configuration"]).parent
     endpoints_path = private / "endpoints.json"
     endpoints = json.loads(endpoints_path.read_text())
-    for name in ("eventstore", "projects", "folders", "eventstore-dapr-cli", "projects-dapr-cli", "folders-dapr-cli"):
-        endpoints[name] = resource_endpoint(graph, name)
-    endpoints["broker"] = resource_endpoint(graph, "supported-read-authority", "https") + "/workload-authority"
-    endpoints["state-grpc"] = resource_endpoint(graph, "eventstore-dapr-cli", "grpc")
+    populate_owned_endpoints(endpoints, graph)
     discovery = verify_discovery(private / "discovery.json", private / "discovery.sqlite", owned["_isolation"])
     endpoints_path.write_text(json.dumps(endpoints))
     os.chmod(endpoints_path, 0o600)
@@ -2694,13 +2709,15 @@ def _main() -> int:
                                     for r in graph["resources"] if not r.get("displayName", "").startswith("supported-reads-")]
         report["endpointNames"] = {r.get("displayName"): [url.get("name") for url in r.get("urls", [])]
                                    for r in graph["resources"] if not r.get("displayName", "").startswith("supported-reads-")}
-        endpoints = {name: endpoint(graph, name) for name in ("eventstore", "projects", "folders", "eventstore-dapr-cli", "projects-dapr-cli", "folders-dapr-cli")}
-        endpoints["broker"] = endpoint(graph, "supported-read-authority", "https") + "/workload-authority"
-        endpoints["state-grpc"] = endpoint(graph, "eventstore-dapr-cli", "grpc")
-        endpoints["ownership"] = str(ownership_path)
-        endpoints["redis-container-id"] = next(item["id"] for item in owned if item["name"].endswith("-redishost"))
-        (private / "endpoints.json").write_text(json.dumps(endpoints))
-        env["SUPPORTED_PROJECT_READ_ENDPOINTS"] = str(private / "endpoints.json")
+        endpoints_path = private / "endpoints.json"
+        write_owned_endpoints(
+            endpoints_path,
+            graph,
+            ownership_path,
+            next(item["id"] for item in owned if item["name"].endswith("-redishost")),
+            lookup=endpoint,
+        )
+        env["SUPPORTED_PROJECT_READ_ENDPOINTS"] = str(endpoints_path)
         artifacts = args.artifacts.resolve() if args.artifacts else private / "artifacts"
         if args.artifacts:
             artifacts.mkdir(mode=0o700, parents=True, exist_ok=True)

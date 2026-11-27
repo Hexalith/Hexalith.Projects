@@ -37,5 +37,8 @@
     <PackageReference Include="CommunityToolkit.Aspire.Hosting.Dapr" />
     <PackageReference Include="Hexalith.EventStore.Aspire" Condition="'$(UseHexalithProjectReferences)' != 'true'" />
   </ItemGroup>
+  <ItemGroup>
+    <InternalsVisibleTo Include="Hexalith.Projects.Integration.Tests" />
+  </ItemGroup>
   <Import Project="../PlatformMtlsHelpers.targets" Condition="'$(UseHexalithProjectReferences)' == 'true'" />
 </Project>
