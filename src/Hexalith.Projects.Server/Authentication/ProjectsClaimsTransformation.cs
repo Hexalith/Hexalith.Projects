@@ -13,12 +13,7 @@ using Microsoft.AspNetCore.Authentication;
 /// <summary>Normalizes authenticated claims into the EventStore evidence claim names used by Projects.</summary>
 public sealed class ProjectsClaimsTransformation : IClaimsTransformation
 {
-    private const string TenantClaimType = "tenantId";
-    private const string TenantsClaimType = "tenants";
-    private const string TenantIdClaimType = "tenant_id";
-    private const string TidClaimType = "tid";
     private const string PermissionsClaimType = "permissions";
-    private const string EventStoreTenantClaimType = "eventstore:tenant";
     private const string EventStorePermissionClaimType = "eventstore:permission";
 
     /// <inheritdoc/>
@@ -36,10 +31,7 @@ public sealed class ProjectsClaimsTransformation : IClaimsTransformation
             return Task.FromResult(principal);
         }
 
-        if (identity.FindFirst(EventStoreTenantClaimType) is null)
-        {
-            AddTenantClaims(identity);
-        }
+        ProjectTenantClaims.AddTenantClaims(identity);
 
         string? principalId = identity.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? identity.FindFirst("sub")?.Value;
         if (!string.IsNullOrWhiteSpace(principalId) && identity.FindFirst(ClaimTypes.NameIdentifier) is null)
@@ -53,21 +45,6 @@ public sealed class ProjectsClaimsTransformation : IClaimsTransformation
         }
 
         return Task.FromResult(principal);
-    }
-
-    private static void AddTenantClaims(ClaimsIdentity identity)
-    {
-        string? tenant = identity.FindFirst(TenantClaimType)?.Value
-            ?? identity.FindFirst(TenantIdClaimType)?.Value
-            ?? identity.FindFirst(TidClaimType)?.Value;
-
-        if (!string.IsNullOrWhiteSpace(tenant))
-        {
-            identity.AddClaim(new Claim(EventStoreTenantClaimType, tenant));
-            return;
-        }
-
-        AddClaimsFromJwt(identity, TenantsClaimType, EventStoreTenantClaimType);
     }
 
     private static void AddClaimsFromJwt(

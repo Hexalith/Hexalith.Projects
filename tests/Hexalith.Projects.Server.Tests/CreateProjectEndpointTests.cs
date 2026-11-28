@@ -11,6 +11,7 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Json;
+using System.Security.Claims;
 using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
@@ -30,6 +31,7 @@ using Hexalith.Projects.Server.Memories;
 using Hexalith.Projects.Testing.Leakage;
 using Hexalith.Projects.Testing.TenantIsolation;
 
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
@@ -1465,6 +1467,98 @@ public sealed partial class CreateProjectEndpointTests
         }
     }
 
+    [Theory]
+    [InlineData(null, null, false)]
+    [InlineData("tenant-other", null, false)]
+    [InlineData("tenant-a", "tenant-b", false)]
+    [InlineData(" ", null, false)]
+    [InlineData("tenant-b", null, true)]
+    public async Task RetainedV1RoutesRequireAVerifiedSingleTenant(string? currentTenant, string? additionalCurrentTenant, bool allowed)
+    {
+        const string firstTenantProject = "01HZ9K8YQ3W6V2N4R7T5P0X1AC";
+        List<Claim> claims =
+        [
+            new("eventstore:tenant", "tenant-a"),
+            new("eventstore:tenant", "tenant-b"),
+        ];
+        if (currentTenant is not null)
+        {
+            claims.Add(new Claim("eventstore:current-tenant", currentTenant));
+        }
+
+        if (additionalCurrentTenant is not null)
+        {
+            claims.Add(new Claim("eventstore:current-tenant", additionalCurrentTenant));
+        }
+
+        RequestBodyReadCounter counter = new();
+        FakeProjectCommandSubmitter submitter = new(ProjectCommandSubmissionResult.Accepted("corr-a", false));
+        WebApplication app = await StartAppAsync(submitter, tenantId: "tenant-b", principalId: "principal-a",
+            configurePipeline: counter.Install, tenantClaims: claims).ConfigureAwait(true);
+        try
+        {
+            await SeedTenantAccessAsync(app.Services, "tenant-a", "principal-a", true, DateTimeOffset.UtcNow).ConfigureAwait(true);
+            InMemoryProjectDetailReadModel details = app.Services.GetRequiredService<InMemoryProjectDetailReadModel>();
+            InMemoryProjectListReadModel list = app.Services.GetRequiredService<InMemoryProjectListReadModel>();
+            ProjectCreated firstTenant = CreatedEvent("tenant-a", ProjectLifecycle.Archived, firstTenantProject);
+            ProjectCreated selectedTenant = CreatedEvent("tenant-b");
+            details.Project("tenant-a", firstTenant);
+            details.Project("tenant-b", selectedTenant);
+            details.Project("tenant-b", FolderSetEvent("tenant-b", "fixture-folder"));
+            list.Project("tenant-a", firstTenant);
+            list.Project("tenant-b", selectedTenant);
+
+            CancellationToken token = TestContext.Current.CancellationToken;
+            using HttpClient client = new() { BaseAddress = new Uri(app.Urls.First()) };
+            using HttpRequestMessage createRequest = ValidCreateRequest();
+            using HttpResponseMessage create = await client.SendAsync(createRequest, token).ConfigureAwait(true);
+            long createBytesRead = counter.BytesRead;
+            counter.Reset();
+            using HttpRequestMessage listRequest = new(HttpMethod.Get, "/api/v1/projects?inspectDescriptiveMetadata=true")
+            {
+                Content = new StringContent("{"),
+            };
+            using HttpRequestMessage openRequest = new(HttpMethod.Get, $"/api/v1/projects/{ProjectIdValue}?inspectDescriptiveMetadata=true")
+            {
+                Content = new StringContent("{"),
+            };
+            using HttpResponseMessage listed = await client.SendAsync(listRequest, token).ConfigureAwait(true);
+            using HttpResponseMessage opened = await client.SendAsync(openRequest, token).ConfigureAwait(true);
+            counter.BytesRead.ShouldBe(0);
+
+            if (allowed)
+            {
+                create.StatusCode.ShouldBe(HttpStatusCode.Accepted);
+                createBytesRead.ShouldBeGreaterThan(0);
+                submitter.Submitted.ShouldHaveSingleItem().TenantId.ShouldBe("tenant-b");
+                listed.StatusCode.ShouldBe(HttpStatusCode.OK);
+                using JsonDocument listBody = JsonDocument.Parse(await listed.Content.ReadAsStringAsync(token).ConfigureAwait(true));
+                listBody.RootElement.GetProperty("items").EnumerateArray().ShouldHaveSingleItem()
+                    .GetProperty("projectId").GetString().ShouldBe(ProjectIdValue);
+                opened.StatusCode.ShouldBe(HttpStatusCode.OK);
+                using HttpResponseMessage unselected = await client.GetAsync($"/api/v1/projects/{firstTenantProject}?inspectDescriptiveMetadata=true", token).ConfigureAwait(true);
+                unselected.StatusCode.ShouldBe(HttpStatusCode.NotFound);
+            }
+            else
+            {
+                foreach (HttpResponseMessage response in new[] { create, listed, opened })
+                {
+                    response.StatusCode.ShouldBe(HttpStatusCode.NotFound);
+                    using JsonDocument denial = JsonDocument.Parse(await response.Content.ReadAsStringAsync(token).ConfigureAwait(true));
+                    denial.RootElement.GetProperty("category").GetString().ShouldBe("tenant_access_denied");
+                    denial.RootElement.GetProperty("code").GetString().ShouldBe("resource_unavailable");
+                }
+
+                createBytesRead.ShouldBe(0);
+                submitter.Submitted.ShouldBeEmpty();
+            }
+        }
+        finally
+        {
+            await StopAsync(app).ConfigureAwait(true);
+        }
+    }
+
     [Fact]
     public async Task PostProject_UnknownTenantProjection_MapsToSafeDenial404()
     {
@@ -2736,7 +2830,8 @@ public sealed partial class CreateProjectEndpointTests
         IProjectFolderDirectory? folderDirectory = null,
         IProjectFileReferenceDirectory? fileReferenceDirectory = null,
         IProjectMemoryDirectory? memoryDirectory = null,
-        Action<WebApplication>? configurePipeline = null)
+        Action<WebApplication>? configurePipeline = null,
+        IReadOnlyCollection<Claim>? tenantClaims = null)
     {
         WebApplicationBuilder builder = WebApplication.CreateSlimBuilder(new WebApplicationOptions
         {
@@ -2748,8 +2843,12 @@ public sealed partial class CreateProjectEndpointTests
         builder.Services.AddSingleton<IProjectEventStoreAuthorizationValidator, AllowingProjectEventStoreAuthorizationValidator>();
         builder.Services.RemoveAll<IProjectDaprPolicyEvidenceProvider>();
         builder.Services.AddSingleton<IProjectDaprPolicyEvidenceProvider, AllowingProjectDaprPolicyEvidenceProvider>();
-        builder.Services.RemoveAll<IProjectTenantContextAccessor>();
-        builder.Services.AddSingleton<IProjectTenantContextAccessor>(new FixedProjectTenantContextAccessor(tenantId, principalId));
+        if (tenantClaims is null)
+        {
+            builder.Services.RemoveAll<IProjectTenantContextAccessor>();
+            builder.Services.AddSingleton<IProjectTenantContextAccessor>(new FixedProjectTenantContextAccessor(tenantId, principalId));
+        }
+
         builder.Services.AddSingleton<IProjectCommandSubmitter>(submitter);
         if (folderDirectory is not null)
         {
@@ -2798,9 +2897,23 @@ public sealed partial class CreateProjectEndpointTests
 
         app.Use(async (context, next) =>
         {
-            context.User = new System.Security.Claims.ClaimsPrincipal(new System.Security.Claims.ClaimsIdentity(
-                [new System.Security.Claims.Claim("eventstore:permission", Hexalith.Projects.Server.Queries.ProjectReadQueryExecutor.InspectionPermission),
-                 new System.Security.Claims.Claim("projects:role", "TenantProjectAdministrator")], "fixture"));
+            List<Claim> claims =
+            [
+                new("eventstore:permission", Hexalith.Projects.Server.Queries.ProjectReadQueryExecutor.InspectionPermission),
+                new("projects:role", "TenantProjectAdministrator"),
+            ];
+            if (tenantClaims is not null)
+            {
+                claims.AddRange(tenantClaims);
+                claims.Add(new Claim("sub", principalId!));
+                claims.Add(new Claim("eventstore:permission", ProjectAuthorizationGate.CreateProjectAction));
+                claims.Add(new Claim("eventstore:permission", ProjectAuthorizationGate.ListProjectsAction));
+                claims.Add(new Claim("eventstore:permission", ProjectAuthorizationGate.ReadProjectAction));
+            }
+
+            ClaimsPrincipal principal = new(new ClaimsIdentity(claims, "fixture"));
+            context.User = tenantClaims is null ? principal : await context.RequestServices.GetRequiredService<IClaimsTransformation>()
+                .TransformAsync(principal).ConfigureAwait(false);
             await next(context).ConfigureAwait(false);
         });
         app.MapProjectsServerEndpoints();

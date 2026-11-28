@@ -10,6 +10,7 @@ using System.Net;
 using System.Net.Http.Headers;
 using System.Security.Claims;
 using System.Security.Cryptography;
+using System.Text;
 using System.Text.Json;
 
 using Hexalith.EventStore.Authorization;
@@ -1103,6 +1104,48 @@ public sealed class ProjectsAuthenticationContractTests
         }
     }
 
+    [Theory]
+    [InlineData(""" "eventstore:tenant":["tenant-a","tenant-b"] """, false)]
+    [InlineData(""" "eventstore:tenant":["tenant-b","tenant-a"],"eventstore:current-tenant":"tenant-a" """, true)]
+    [InlineData(""" "eventstore:tenant":[],"eventstore:current-tenant":"tenant-a" """, false)]
+    [InlineData(""" "eventstore:current-tenant":[],"eventstore:tenant":"tenant-a" """, false)]
+    [InlineData(""" "tenants":[],"eventstore:current-tenant":"tenant-a" """, false)]
+    [InlineData(""" "tenants":["tenant-a",null] """, false)]
+    [InlineData(""" "eventstore:tenant":"tenant-b","eventstore:tenant":"tenant-a" """, false)]
+    [InlineData(""" "eventstore:current-tenant":"tenant-b","eventstore:current-tenant":"tenant-a","eventstore:tenant":"tenant-a" """, false)]
+    public async Task ProtectedRead_SignedTenantClaimsRequireAnUnambiguousBinding(string tenantClaims, bool allowed)
+    {
+        WebApplication app = await StartAuthenticatedProjectsHostAsync().ConfigureAwait(true);
+        try
+        {
+            string token = CreateToken(
+                CreateSigningKey(), TestIssuer, TestAudience, DateTime.UtcNow.AddMinutes(5),
+                [new Claim("sub", "actor-a"), new Claim("permissions", ProjectAuthorizationGate.ReadProjectAction)]);
+            token = AppendSignedPayloadProperties(token, tenantClaims);
+
+            using HttpClient client = CreateClient(app, token);
+            CancellationToken cancellationToken = TestContext.Current.CancellationToken;
+            using HttpResponseMessage authenticated = await client.GetAsync("/authentication-contract", cancellationToken).ConfigureAwait(true);
+            authenticated.StatusCode.ShouldBe(HttpStatusCode.OK);
+
+            if (allowed)
+            {
+                await AssertAccessibleProjectAsync(app, token).ConfigureAwait(true);
+            }
+            else
+            {
+                using HttpResponseMessage response = await client
+                    .GetAsync($"/api/v1/projects/{TestProjectId}?inspectDescriptiveMetadata=true", cancellationToken)
+                    .ConfigureAwait(true);
+                await AssertSafeDenialAsync(response).ConfigureAwait(true);
+            }
+        }
+        finally
+        {
+            await StopAsync(app).ConfigureAwait(true);
+        }
+    }
+
     [Fact]
     public void TenantContext_CurrentTenantClaimWinsOverMembershipClaimOrder()
     {
@@ -1489,6 +1532,19 @@ public sealed class ProjectsAuthenticationContractTests
     {
         using RSA rsa = RSA.Create(2048);
         return rsa.ExportParameters(includePrivateParameters: true);
+    }
+
+    private static string AppendSignedPayloadProperties(string token, string properties)
+    {
+        // Keep the exact JSON properties so repeated names survive token generation.
+        string[] segments = token.Split('.');
+        string payload = Base64UrlEncoder.Decode(segments[1]);
+        string encodedPayload = Base64UrlEncoder.Encode(payload[..^1] + "," + properties + "}");
+        string signingInput = $"{segments[0]}.{encodedPayload}";
+        using RSA rsa = RSA.Create();
+        rsa.ImportParameters(SigningKeyParameters);
+        byte[] signature = rsa.SignData(Encoding.ASCII.GetBytes(signingInput), HashAlgorithmName.SHA256, RSASignaturePadding.Pkcs1);
+        return $"{signingInput}.{Base64UrlEncoder.Encode(signature)}";
     }
 
     private static string CreateToken(

@@ -919,12 +919,13 @@ resolution: EventStore 5.6.0 carries the type, Builds a6abb7908ec38dcb3fbd99d69e
 
 origin: Architecture Spine 2026-11-25 update, finding H8 (architecture/architecture-projects-2026-07-15/.memlog.md); routed by sprint-change-proposal-2026-11-25-spine-upstream-sync.md
 owner: Story 7.1 owner (Projects Server)
-location: src/Hexalith.Projects.Server/HttpContextProjectTenantContextAccessor.cs:46-48 and :80-82; src/Hexalith.Projects.Server/ProjectsClaimsTransformation.cs; ProjectAuthorizationGate.cs
+location: src/Hexalith.Projects.Server/HttpContextProjectTenantContextAccessor.cs; src/Hexalith.Projects.Server/Authentication/ProjectTenantClaims.cs; src/Hexalith.Projects.Server/Authentication/ProjectsClaimsTransformation.cs
 source_spec: _bmad-output/planning-artifacts/sprint-change-proposal-2026-11-25-spine-upstream-sync.md
 reason: The v1 Tenant accessor takes the first matching Tenant claim, so a principal with more than one Tenant is bound by token claim order. AD-18: each request binds exactly one Tenant, either the Gateway envelope Tenant verified against the principal's Tenant set or, on retained v1 routes, a single current-tenant claim. A multi-Tenant principal without a verified selection gets the safe 404. First-claim selection is forbidden.
 removal_condition: Tests show that a principal with more than one Tenant and no verified selection receives the safe 404 on v1 routes, that a single current-tenant claim binds that Tenant, and that no code path selects the first of several Tenant claims.
 gate: 7-1-activate-a-project-with-exactly-one-authorized-folder
-status: open
+status: done 2026-11-28
+resolution: Projects resolves one concrete Tenant from the primary authenticated identity and verifies an explicit selection against exact membership. Retained v1 create, list, and open tests confirm the matching Tenant binds and ambiguous or malformed evidence returns the safe 404 without reading the request body or dispatching a command. The ListProjectsV2 handler returns Unavailable with no rows or continuation for an abandoned creation. The CI package-mode solution and focused Server builds passed with zero warnings or errors. All 375 focused tests, including the signed bearer contract, passed with zero skips in both source-mapped Debug and package-mode Release. The production-authority index remained [6, 7, 8].
 
 ### DW-101: Run Dapr runtime 1.19.2 in G-6 and CI.
 

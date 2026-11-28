@@ -43,6 +43,42 @@ public sealed class ProjectsClaimsTransformationTests
         ]);
     }
 
+    [Theory]
+    [InlineData("""{ "tenantId": "tenant-a" }""")]
+    [InlineData("""["tenant-a",null]""")]
+    [InlineData("""["tenant-a",{"tenantId":"tenant-b"}]""")]
+    public async Task TransformAsync_MalformedStructuredMembershipDoesNotPromotePartialMembership(string value)
+    {
+        ClaimsIdentity identity = new([new Claim("tenants", value)], "test");
+
+        _ = await new ProjectsClaimsTransformation().TransformAsync(new ClaimsPrincipal(identity)).ConfigureAwait(true);
+
+        identity.FindAll("eventstore:tenant").ShouldBeEmpty();
+    }
+
+    [Fact]
+    public async Task TransformAsync_ShouldPromoteAllDistinctRawTenantValues()
+    {
+        ClaimsIdentity identity = new(
+        [
+            new Claim("tenantId", "tenant-a"),
+            new Claim("tenantId", "tenant-b"),
+            new Claim("tenant_id", "tenant-c"),
+            new Claim("tid", "tenant-a"),
+            new Claim("tenants", "[\"tenant-c\",\"tenant-d\",\" \" ]"),
+            new Claim("tenants", "tenant-e tenant-f"),
+            new Claim("tenant_id", " "),
+        ], "test");
+        ClaimsPrincipal principal = new(identity);
+        ProjectsClaimsTransformation transformation = new();
+
+        _ = await transformation.TransformAsync(principal).ConfigureAwait(true);
+        _ = await transformation.TransformAsync(principal).ConfigureAwait(true);
+
+        identity.FindAll("eventstore:tenant").Select(static claim => claim.Value).Order(StringComparer.Ordinal)
+            .ShouldBe(["tenant-a", "tenant-b", "tenant-c", "tenant-d", "tenant-e", "tenant-f"]);
+    }
+
     [Fact]
     public async Task TransformAsync_ShouldNotDuplicateAlreadyNormalizedEvidence()
     {
@@ -50,6 +86,7 @@ public sealed class ProjectsClaimsTransformationTests
             new ClaimsIdentity(
                 [
                     new Claim("eventstore:tenant", "tenant-a"),
+                    new Claim("tenants", "tenant-b"),
                     new Claim(ClaimTypes.NameIdentifier, "principal-a"),
                     new Claim("eventstore:permission", ProjectAuthorizationGate.CreateProjectAction),
                     new Claim("permissions", "[\"projects:read\"]"),

@@ -65,7 +65,7 @@ public static class ProjectsAuthenticationServiceCollectionExtensions
                     string? actor = subjects.Length == 1 ? subjects[0].Value : null;
                     if (principal is null
                         || string.IsNullOrWhiteSpace(actor)
-                        || !HasStringSubject(context.SecurityToken)
+                        || !ValidatePayload(context.SecurityToken, principal.Identity as ClaimsIdentity)
                         || principal.FindAll(ClaimTypes.NameIdentifier)
                             .Any(claim => !string.Equals(claim.Value, actor, StringComparison.Ordinal))
                         || (principal.FindAll("act").Any(static claim => !string.IsNullOrWhiteSpace(claim.Value))
@@ -126,10 +126,10 @@ public static class ProjectsAuthenticationServiceCollectionExtensions
         return environment.IsDevelopment() && options.AllowAnonymousDevelopment;
     }
 
-    private static bool HasStringSubject(SecurityToken token)
+    private static bool ValidatePayload(SecurityToken token, ClaimsIdentity? identity)
     {
-        // IdentityModel normalizes numeric sub values into string claims. Inspect only the
-        // already-validated payload so malformed subject types cannot become actor identities.
+        // IdentityModel normalizes some claim types and omits some malformed values.
+        // Inspect the already-validated payload before relying on materialized evidence.
         string? encodedPayload = token switch
         {
             JsonWebToken jsonToken => jsonToken.EncodedPayload,
@@ -142,8 +142,17 @@ public static class ProjectsAuthenticationServiceCollectionExtensions
         }
 
         using JsonDocument payload = JsonDocument.Parse(Base64UrlEncoder.Decode(encodedPayload));
-        return payload.RootElement.TryGetProperty("sub", out JsonElement subject)
-            && subject.ValueKind == JsonValueKind.String;
+        if (!payload.RootElement.TryGetProperty("sub", out JsonElement subject) || subject.ValueKind != JsonValueKind.String)
+        {
+            return false;
+        }
+
+        if (identity is not null)
+        {
+            ProjectTenantClaims.PreserveMalformedJwtClaims(identity, payload.RootElement);
+        }
+
+        return true;
     }
 
     private static ProjectsAuthenticationOptions ReadConfiguration(IConfigurationSection section)

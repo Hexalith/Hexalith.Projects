@@ -2,7 +2,8 @@
 title: '7.1: Close remaining Story 7.1 gates (DW-100 AD-18 binding and ListProjectsV2 test parity)'
 type: 'feature'
 created: '2026-11-28'
-status: 'ready-for-dev'
+status: 'done'
+baseline_commit: '8c3119f47ae0a977d4c2b21e6353be814b760b29'
 route: 'dispatch'
 review_loop_iteration: 0
 context: ['{project-root}/_bmad-output/implementation-artifacts/epic-7-context.md']
@@ -51,10 +52,10 @@ context: ['{project-root}/_bmad-output/implementation-artifacts/epic-7-context.m
 ## Tasks & Acceptance
 
 **Execution:**
-- [ ] `src/Hexalith.Projects.Server/Authentication/ProjectsClaimsTransformation.cs` -- update `AddTenantClaims` to collect and promote all distinct non-whitespace tenant values across primary-identity `tenantId`, `tenant_id`, `tid`, and `tenants` (never stopping at the first claim and preserving existing `eventstore:tenant` when already populated) -- ensures multi-Tenant tokens are never collapsed to one claim during transformation.
-- [ ] `src/Hexalith.Projects.Server/HttpContextProjectTenantContextAccessor.cs` -- replace `FindFirst` tenant lookups in `AuthoritativeTenantId` and `GetClaimTransformEvidence` with a single fail-closed resolver enforcing Decision `3A` (unique non-blank `eventstore:current-tenant` verified against `eventstore:tenant`/`tenants` membership when present, and no conflicting raw tenant claims; when `eventstore:current-tenant` is absent, require exactly one distinct non-blank tenant across `eventstore:tenant` or raw `tenantId`/`tenant_id`/`tid`/`tenants`, rejecting malformed/blank values) -- closes DW-100 AD-18 single-Tenant binding with zero first-claim selection.
-- [ ] `tests/Hexalith.Projects.Server.Tests/HttpContextProjectTenantContextAccessorTests.cs`, `ProjectsClaimsTransformationTests.cs`, `CreateProjectEndpointTests.cs`, and `Queries/ListProjectsEnvelopePagingTests.cs` -- update `PrimaryIdentityRetainsCanonicalClaimPrecedence` to include `"current"` in `eventstore:tenant` and add tests covering every I/O Matrix row (single-Tenant binding, multi-Tenant + matching `eventstore:current-tenant`, multi-Tenant without selection returning safe `404` on retained v1 routes with zero body bytes read, mismatched/duplicate/blank `eventstore:current-tenant`, and `ListProjectsV2` `IsCreationAbandoned` -> `Unavailable`) -- proves DW-100 removal conditions and `ListProjectsV2` parity.
-- [ ] `_bmad-output/implementation-artifacts/deferred-work.md` -- update `DW-100` (`:918-927`) to `status: done 2026-11-28` with concise resolution and verification results -- closes the Story 7.1 AD-18 ledger item.
+- [x] `src/Hexalith.Projects.Server/Authentication/ProjectsClaimsTransformation.cs` -- update `AddTenantClaims` to collect and promote all distinct non-whitespace tenant values across primary-identity `tenantId`, `tenant_id`, `tid`, and `tenants` (never stopping at the first claim and preserving existing `eventstore:tenant` when already populated) -- ensures multi-Tenant tokens are never collapsed to one claim during transformation.
+- [x] `src/Hexalith.Projects.Server/HttpContextProjectTenantContextAccessor.cs` -- replace `FindFirst` tenant lookups in `AuthoritativeTenantId` and `GetClaimTransformEvidence` with a single fail-closed resolver enforcing Decision `3A` (unique non-blank `eventstore:current-tenant` verified against `eventstore:tenant`/`tenants` membership when present, and no conflicting raw tenant claims; when `eventstore:current-tenant` is absent, require exactly one distinct non-blank tenant across `eventstore:tenant` or raw `tenantId`/`tenant_id`/`tid`/`tenants`, rejecting malformed/blank values) -- closes DW-100 AD-18 single-Tenant binding with zero first-claim selection.
+- [x] `tests/Hexalith.Projects.Server.Tests/HttpContextProjectTenantContextAccessorTests.cs`, `ProjectsClaimsTransformationTests.cs`, `CreateProjectEndpointTests.cs`, and `Queries/ListProjectsEnvelopePagingTests.cs` -- update `PrimaryIdentityRetainsCanonicalClaimPrecedence` to include `"current"` in `eventstore:tenant` and add tests covering every I/O Matrix row (single-Tenant binding, multi-Tenant + matching `eventstore:current-tenant`, multi-Tenant without selection returning safe `404` on retained v1 routes with zero body bytes read, mismatched/duplicate/blank `eventstore:current-tenant`, and `ListProjectsV2` `IsCreationAbandoned` -> `Unavailable`) -- proves DW-100 removal conditions and `ListProjectsV2` parity.
+- [x] `_bmad-output/implementation-artifacts/deferred-work.md` -- update `DW-100` (`:918-927`) to `status: done 2026-11-28` with concise resolution and verification results -- closes the Story 7.1 AD-18 ledger item.
 
 **Acceptance Criteria:**
 - Given an authenticated principal with two or more distinct Tenant claims and no verified single `eventstore:current-tenant` binding, when retained v1 HTTP routes (create/list/open) are invoked, then `HttpContextProjectTenantContextAccessor` returns `null` / malformed evidence and the endpoint returns safe `404` (`tenant_access_denied` / `resource_unavailable`) without reading the request body or dispatching a command.
@@ -63,14 +64,66 @@ context: ['{project-root}/_bmad-output/implementation-artifacts/epic-7-context.m
 
 ## Implementation Notes
 
+- The shared resolver uses the primary identity's canonical membership for explicit selections. Locally promoted claims retain their source so normalization preserves the original raw membership check.
+- Bearer validation preserves malformed Tenant evidence from the signed payload when claim materialization would drop empty arrays or collapse duplicate keys. The retained route tests exercise that behavior through signed tokens.
+- The v2 regression test first observes the seeded Project, then marks its persisted model abandoned and verifies that the handler returns an unavailable snapshot without rows, ProjectId, or paging continuation.
+
 ## Spec Change Log
 
 ## Review Triage Log
 
+| Lens | Finding | Verdict | Route and evidence |
+| --- | --- | --- | --- |
+| Blind | Empty Tenant claim arrays disappear during JWT materialization | high | Patch. IdentityModel emits each array element as a claim. An empty declared membership set could be mistaken for an absent set. |
+| Blind | Duplicate JSON Tenant properties collapse to one value | high | Patch. IdentityModel's payload dictionary keeps the last property value, losing conflicting selection evidence before the resolver runs. |
+| Blind | Invalid structured raw membership can promote valid fragments | medium | Patch. The transformation intentionally collects valid non-whitespace values. A null-containing array or object-shaped membership was previously rejected as a unit and must stay indivisible. |
+| Blind | Canonical selection accepts a single differently valued raw alias | false | Reject. Decision 3A and the named precedence test make native canonical membership authoritative for explicit selection. The resolver rejects distinct conflicting raw scalar aliases. |
+| Blind | The v1 resolver accepts Tenant strings outside the public Gateway grammar | low | Reject as outside the approved v1 claim-binding scope. AD-27 governs public Gateway Tenant IDs. Additional Tenant-format validation changes the retained v1 compatibility boundary. |
+| Blind | Missing or malformed idempotency key on create returns 400 before the Tenant gate | low | Reject as outside the approved change. The existing create contract handles the idempotency key before authorization and has a dedicated missing-key regression test. The 7.1 verification uses requests that reach the Tenant gate. |
+| Blind | The paging test has no continuation in its control | low | Patch. Seed an earlier visible item and use a one-item page to verify that encountering an indexed abandoned entry suppresses the previously available continuation. |
+| Blind | Verification results omit exact runner invocations | low | Reject as a spec-only review finding. Record the successful commands alongside the final verification results. |
+| Edge | Explicit canonical selection can bind when raw plural membership excludes it | false | Reject. Decision 3A makes raw `tenants` the fallback when native canonical membership is absent. The source-mapped normalization test exercises this fallback. |
+| Edge | A raw membership array containing null now produces canonical grants | medium | Patch with the malformed structured membership finding. The old transformation rejected the full null-containing array. |
+| Edge | Normal projection excludes abandoned IDs from the index | low | Reject as outside the approved parity check. Normal projection already hides abandoned IDs. The matrix exercises the read guard when the index still points to an abandoned model, using the same behavior in both query versions. |
+| Verification | Signed multivalued memberships lack retained-route coverage | medium | Patch. The endpoint matrix builds a principal directly. A signed canonical membership array verifies the actual bearer materialization and a later matching selection. |
+
 ## Verification
 
-**Commands:**
-- `CI=true dotnet build Hexalith.Projects.CI.slnx -c Release -p:UseHexalithProjectReferences=false -m:1` -- expected: 0 warnings, 0 errors.
-- `dotnet build tests/Hexalith.Projects.Server.Tests/Hexalith.Projects.Server.Tests.csproj -c Debug -m:1` + run built dll (`HttpContextProjectTenantContextAccessorTests`, `ProjectsClaimsTransformationTests`, `ProjectAuthorizationGateTests`, `CreateProjectEndpointTests`, `ListProjectsEnvelopePagingTests`) -- expected: all pass, 0 skips.
-- `CI=true dotnet build tests/Hexalith.Projects.Server.Tests/Hexalith.Projects.Server.Tests.csproj -c Release -p:UseHexalithProjectReferences=false -m:1` + run built dll (`HttpContextProjectTenantContextAccessorTests`, `ProjectsClaimsTransformationTests`, `CreateProjectEndpointTests`, `ListProjectsEnvelopePagingTests`) -- expected: all pass, 0 skips.
-- `python3 tools/planning/validate_production_authority.py --validate-index` -- expected: exit 0 (`PASS: production-authority index is [6, 7, 8]`).
+**Results (2026-11-28)**
+
+- Package-mode CI solution, package-mode Server test project, and source-mapped Debug Server test project builds passed with 0 warnings and 0 errors.
+- All six focused Server test classes passed in source-mapped Debug and package-mode Release (375 passed, 0 failed, 0 skipped in each). Test XML confirmed that all matrix cases ran and passed, including five retained-route cases, eight signed-token cases, and the abandoned-creation paging case.
+- The bare Debug build reported source-mapping errors in `references/Hexalith.Conversations/Directory.Build.props:9`. The checked-in source preparation script enabled the clean Debug build.
+- The first isolated-output Release run had one failure. The OpenAPI fixture needs a checkout layout, and the same 375-test run passed both from checkout output and from isolated output with solution and source links.
+- `python3 tools/planning/validate_production_authority.py --validate-index` passed with `[6, 7, 8]`.
+- The mapped AppHost built with 0 warnings and 0 errors. `KeycloakPersistent=false aspire start --apphost src/Hexalith.Projects.AppHost/Hexalith.Projects.AppHost.csproj --isolated --non-interactive` exited 2 before resource composition because `Projects:DevelopmentRouteCatalog` requires owner custody for the selected Redis backend.
+
+**Reproduction from the repository root**
+
+```bash
+run-with-temp bash -euo pipefail -c '
+project=tests/Hexalith.Projects.Server.Tests/Hexalith.Projects.Server.Tests.csproj
+export MSBUILDDISABLENODEREUSE=1 DOTNET_CLI_USE_MSBUILD_SERVER=0
+CI=true dotnet build Hexalith.Projects.CI.slnx -c Release -p:UseHexalithProjectReferences=false -m:1 --artifacts-path "$TMPDIR/Release"
+CI=true dotnet build "$project" -c Release -p:UseHexalithProjectReferences=false -m:1 --artifacts-path "$TMPDIR/Release"
+(
+  source scripts/prepare-projects-source.sh
+  mkdir "$TMPDIR/projects-mapping"
+  projects_prepare_source "$PWD" "$TMPDIR/projects-mapping"
+  dotnet build "$project" -c Debug -m:1 --artifacts-path "$TMPDIR/Debug"
+)
+for lane in Release Debug; do
+  ln -s "$PWD/Hexalith.Projects.slnx" "$TMPDIR/$lane/Hexalith.Projects.slnx"
+  ln -s "$PWD/src" "$TMPDIR/$lane/src"
+  dotnet "$TMPDIR/$lane/bin/Hexalith.Projects.Server.Tests/${lane,,}/Hexalith.Projects.Server.Tests.dll" -noColor -failSkips \
+    -class Hexalith.Projects.Server.Tests.HttpContextProjectTenantContextAccessorTests \
+    -class Hexalith.Projects.Server.Tests.ProjectsClaimsTransformationTests \
+    -class Hexalith.Projects.Server.Tests.ProjectAuthorizationGateTests \
+    -class Hexalith.Projects.Server.Tests.CreateProjectEndpointTests \
+    -class Hexalith.Projects.Server.Tests.Queries.ListProjectsEnvelopePagingTests \
+    -class Hexalith.Projects.Server.Tests.Authentication.ProjectsAuthenticationContractTests \
+    -result-xml "$TMPDIR/$lane.xml"
+done
+python3 tools/planning/validate_production_authority.py --validate-index
+'
+```

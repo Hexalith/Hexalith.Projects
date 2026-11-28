@@ -24,10 +24,6 @@ using Microsoft.AspNetCore.Http;
 /// </summary>
 public sealed class HttpContextProjectTenantContextAccessor(IHttpContextAccessor httpContextAccessor) : IProjectTenantContextAccessor
 {
-    // Canonical tenant claim type carried after claim transformation; matches the Hexalith convention.
-    private const string TenantClaimType = "tenantId";
-    private const string EventStoreCurrentTenantClaimType = "eventstore:current-tenant";
-    private const string EventStoreTenantClaimType = "eventstore:tenant";
     private const string EventStorePermissionClaimType = "eventstore:permission";
 
     private readonly IHttpContextAccessor _httpContextAccessor = httpContextAccessor ?? throw new ArgumentNullException(nameof(httpContextAccessor));
@@ -38,15 +34,7 @@ public sealed class HttpContextProjectTenantContextAccessor(IHttpContextAccessor
         get
         {
             ClaimsIdentity? identity = _httpContextAccessor.HttpContext?.User.Identity as ClaimsIdentity;
-            if (identity?.IsAuthenticated != true)
-            {
-                return null;
-            }
-
-            string? tenant = identity.FindFirst(EventStoreCurrentTenantClaimType)?.Value
-                ?? identity.FindFirst(EventStoreTenantClaimType)?.Value
-                ?? identity.FindFirst(TenantClaimType)?.Value;
-            return string.IsNullOrWhiteSpace(tenant) ? null : tenant;
+            return identity?.IsAuthenticated == true ? ProjectTenantClaims.Resolve(identity) : null;
         }
     }
 
@@ -77,9 +65,7 @@ public sealed class HttpContextProjectTenantContextAccessor(IHttpContextAccessor
             return EventStoreClaimTransformEvidence.Missing();
         }
 
-        string? tenant = identity.FindFirst(EventStoreCurrentTenantClaimType)?.Value
-            ?? identity.FindFirst(EventStoreTenantClaimType)?.Value
-            ?? identity.FindFirst(TenantClaimType)?.Value;
+        string? tenant = ProjectTenantClaims.Resolve(identity);
         string? principal = identity.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? identity.FindFirst("sub")?.Value;
         if (string.IsNullOrWhiteSpace(tenant) || string.IsNullOrWhiteSpace(principal))
         {

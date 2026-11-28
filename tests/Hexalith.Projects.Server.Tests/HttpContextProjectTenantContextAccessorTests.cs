@@ -79,6 +79,7 @@ public sealed class HttpContextProjectTenantContextAccessorTests
         [
             new Claim("eventstore:current-tenant", "current"),
             new Claim("eventstore:tenant", "canonical"),
+            new Claim("eventstore:tenant", "current"),
             new Claim("tenantId", "raw"),
             new Claim(ClaimTypes.NameIdentifier, "canonical-actor"),
             new Claim("sub", "raw-actor"),
@@ -91,6 +92,106 @@ public sealed class HttpContextProjectTenantContextAccessorTests
         evidence.TenantId.ShouldBe("current");
         evidence.PrincipalId.ShouldBe("canonical-actor");
         evidence.PermissionTokens.ShouldBe(["projects:read"]);
+    }
+
+    [Theory]
+    [InlineData("eventstore:current-tenant")]
+    [InlineData("eventstore:tenant")]
+    [InlineData("tenantId")]
+    [InlineData("tenant_id")]
+    [InlineData("tid")]
+    [InlineData("tenants")]
+    public void SingleDistinctTenantBindsAcrossSupportedClaimTypes(string claimType)
+    {
+        HttpContextProjectTenantContextAccessor accessor = Accessor(new ClaimsIdentity(
+        [
+            new Claim("sub", "actor"),
+            new Claim(claimType, "tenant-a"),
+            new Claim(claimType, "tenant-a"),
+        ], "test"));
+
+        accessor.AuthoritativeTenantId.ShouldBe("tenant-a");
+        EventStoreClaimTransformEvidence evidence = accessor.GetClaimTransformEvidence("projects:read");
+        evidence.Malformed.ShouldBeFalse();
+        evidence.TenantId.ShouldBe("tenant-a");
+    }
+
+    [Theory]
+    [InlineData("eventstore:tenant")]
+    [InlineData("tenants")]
+    public async Task ExplicitCurrentTenantBindsTheMatchingMember(string membershipClaimType)
+    {
+        ClaimsIdentity identity = new(
+        [
+            new Claim("sub", "actor"),
+            new Claim(membershipClaimType, "tenant-a"),
+            new Claim(membershipClaimType, "tenant-b"),
+            new Claim("eventstore:current-tenant", "tenant-b"),
+        ], "test");
+        HttpContextProjectTenantContextAccessor accessor = Accessor(identity);
+        accessor.AuthoritativeTenantId.ShouldBe("tenant-b");
+
+        _ = await new ProjectsClaimsTransformation().TransformAsync(new ClaimsPrincipal(identity));
+
+        accessor.AuthoritativeTenantId.ShouldBe("tenant-b");
+        accessor.GetClaimTransformEvidence("projects:read").TenantId.ShouldBe("tenant-b");
+    }
+
+    [Theory]
+    [InlineData("eventstore:tenant", "tenant-a", "eventstore:tenant", "tenant-b")]
+    [InlineData("tenants", "tenant-a", "tenants", "tenant-b")]
+    [InlineData("tenantId", "tenant-a", "tenant_id", "tenant-b")]
+    [InlineData("eventstore:tenant", "tenant-a", "tenants", "tenant-b")]
+    [InlineData("eventstore:current-tenant", "tenant-b", "eventstore:tenant", "tenant-a")]
+    [InlineData("eventstore:current-tenant", "tenant-b", "eventstore:tenant", "*")]
+    [InlineData("eventstore:current-tenant", "tenant-a", "eventstore:current-tenant", "tenant-b")]
+    [InlineData("eventstore:current-tenant", " ", "eventstore:tenant", "tenant-a")]
+    [InlineData("eventstore:current-tenant", "tenant-b", "tid", "tenant-a")]
+    [InlineData("eventstore:tenant", " ", "tenantId", "tenant-a")]
+    [InlineData("tenantId", "tenant-a", "tenants", "[\"tenant-a\",null]")]
+    [InlineData("eventstore:tenant", "*", "tenantId", "*")]
+    public async Task AmbiguousOrMalformedTenantEvidenceFailsClosedBeforeAndAfterTransformation(
+        string firstType,
+        string firstValue,
+        string secondType,
+        string secondValue)
+    {
+        ClaimsIdentity identity = new(
+        [
+            new Claim("sub", "actor"),
+            new Claim(firstType, firstValue),
+            new Claim(secondType, secondValue),
+        ], "test");
+        HttpContextProjectTenantContextAccessor accessor = Accessor(identity);
+        accessor.AuthoritativeTenantId.ShouldBeNull();
+        accessor.GetClaimTransformEvidence("projects:read").Malformed.ShouldBeTrue();
+
+        _ = await new ProjectsClaimsTransformation().TransformAsync(new ClaimsPrincipal(identity));
+
+        accessor.AuthoritativeTenantId.ShouldBeNull();
+        accessor.GetClaimTransformEvidence("projects:read").Malformed.ShouldBeTrue();
+    }
+
+    [Theory]
+    [InlineData("tenants", "tenant-a")]
+    [InlineData("tid", "tenant-a")]
+    public async Task PromotionCannotMakeConflictingRawEvidenceAuthorizeAnExplicitSelection(string claimType, string value)
+    {
+        ClaimsIdentity identity = new(
+        [
+            new Claim("sub", "actor"),
+            new Claim("eventstore:current-tenant", "tenant-b"),
+            new Claim("tenant_id", "tenant-b"),
+            new Claim(claimType, value),
+        ], "test");
+        HttpContextProjectTenantContextAccessor accessor = Accessor(identity);
+        accessor.AuthoritativeTenantId.ShouldBeNull();
+
+        _ = await new ProjectsClaimsTransformation().TransformAsync(new ClaimsPrincipal(identity));
+        identity.FindAll("eventstore:tenant").Select(static claim => claim.Value).ShouldContain("tenant-b");
+
+        accessor.AuthoritativeTenantId.ShouldBeNull();
+        accessor.GetClaimTransformEvidence("projects:read").Malformed.ShouldBeTrue();
     }
 
     private static HttpContextProjectTenantContextAccessor Accessor(params ClaimsIdentity[] identities)

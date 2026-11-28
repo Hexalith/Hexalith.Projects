@@ -4,6 +4,8 @@ using System.Text;
 
 using Hexalith.EventStore.Contracts.Queries;
 using Hexalith.Projects.Contracts.Queries;
+using Hexalith.Projects.Projections.ProjectReads;
+using Hexalith.Projects.Server.Queries;
 
 using Shouldly;
 
@@ -49,6 +51,43 @@ public sealed class ListProjectsEnvelopePagingTests
         legacyCursor.ShouldNotBeNullOrWhiteSpace();
         QueryResult wrongWire = await fixture.Executor.ListV2Async(envelope with { Paging = new(PageSize: 1, Cursor: legacyCursor) }, token);
         wrongWire.ErrorMessage.ShouldBe(QueryAdapterFailureReason.InvalidCursor);
+    }
+
+    /// <summary>Checks that a persisted abandoned reservation stays hidden even when it retains detail and an index entry.</summary>
+    [Fact]
+    public async Task AbandonedCreationIsUnavailableWithoutDisclosingRowsOrPaging()
+    {
+        const string earlierProjectId = "project-a";
+        const string abandonedProjectId = "project-z";
+        SupportedProjectReadFixture fixture = await SupportedProjectReadFixture.CreateAsync();
+        await fixture.SeedAsync(abandonedProjectId, 100);
+        await fixture.SeedAsync(earlierProjectId, 200);
+        CancellationToken token = TestContext.Current.CancellationToken;
+        ListProjectsV2QueryHandler handler = new(fixture.Executor);
+        QueryEnvelope query = fixture.Query(new ListProjectsV2Query()) with { Paging = new(PageSize: 1) };
+
+        QueryResult visible = await handler.ExecuteAsync(query, token);
+        visible.Success.ShouldBeTrue(visible.ErrorMessage);
+        SupportedProjectReadFixture.Payload<ProjectListDocument>(visible).Items.ShouldHaveSingleItem()
+            .ProjectId.ShouldBe(earlierProjectId);
+        QueryPagingMetadata visiblePaging = visible.Metadata.ShouldNotBeNull().Paging.ShouldNotBeNull();
+        visiblePaging.HasMore.ShouldBe(true);
+        visiblePaging.NextCursor.ShouldNotBeNullOrWhiteSpace();
+
+        string detailKey = ProjectReadModelKeys.Detail("tenant-a", abandonedProjectId);
+        ProjectReadModel model = fixture.Store.Snapshot<ProjectReadModel>(ProjectReadModelKeys.StoreName, detailKey).ShouldNotBeNull();
+        fixture.Store.SeedRaw(ProjectReadModelKeys.StoreName, detailKey, model with { IsCreationAbandoned = true });
+
+        QueryResult result = await handler.ExecuteAsync(query, token);
+
+        result.Success.ShouldBeTrue(result.ErrorMessage);
+        ProjectListDocument document = SupportedProjectReadFixture.Payload<ProjectListDocument>(result);
+        document.Snapshot.ResponseState.ShouldBe(AdmissionResponseState.Unavailable);
+        document.Items.ShouldBeEmpty();
+        result.Metadata.ShouldNotBeNull().Paging.ShouldBe(new QueryPagingMetadata(PageSize: 1));
+        string payload = result.GetPayload().GetRawText();
+        payload.ShouldNotContain(earlierProjectId);
+        payload.ShouldNotContain(abandonedProjectId);
     }
 
     /// <summary>Checks default paging and honest unavailable and insufficient-permission outcomes.</summary>
