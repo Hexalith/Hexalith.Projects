@@ -1,3 +1,5 @@
+extern alias PackageFixtureHost;
+
 namespace Hexalith.Projects.Integration.Tests;
 
 using System.Net;
@@ -8,9 +10,9 @@ using System.Text.Json;
 using Hexalith.EventStore.Contracts.Commands;
 using Hexalith.EventStore.Contracts.Streams;
 using Hexalith.Projects.Projections.TenantAccess;
-using Hexalith.Projects.AppHost;
 using Hexalith.Tenants.Contracts.Events;
 using Hexalith.Tenants.Contracts.Identity;
+using PackageHost = PackageFixtureHost::Hexalith.Projects.PackageFixtures.AppHost;
 
 /// <summary>Exercises supported recovery against the actual launched owners and persisted read model.</summary>
 internal sealed partial class PackageReadFixture
@@ -27,7 +29,7 @@ internal sealed partial class PackageReadFixture
         ProjectTenantAccessProjection before = await ReadRecoveryProjectionAsync().ConfigureAwait(false);
         Require(before.Enabled && before.Principals.ContainsKey(PrimaryActor) && before.LastEventTimestamp is not null
             && !before.MalformedEvidence && !before.ReplayConflict, "Existing source membership was not projected before recovery.");
-        TimeSpan freshness = TimeSpan.Parse(SupportedProjectReadFixtureProfile.TenantAccessRecoveryFreshnessBudget,
+        TimeSpan freshness = TimeSpan.Parse(PackageHost.PackageActualOwnerComposition.TenantAccessRecoveryFreshnessBudget,
             System.Globalization.CultureInfo.InvariantCulture);
         double staleAge = await AwaitStaleRecoveryListAsync(token, before, freshness).ConfigureAwait(false);
 
@@ -263,7 +265,7 @@ internal sealed partial class PackageReadFixture
 
     private async Task<HttpResponseMessage> RecoveryListAsync(string token, CancellationToken cancellation)
     {
-        using HttpRequestMessage list = new(HttpMethod.Get, _endpoints["projects"] + "/api/v1/projects");
+        using HttpRequestMessage list = new(HttpMethod.Get, _endpoints["projects"] + "/api/v1/projects?inspectDescriptiveMetadata=true");
         list.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
         list.Headers.Add("X-Hexalith-Tenant-Id", Tenant);
         return await _http.SendAsync(list, cancellation).ConfigureAwait(false);

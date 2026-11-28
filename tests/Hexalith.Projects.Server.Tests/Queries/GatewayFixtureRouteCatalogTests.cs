@@ -23,6 +23,7 @@ public sealed class GatewayFixtureRouteCatalogTests
         (string Route, Type Request, Type Result)[] expected =
         [
             ("projects-list", typeof(ListProjectsQuery), typeof(ProjectListPage)),
+            ("projects-list-v2", typeof(ListProjectsV2Query), typeof(ProjectListDocument)),
             ("projects-open", typeof(GetProjectQuery), typeof(GetProjectResponse)),
             ("projects-audit", typeof(GetProjectAuditQuery), typeof(ProjectAuditPage)),
             ("projects-task-status", typeof(GetProjectTaskStatusQuery), typeof(ProjectTaskStatusResponse)),

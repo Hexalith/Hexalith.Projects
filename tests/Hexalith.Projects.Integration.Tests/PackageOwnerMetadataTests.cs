@@ -51,6 +51,8 @@ public sealed class PackageOwnerMetadataTests
         }
         var routes = CompiledRouteCatalogDeclarations.Read([actual]);
         routes.ShouldNotBeEmpty();
+        CompiledRouteCatalogDeclarations.ReadOperations([actual]).Select(operation => operation.RouteId)
+            .ShouldBe(routes.Select(route => route.RouteId));
         foreach (RouteContractDeclaration route in routes)
             route.GetType().Assembly.ShouldBe(typeof(RouteContractDeclaration).Assembly);
         Assembly policyOwner = context.LoadOwner(adapters);

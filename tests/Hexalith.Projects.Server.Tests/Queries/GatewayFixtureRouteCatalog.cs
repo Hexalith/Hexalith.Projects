@@ -80,6 +80,7 @@ internal sealed class GatewayFixtureRouteCatalog(string tenant, bool includeAdvi
         List<(string RouteId, string Domain, string QueryType, Type Handler, Type Request, Type Result, bool Internal)> queries =
         [
             ("projects-list", "projects", ListProjectsQuery.QueryType, typeof(ListProjectsQueryHandler), typeof(ListProjectsQuery), typeof(ProjectListPage), false),
+            ("projects-list-v2", "projects", ListProjectsV2Query.QueryType, typeof(ListProjectsV2QueryHandler), typeof(ListProjectsV2Query), typeof(ProjectListDocument), false),
             ("projects-open", "projects", GetProjectQuery.QueryType, typeof(GetProjectQueryHandler), typeof(GetProjectQuery), typeof(GetProjectResponse), false),
 #if HEXALITH_SOURCE_FIXTURE
             ("folders-owner-read", "folders", FolderOwnerReadQuery.QueryType, typeof(FolderOwnerReadQueryHandler), typeof(FolderOwnerReadQuery), typeof(FolderOwnerReadResult), true),

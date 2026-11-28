@@ -174,6 +174,30 @@ public sealed partial class SupportedProjectGatewayHttpTests
         cliNext["payload"]!["cursor"].ShouldBeNull();
         await ObservedSubmitAsync(McpCliRequest(tenant, firstInput with { Cursor = cliCursor, PageSize = 2 }), HttpStatusCode.BadRequest).ConfigureAwait(false);
         await ObservedSubmitAsync(webRequest(firstInput with { Cursor = webCursor, PageSize = 2 }, "projects"), HttpStatusCode.BadRequest).ConfigureAwait(false);
+
+        SubmitQueryRequest envelopeList = McpCliRequest(tenant, new ListProjectsV2Query()) with { Paging = new(PageSize: 1) };
+        JsonObject envelopeFirst = await ObservedSubmitAsync(envelopeList, HttpStatusCode.OK).ConfigureAwait(false);
+        envelopeFirst["payload"]!.AsObject().Select(field => field.Key).ShouldBe(["items", "snapshot"]);
+        envelopeFirst["payload"]!["items"]![0]!["projectId"]!.GetValue<string>().ShouldBe("project-a");
+        JsonObject pagingFirst = envelopeFirst["metadata"]!["paging"].ShouldNotBeNull().AsObject();
+        pagingFirst["pageSize"]!.GetValue<int>().ShouldBe(1);
+        pagingFirst["hasMore"]!.GetValue<bool>().ShouldBeTrue();
+        string nextCursor = pagingFirst["nextCursor"].ShouldNotBeNull().GetValue<string>();
+        nextCursor.ShouldNotBeNullOrWhiteSpace();
+
+        SubmitQueryRequest envelopeNext = envelopeList with { Paging = new(PageSize: 1, Cursor: nextCursor) };
+        JsonObject envelopeSecond = await ObservedSubmitAsync(envelopeNext, HttpStatusCode.OK).ConfigureAwait(false);
+        envelopeSecond["payload"]!["items"]![0]!["projectId"]!.GetValue<string>().ShouldBe("project-b");
+        JsonObject pagingSecond = envelopeSecond["metadata"]!["paging"].ShouldNotBeNull().AsObject();
+        pagingSecond["pageSize"]!.GetValue<int>().ShouldBe(1);
+        pagingSecond["hasMore"]!.GetValue<bool>().ShouldBeFalse();
+        pagingSecond["nextCursor"].ShouldBeNull();
+        await ObservedSubmitAsync(envelopeList with { Paging = new(PageSize: 1, Offset: 0) }, HttpStatusCode.BadRequest).ConfigureAwait(false);
+        client.DefaultRequestHeaders.Authorization = new("Bearer", HumanToken(tenant, inspection: false, projectRole: "Reader"));
+        JsonObject envelopeDenied = await ObservedSubmitAsync(envelopeNext, HttpStatusCode.NotFound).ConfigureAwait(false);
+        envelopeDenied.ContainsKey("payload").ShouldBeFalse();
+        envelopeDenied.ContainsKey("metadata").ShouldBeFalse();
+
         client.DefaultRequestHeaders.Authorization = null;
         int ownerQueries = transport.OwnerQueries;
         int receiverQueries = transport.TransportResponses.Count;
@@ -246,9 +270,21 @@ public sealed partial class SupportedProjectGatewayHttpTests
 
     private static SubmitQueryRequest McpCliRequest(string tenant, object input, string project = "project-a")
     {
-        HexalithQueryAttribute query = input.GetType().GetCustomAttribute<HexalithQueryAttribute>()!;
-        return new(tenant, query.Domain!, query.AggregateId ?? project, query.WireType!, query.ProjectionType,
-            JsonSerializer.SerializeToElement(input, input.GetType()), ProjectionActorType: query.ProjectionActorType);
+        Type type = input.GetType();
+        JsonElement payload = JsonSerializer.SerializeToElement(input, type);
+        if (type.GetCustomAttribute<HexalithQueryAttribute>() is { } enrolled)
+        {
+            return new(tenant, enrolled.Domain!, enrolled.AggregateId ?? project, enrolled.WireType!, enrolled.ProjectionType,
+                payload, ProjectionActorType: enrolled.ProjectionActorType);
+        }
+
+        return input switch
+        {
+            ListProjectsQuery => new(tenant, "projects", "projects", ListProjectsQuery.QueryType, Payload: payload),
+            GetProjectAuditQuery => new(tenant, "projects", project, GetProjectAuditQuery.QueryType, Payload: payload),
+            GetProjectTaskStatusQuery => new(tenant, "projects", project, GetProjectTaskStatusQuery.QueryType, Payload: payload),
+            _ => throw new InvalidOperationException("The input is not a recorded Projects query contract."),
+        };
     }
 
     private async Task<JsonObject> SubmitMcpCliMatrixAsync(HttpClient client, SubmitQueryRequest request, HttpStatusCode expected)

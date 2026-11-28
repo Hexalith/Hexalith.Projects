@@ -19,7 +19,7 @@ public sealed class ProjectMcpCliAdmissionTests
     /// <summary>Every enrolled query's declared routing and example must produce an authorized result.</summary>
     /// <param name="queryType">The enrolled Contracts query to submit.</param>
     [Theory]
-    [InlineData(typeof(ListProjectsQuery))]
+    [InlineData(typeof(ListProjectsV2Query))]
     [InlineData(typeof(GetProjectQuery))]
     [InlineData(typeof(ResolveProjectFromConversationQuery))]
     [InlineData(typeof(ResolveProjectFromAttachmentsQuery))]
@@ -34,7 +34,7 @@ public sealed class ProjectMcpCliAdmissionTests
         declaration.ProjectionType.ShouldBeNull();
         declaration.ProjectionActorType.ShouldBeNull();
 
-        QueryEnvelope envelope = fixture.Query(new ListProjectsQuery()) with
+        QueryEnvelope envelope = fixture.Query(new ListProjectsV2Query()) with
         {
             Domain = declaration.Domain,
             AggregateId = declaration.AggregateId ?? "project-a",
@@ -44,8 +44,8 @@ public sealed class ProjectMcpCliAdmissionTests
         ProjectAdvisoryQueryExecutor advisory = new(fixture.Store, fixture.Gate, fixture.Binding,
             fixture.Folders, new AdvisoryTestConversationDirectory(), fixture.Clock);
         CancellationToken token = TestContext.Current.CancellationToken;
-        QueryResult result = queryType == typeof(ListProjectsQuery)
-            ? await fixture.Executor.ListAsync(envelope, token)
+        QueryResult result = queryType == typeof(ListProjectsV2Query)
+            ? await fixture.Executor.ListV2Async(envelope, token)
             : queryType == typeof(GetProjectQuery)
                 ? await fixture.Executor.GetAsync(envelope, token)
                 : queryType == typeof(ResolveProjectFromConversationQuery)

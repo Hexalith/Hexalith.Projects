@@ -116,7 +116,8 @@ export const test = utilsTest.extend<ProjectFixtures & LiveFixtureFixtures & Dir
     const ledger = new CleanupLedger();
     const deps = { apiRequest, authToken, recurse, tenantContext, graph: liveFixtureGraph };
     const project = await setupWithReverseCleanup(testInfo, 'seeded-project-cleanup', ledger, () =>
-      seedActiveProject(deps, ledger, 'projects:seeded', createProjectInput({ projectId: liveFixtureGraph.projectId })));
+      seedActiveProject(deps, ledger, 'projects:seeded', createProjectInput({ projectId: liveFixtureGraph.projectId }),
+        { folderId: liveFixtureGraph.folderId, displayName: `Fixture folder ${liveFixtureGraph.scenario}` }));
     try {
       await use(project);
     } finally {

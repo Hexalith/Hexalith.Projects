@@ -76,7 +76,13 @@ public sealed partial class SupportedProjectReadHttpTests
             opened.StatusCode.ShouldBe(HttpStatusCode.OK); listed.StatusCode.ShouldBe(HttpStatusCode.OK);
             SupportedProjectReadFixture.Payload<GetProjectResponse>((await opened.Content.ReadFromJsonAsync<QueryResult>(TestContext.Current.CancellationToken))!).ProjectId.ShouldBe("project-a");
             SupportedProjectReadFixture.Payload<ProjectListPage>((await listed.Content.ReadFromJsonAsync<QueryResult>(TestContext.Current.CancellationToken))!).Items.Single().ProjectId.ShouldBe("project-a");
-            foreach (QueryEnvelope query in new[] { open, list })
+            QueryEnvelope envelopeList = list with { QueryType = ListProjectsV2Query.QueryType, Paging = new(PageSize: 1) };
+            using HttpResponseMessage listedV2 = await client.PostAsJsonAsync("/query", envelopeList, TestContext.Current.CancellationToken);
+            listedV2.StatusCode.ShouldBe(HttpStatusCode.OK);
+            QueryResult listResult = (await listedV2.Content.ReadFromJsonAsync<QueryResult>(TestContext.Current.CancellationToken))!;
+            SupportedProjectReadFixture.Payload<ProjectListDocument>(listResult).Items.ShouldHaveSingleItem().ProjectId.ShouldBe("project-a");
+            listResult.Metadata!.Paging.ShouldBe(new QueryPagingMetadata(1, HasMore: false));
+            foreach (QueryEnvelope query in new[] { open, list, envelopeList })
             {
                 using HttpResponseMessage malformed = await client.PostAsJsonAsync("/query", query with { Payload = "[]"u8.ToArray() }, TestContext.Current.CancellationToken);
                 malformed.StatusCode.ShouldBe(HttpStatusCode.BadRequest);

@@ -41,6 +41,7 @@ public static class ProjectsRuntimeCatalogDeclarations
         Query<ExplainContextSelectionQuery>("explain-context-selection", ProjectsRouteIdentity.ExplainContextSelectionQueryType),
         Query<ResolveProjectChatBotAuthority>("chatbot-authority", ResolveProjectChatBotAuthority.QueryType),
         Query<ListProjectsQuery>("list-projects", ListProjectsQuery.QueryType),
+        Query<ListProjectsV2Query>("list-projects-v2", ListProjectsV2Query.QueryType),
         Query<GetProjectAuditQuery>("get-project-audit", GetProjectAuditQuery.QueryType),
         Query<GetProjectTaskStatusQuery>("get-project-task-status", GetProjectTaskStatusQuery.QueryType),
         Query<GetProjectQuery>("get-project", GetProjectQuery.QueryType),

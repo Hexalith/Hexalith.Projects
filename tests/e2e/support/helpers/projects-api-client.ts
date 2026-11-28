@@ -38,6 +38,7 @@ export interface ProjectListResponse {
 
 export interface ProjectDetail extends ProjectSummary {
   description?: string;
+  references: ProjectOperatorReferenceSummary[];
 }
 
 export type ResolutionResult = 'NoMatch' | 'SingleCandidate' | 'MultipleCandidates';
@@ -300,6 +301,10 @@ export interface QueryRequestOptions extends AuthHeaderOptions {
   extraHeaders?: Record<string, string>;
 }
 
+export interface ProjectDetailRequestOptions extends QueryRequestOptions {
+  inspectQuarantined?: boolean;
+}
+
 export interface OperatorDiagnosticOptions extends QueryRequestOptions {
   auditLimit?: number;
 }
@@ -330,7 +335,7 @@ export async function getProject(
   apiRequest: ApiRequest,
   tenantId: string,
   projectId: string,
-  headerOptions: QueryRequestOptions,
+  headerOptions: ProjectDetailRequestOptions,
 ): Promise<{ status: number; body: ProjectDetail }> {
   const headers = {
     ...queryHeaders(headerOptions),
@@ -342,7 +347,10 @@ export async function getProject(
     method: 'GET',
     path: `/api/v1/projects/${projectId}`,
     // Story 6.7: retained v1 open discloses names only to explicit, audited descriptive inspection.
-    params: { inspectDescriptiveMetadata: 'true' },
+    params: {
+      inspectDescriptiveMetadata: 'true',
+      ...(headerOptions.inspectQuarantined ? { inspectQuarantined: 'true' } : {}),
+    },
     headers,
     // 404 is an expected safe-denial outcome, not a transport failure — don't retry it.
     retryConfig: { maxRetries: 0 },

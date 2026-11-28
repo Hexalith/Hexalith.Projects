@@ -15,6 +15,7 @@ from _nuget import (
     EXTENSION_PACKAGE_ID,
     PACKAGED_MODULE_MANIFEST,
     ROOT,
+    VERSION_PATTERN,
     ManifestPackage,
     load_manifest,
     validate_packages,
@@ -123,6 +124,9 @@ def run_consumer(
 ) -> None:
     """Restore an isolated candidate consumer and run the extension probe when selected."""
 
+    if eventstore_host and (package.package_id != EXTENSION_PACKAGE_ID or not VERSION_PATTERN.fullmatch(version)):
+        raise ValueError("The EventStore extension probe requires its canonical package ID and an exact package version.")
+
     consumer = workspace / ("eventstore-extension-host" if eventstore_host else package.package_id)
     consumer.mkdir()
     project = consumer / "Consumer.csproj"
@@ -157,9 +161,16 @@ def run_consumer(
         check=True,
     )
     if eventstore_host:
-        manifest = consumer / ".packages" / package.package_id.lower() / version.lower() / PACKAGED_MODULE_MANIFEST
+        # The SDK Run target uses a shell. Keep both arguments relative to the generated
+        # project's directory and compose the manifest argument from validated package data.
+        manifest = f".packages/{EXTENSION_PACKAGE_ID.lower()}/{version.lower()}/{PACKAGED_MODULE_MANIFEST}"
         subprocess.run(
-            ["dotnet", str(consumer / "bin/Release/net11.0/Consumer.dll"), str(manifest)],
+            [
+                "dotnet", "msbuild", str(project), "-target:Run", "-noAutoResponse",
+                "-p:Configuration=Release", "-p:UseHexalithProjectReferences=false", "-p:ArtifactsPath=",
+                "-p:UseAppHost=false", "-p:StartWorkingDirectory=.", "-p:RunCommand=dotnet",
+                f"-p:RunArguments=exec bin/Release/net11.0/Consumer.dll {manifest}", "-nr:false",
+            ],
             check=True,
         )
     else:

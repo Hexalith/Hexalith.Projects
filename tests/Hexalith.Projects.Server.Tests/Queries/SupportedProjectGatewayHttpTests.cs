@@ -601,6 +601,7 @@ public sealed partial class SupportedProjectGatewayHttpTests(ITestOutputHelper o
         builder.Configuration["Authentication:QueryAuthority:RequiredQueries:projects:6"] = ProjectsServerModule.ExplainContextSelectionQueryType;
         builder.Configuration["Authentication:QueryAuthority:RequiredQueries:projects:7"] = GetProjectAuditQuery.QueryType;
         builder.Configuration["Authentication:QueryAuthority:RequiredQueries:projects:8"] = GetProjectTaskStatusQuery.QueryType;
+        builder.Configuration["Authentication:QueryAuthority:RequiredQueries:projects:9"] = ListProjectsV2Query.QueryType;
         builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
         {
             options.MapInboundClaims = false;
