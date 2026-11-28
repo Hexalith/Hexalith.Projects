@@ -1,0 +1,177 @@
+{
+  "schema": "hexalith.g6-current-audit.v1",
+  "policySha256": "2a82a12acf9603534bed95a5491708889390e115067a3d0fb6aeb29656bad3dc",
+  "source": {
+    "rootSha": "8c3119f47ae0a977d4c2b21e6353be814b760b29",
+    "gitlinks": [
+      {
+        "path": "references/Hexalith.AI.Tools",
+        "sha": "f4c12476ace1c4f10b423c9ac9181882c9f47c3c"
+      },
+      {
+        "path": "references/Hexalith.EventStore",
+        "sha": "b88c7a184f288a96fab9df78abdfd044812ed145"
+      },
+      {
+        "path": "references/Hexalith.EventStore.PackageMode",
+        "sha": "295b5a6ba584167f21cfef40787477b8814e32da"
+      },
+      {
+        "path": "references/Hexalith.Tenants",
+        "sha": "b5cce6f814e692f41c7c91ff6adbe6626d19fb38"
+      },
+      {
+        "path": "references/Hexalith.FrontComposer",
+        "sha": "3297cbdc559f28a3250c97b963a820e06cd1700a"
+      },
+      {
+        "path": "references/Hexalith.Conversations",
+        "sha": "b59bd9f9ebc00e622e6d329acf8555c64a355aae"
+      },
+      {
+        "path": "references/Hexalith.Folders",
+        "sha": "aa51b20f9bbe14e2e401c0e35904f2a88d0179e1"
+      },
+      {
+        "path": "references/Hexalith.Parties",
+        "sha": "05129fa0ce3bebc7a0be9895f6738edc47ee32ab"
+      },
+      {
+        "path": "references/Hexalith.Commons",
+        "sha": "881ab57961de99ee129dd03a61d4a53d537af59d"
+      },
+      {
+        "path": "references/Hexalith.Builds",
+        "sha": "aebabdadadffa108801992253c7910f37437b115"
+      },
+      {
+        "path": "references/Hexalith.Memories",
+        "sha": "a3ee240a2a6d421b0212950500e9a2ba6f1b2ce2"
+      },
+      {
+        "path": "references/Hexalith.Platform",
+        "sha": "d72ec18aa07250f632e5e23a43f0fa79931fe71a"
+      },
+      {
+        "path": "references/Hexalith.McpCli",
+        "sha": "96e01c82f1030c36c59511a02db5a3b6ac339f92"
+      },
+      {
+        "path": "references/Hexalith.CiCd",
+        "sha": "c31df42ac893e52c3b566083f7e410680e5e6cec"
+      }
+    ]
+  },
+  "materialInputs": {
+    "fingerprint": "c023f078490248549bbe8f30c759f49d1a83c2fbe492e4567ed46e32ce2fffd5",
+    "fileCount": 10139
+  },
+  "effectiveTuple": {
+    "dotnetSdk": "11.0.100",
+    "aspireSdk": "17.0.0",
+    "aspireCli": "17.0.0",
+    "communityToolkitAspireDapr": "17.0.0-preview.1.261120-0454",
+    "daprCli": "1.19.1",
+    "daprRuntime": "1.19.1",
+    "daprDotnetPackages": "1.19.1",
+    "fluentUi": "5.1.0",
+    "nSubstitute": "6.2.0",
+    "fluxor": "6.11.0"
+  },
+  "resolvedPackages": [
+    {
+      "path": "src/Hexalith.Projects.AppHost/Hexalith.Projects.AppHost.csproj",
+      "packages": [
+        {
+          "id": "Aspire.Hosting",
+          "version": "17.0.0"
+        },
+        {
+          "id": "Aspire.Hosting.AppHost",
+          "version": "17.0.0"
+        },
+        {
+          "id": "Aspire.Hosting.Dotnet",
+          "version": "17.0.0"
+        },
+        {
+          "id": "Aspire.Hosting.Keycloak",
+          "version": "17.0.0-preview.1.26567.5"
+        },
+        {
+          "id": "Aspire.Hosting.Redis",
+          "version": "17.0.0"
+        },
+        {
+          "id": "CommunityToolkit.Aspire.Hosting.Dapr",
+          "version": "17.0.0-preview.1.261120-0454"
+        },
+        {
+          "id": "Dapr.Client",
+          "version": "1.19.1"
+        },
+        {
+          "id": "Dapr.Common",
+          "version": "1.19.1"
+        },
+        {
+          "id": "Dapr.Protos",
+          "version": "1.19.1"
+        }
+      ]
+    },
+    {
+      "path": "references/Hexalith.Conversations/src/Hexalith.Conversations.AppHost/Hexalith.Conversations.AppHost.csproj",
+      "packages": []
+    },
+    {
+      "path": "references/Hexalith.EventStore/src/Hexalith.EventStore.AppHost/Hexalith.EventStore.AppHost.csproj",
+      "packages": []
+    },
+    {
+      "path": "references/Hexalith.EventStore/tests/Hexalith.EventStore.Server.LiveSidecar.Tests/Hexalith.EventStore.Server.LiveSidecar.Tests.csproj",
+      "packages": []
+    },
+    {
+      "path": "references/Hexalith.Folders/src/Hexalith.Folders.AppHost/Hexalith.Folders.AppHost.csproj",
+      "packages": []
+    },
+    {
+      "path": "references/Hexalith.FrontComposer/src/Hexalith.FrontComposer.AppHost/Hexalith.FrontComposer.AppHost.csproj",
+      "packages": []
+    },
+    {
+      "path": "references/Hexalith.Memories/src/Hexalith.Memories.AppHost/Hexalith.Memories.AppHost.csproj",
+      "packages": []
+    },
+    {
+      "path": "references/Hexalith.Parties/src/Hexalith.Parties.AppHost/Hexalith.Parties.AppHost.csproj",
+      "packages": []
+    },
+    {
+      "path": "references/Hexalith.Tenants/src/Hexalith.Tenants.AppHost/Hexalith.Tenants.AppHost.csproj",
+      "packages": []
+    },
+    {
+      "path": "references/Hexalith.Builds/src/hosts/Hexalith.Builds.Module.AppHost/Hexalith.Builds.Module.AppHost.csproj",
+      "packages": []
+    },
+    {
+      "path": "references/Hexalith.McpCli/src/Hexalith.McpCli/Hexalith.McpCli.csproj",
+      "packages": []
+    }
+  ],
+  "tupleApproved": false,
+  "issues": [
+    "missing restored graph: references/Hexalith.Conversations/src/Hexalith.Conversations.AppHost/Hexalith.Conversations.AppHost.csproj",
+    "missing restored graph: references/Hexalith.EventStore/src/Hexalith.EventStore.AppHost/Hexalith.EventStore.AppHost.csproj",
+    "missing restored graph: references/Hexalith.EventStore/tests/Hexalith.EventStore.Server.LiveSidecar.Tests/Hexalith.EventStore.Server.LiveSidecar.Tests.csproj",
+    "missing restored graph: references/Hexalith.Folders/src/Hexalith.Folders.AppHost/Hexalith.Folders.AppHost.csproj",
+    "missing restored graph: references/Hexalith.FrontComposer/src/Hexalith.FrontComposer.AppHost/Hexalith.FrontComposer.AppHost.csproj",
+    "missing restored graph: references/Hexalith.Memories/src/Hexalith.Memories.AppHost/Hexalith.Memories.AppHost.csproj",
+    "missing restored graph: references/Hexalith.Parties/src/Hexalith.Parties.AppHost/Hexalith.Parties.AppHost.csproj",
+    "missing restored graph: references/Hexalith.Tenants/src/Hexalith.Tenants.AppHost/Hexalith.Tenants.AppHost.csproj",
+    "missing restored graph: references/Hexalith.Builds/src/hosts/Hexalith.Builds.Module.AppHost/Hexalith.Builds.Module.AppHost.csproj",
+    "missing restored graph: references/Hexalith.McpCli/src/Hexalith.McpCli/Hexalith.McpCli.csproj"
+  ]
+}

@@ -97,6 +97,7 @@ context: ['{project-root}/_bmad-output/implementation-artifacts/epic-7-context.m
 - The first isolated-output Release run had one failure. The OpenAPI fixture needs a checkout layout, and the same 375-test run passed both from checkout output and from isolated output with solution and source links.
 - `python3 tools/planning/validate_production_authority.py --validate-index` passed with `[6, 7, 8]`.
 - The mapped AppHost built with 0 warnings and 0 errors. `KeycloakPersistent=false aspire start --apphost src/Hexalith.Projects.AppHost/Hexalith.Projects.AppHost.csproj --isolated --non-interactive` exited 2 before resource composition because `Projects:DevelopmentRouteCatalog` requires owner custody for the selected Redis backend.
+- Follow-up at Projects `e2490842fffba312e1d6caf13cc883ce4e828bde`: the [disposable ordinary Debug qualification](../../module/README.md#disposable-ordinary-debug-qualification) passed using `run_live_project_fixtures.py --ordinary-only` under Platform's run-owned issuer with fresh Redis and private catalog custody. All 54 launcher controls passed. Aspire reported the ordinary resources healthy. The native test verified a shared committed catalog, persisted delivery through the named SDK callback, a matching Project query, and unchanged state after credential refusals. The runner verified cleanup and preservation of preexisting resources.
 
 **Reproduction from the repository root**
 
