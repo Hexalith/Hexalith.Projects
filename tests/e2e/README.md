@@ -52,24 +52,25 @@ The managed runner owns a fresh Redis backend, private discovery, SDK compiled c
 mTLS/workload authority and real HTTPS Keycloak. It creates source authority through authenticated
 Tenant commands only in that newly owned backend. The ordinary shared tenant and its roles remain
 untouched. It enables the explicit metadata fixture profile, discovers the AppHost URLs, and runs the
-startup/auth smoke, complete Chromium matrix, repeats and actual retries with two workers:
+startup/auth smoke, complete Chromium matrix, repeats and actual retries with two workers. Build the
+Platform workload provider before starting the local managed run.
 
 ```bash
-run-with-temp npm --prefix tests/e2e run test:live:managed
+(cd references/Hexalith.Platform/infrastructure/keycloak-workload-binding && mvn -B -ntp package)
+npm --prefix tests/e2e run test:live:managed
 ```
 
-Credentials for this isolated lane are generated and kept in the private run directory. Set
+The local managed shell entry starts Platform's Projects enrollment launcher with a two-hour lease
+and runs the Projects runner as its direct child under `run-with-temp`. Credentials for this isolated
+lane are generated and kept in the private run directory. Set
 `E2E_LIVE_FIXTURE_EVIDENCE` to a new persistent directory for sanitized logs, native XML and JUnit.
 `E2E_RESOURCE_TIMEOUT_SECONDS` bounds operations (default 600). The launcher cleans its exact
 processes, containers, browser session, keys, mapping and build outputs on every exit. Unverified
 cleanup fails the run and preserves a metadata-only recovery identity outside disposable scratch.
-The final check starts the ordinary AppHost with every fixture flag disabled and inspects its
-actual Projects process environment plus resource graph for fixture ingress and sibling bindings.
-In a source build that ordinary startup composes the SDK route catalog, so it needs the
-`Projects:DevelopmentRouteCatalog` custody and workload issuer settings in
-[the module README](../../module/README.md#ordinary-local-catalog). Without them the AppHost refuses at startup;
-the final check accepts only that named refusal, after verifying that no owned AppHost, sidecar or
-application process remains.
+The final check starts the ordinary Debug AppHost with every fixture flag disabled, a separate fresh
+Redis backend, and the verified Platform enrollment. It requires a shared committed SDK catalog and
+checks persisted delivery and credential refusals. The [module README](../../module/README.md#ordinary-local-catalog)
+describes the owner configuration for shared or persistent installations.
 The private gateway uses inline projections with the SDK's supported background-worker suppression
 switch during this deterministic fixture run. This lane does not qualify production background
 projection retry or parallel callback delivery. The private Projects worker sidecar also selects

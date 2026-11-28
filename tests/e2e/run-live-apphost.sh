@@ -11,7 +11,9 @@ resource_timeout_seconds="${E2E_RESOURCE_TIMEOUT_SECONDS:-600}"
 # The local default owns a fresh backend and its complete private catalog/workload enrollment.
 # Scheduled CI retains its package-reference path; local shared compatibility is explicit.
 if test "${CI:-false}" != true && test "${E2E_SHARED_APPHOST:-0}" != 1 && test "${E2E_SUPPORTED_READS_ONLY:-0}" != 1; then
-    exec python3 "$repository_root/tools/qualification/run_live_project_fixtures.py" \
+    exec run-with-temp python3 -B "$repository_root/references/Hexalith.Platform/infrastructure/keycloak-workload-binding/run_owned.py" \
+        --owner disposable-projects-acceptance --lifetime-seconds 7200 -- \
+        python3 -B "$repository_root/tools/qualification/run_live_project_fixtures.py" \
         --timeout "$resource_timeout_seconds" \
         --evidence "${E2E_LIVE_FIXTURE_EVIDENCE:-/tmp/projects-live-fixtures-evidence-$(date -u +%Y%m%d%H%M%S)-$$}"
 fi

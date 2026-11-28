@@ -365,14 +365,15 @@ def regression_environment(env: dict, endpoints_path: Path) -> dict:
 
 
 def regression_test_command(lane: str, assembly: Path, evidence: Path) -> list[str]:
-    """Run application regressions after seeding; setup executes in its dedicated browser lane."""
+    """Run application regressions without the dedicated live test classes."""
     if lane not in {"Integration", "Server"}:
         raise ValueError("Unknown regression lane.")
     command = ["dotnet", str(assembly), "-xml", str(evidence / (lane.lower() + ".xml"))]
     if lane == "Integration":
         command.extend(["-class-", "*SupportedProjectReadDistributedTests",
                         "-class-", "*SupportedProjectBrowserSeedTests",
-                        "-class-", "*IsolatedLiveFixtureSeedTests"])
+                        "-class-", "*IsolatedLiveFixtureSeedTests",
+                        "-class-", "*OrdinaryRunModeLiveTests"])
     return command
 
 

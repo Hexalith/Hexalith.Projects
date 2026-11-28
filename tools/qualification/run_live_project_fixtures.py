@@ -8,6 +8,7 @@ import hashlib
 import json
 import os
 from pathlib import Path
+import re
 import secrets
 import shutil
 import signal
@@ -16,6 +17,8 @@ import subprocess
 import sys
 import tempfile
 import time
+import traceback
+import ssl
 import urllib.request
 import urllib.error
 import urllib.parse
@@ -28,7 +31,94 @@ import run_supported_project_reads as support
 from supported_browser_reads import prepare_oidc, sanitize_output
 
 ROOT = support.ROOT
+SOURCE_ROOT = ROOT
 APPS = ("eventstore", "tenants", "projects", "projects-workers")
+PLATFORM = ROOT / "references/Hexalith.Platform"
+PLATFORM_ENROLLMENT = PLATFORM / "infrastructure/keycloak-workload-binding"
+sys.path.insert(0, str(PLATFORM_ENROLLMENT))
+from adopt_run_owned import ProjectsEnrollment, publish_once
+from run_owned import NoRedirect, PREFIX as ENROLLMENT_PREFIX, projects_inventory
+
+ORDINARY_TEST = "Hexalith.Projects.Integration.Tests.OrdinaryRunModeLiveTests.QualifiesOwnedCatalogAndDelivery"
+ORDINARY_OWNER = "projects-disposable-owner"
+CHECKOUT_EXCLUSIONS = frozenset(("_bmad-output", "_bmad", ".agents", ".agent", ".bmad-loop"))
+
+
+def source_inputs():
+    """Fingerprint source inputs without treating historical evidence builds as live inputs."""
+    return {name: digest for name, digest in support.source_manifest().items()
+        if CHECKOUT_EXCLUSIONS.isdisjoint(Path(name).parts)}
+
+
+def changed_source_inputs(expected, current):
+    return sorted(name for name, digest in expected.items() if current.get(name) != digest)
+
+
+def prepare_source_checkout(destination, manifest):
+    """Materialize the exact build inputs in a private tree with independent launch outputs."""
+    repositories = [SOURCE_ROOT]
+    modules = support.execute(["git", "config", "--file", str(SOURCE_ROOT / ".gitmodules"),
+        "--get-regexp", r"^submodule\..*\.path$"]).splitlines()
+    repositories.extend(SOURCE_ROOT / row.split(maxsplit=1)[1] for row in modules)
+    for repository in repositories:
+        checkout = destination / repository.relative_to(SOURCE_ROOT)
+        checkout.mkdir(mode=0o700, parents=True, exist_ok=True)
+        git_dir = support.execute(["git", "-C", str(repository), "rev-parse", "--absolute-git-dir"]).strip()
+        (checkout / ".git").write_text("gitdir: " + git_dir + "\n")
+        files = support.execute(["git", "-C", str(repository), "ls-files", "--cached", "--others", "--exclude-standard", "-z"]).split("\0")
+        for relative in sorted(set(files)):
+            if not relative or not CHECKOUT_EXCLUSIONS.isdisjoint(Path(relative).parts):
+                continue
+            source = repository / relative
+            if not source.is_file():
+                continue
+            target = checkout / relative
+            target.parent.mkdir(mode=0o700, parents=True, exist_ok=True)
+            shutil.copy2(source, target)
+            expected = manifest.get(str(source.relative_to(SOURCE_ROOT)))
+            if expected and hashlib.sha256(target.read_bytes()).hexdigest() != expected:
+                raise RuntimeError("A Debug source input changed while copying the owned checkout.")
+    npm_dependencies = SOURCE_ROOT / "tests/e2e/node_modules"
+    if npm_dependencies.is_dir():
+        (destination / "tests/e2e/node_modules").symlink_to(npm_dependencies, target_is_directory=True)
+
+
+def install_launch_outputs(artifacts):
+    """Publish the freshly built assemblies at the conventional paths Aspire 17 actually starts."""
+    projects = (
+        "src/Hexalith.Projects.AppHost", "src/Hexalith.Projects.Server", "src/Hexalith.Projects.UI",
+        "src/Hexalith.Projects.Workers", "tests/Hexalith.Projects.ReadAuthority", "tests/Hexalith.Projects.E2E.Fixtures",
+        "references/Hexalith.EventStore/src/Hexalith.EventStore", "references/Hexalith.Tenants/src/Hexalith.Tenants",
+    )
+    for relative in projects:
+        project = ROOT / relative
+        output = artifacts / "bin" / project.name / "debug"
+        destination = project / "bin/Debug/net11.0"
+        if not (output / (project.name + ".dll")).is_file() or destination.exists():
+            raise RuntimeError("Fresh Debug output is missing or its conventional launch path is occupied.")
+        shutil.copytree(output, destination)
+
+
+def require_apphost_binary(owned, artifacts):
+    """Bind the exact ordinary process to the fresh Debug artifact before accepting runtime results."""
+    expected = ROOT / "src/Hexalith.Projects.AppHost/bin/Debug/net11.0/Hexalith.Projects.AppHost.dll"
+    pid = owned["appHostPid"]
+    process = Path("/proc", str(pid))
+    executable = process.joinpath("exe").resolve()
+    artifact = artifacts / "bin/Hexalith.Projects.AppHost/debug" / expected.name
+    if executable in {expected.with_suffix(""), artifact.with_suffix("")}:
+        actual = executable.with_name(executable.name + ".dll")
+    elif executable.name == "dotnet":
+        arguments = process.joinpath("cmdline").read_bytes().decode().split("\0")
+        actual = next((path for path in (expected, artifact) if str(path) in arguments[1:]), None)
+    else:
+        actual = None
+    if actual is None or support.process_start(pid) != owned["appHostStartTicks"]:
+        raise RuntimeError("Aspire did not launch the exact owned Debug AppHost.")
+    sha = hashlib.sha256(actual.read_bytes()).hexdigest()
+    if sha != hashlib.sha256(artifact.read_bytes()).hexdigest():
+        raise RuntimeError("The running AppHost binary differs from the freshly built Debug artifact.")
+    return sha
 
 
 def command_evidence(command):
@@ -373,8 +463,8 @@ def proposal_observations(path, fixture, endpoints, run):
 PROJECT_EVENT_PREFIX = "Hexalith.Projects.Contracts.Events."
 PROJECT_STATE_EVENTS = frozenset(PROJECT_EVENT_PREFIX + name for name in (
     "FileReferenceLinked", "FileReferenceUnlinked", "MemoryLinked", "MemoryUnlinked", "ProjectArchived",
-    "ProjectChatBotAuthorityGranted", "ProjectChatBotAuthorityRevoked", "ProjectCreated", "ProjectFolderCreationPending",
-    "ProjectFolderSet", "ProjectResolutionConfirmed", "ProjectRestored", "ProjectSetupUpdated"))
+    "ProjectChatBotAuthorityGranted", "ProjectChatBotAuthorityRevoked", "ProjectCreated", "ProjectCreationAbandoned",
+    "ProjectFolderCreationPending", "ProjectFolderSet", "ProjectResolutionConfirmed", "ProjectRestored", "ProjectSetupUpdated"))
 PROJECT_REJECTION_EVENTS = frozenset(PROJECT_EVENT_PREFIX + name for name in (
     "ProjectArchiveRejected", "ProjectChatBotAuthorityRejected", "ProjectCreationRejected", "ProjectReferenceLinkRejected",
     "ProjectReferenceUnlinkRejected", "ProjectResolutionConfirmationRejected", "ProjectRestoreRejected", "ProjectSetupUpdateRejected"))
@@ -637,6 +727,37 @@ def _persisted_cleanup(redis_id, tenant, run, diagnostics):
         sourceCoverage=diagnostics)
 
 
+def prepare_owned_redis(private, isolation, name, owned, run):
+    """Allocate one labeled, empty backend and track its immutable identity from creation."""
+    resource = {"name": name, "id": None, "cidfile": str(private / "redis.cid")}
+    owned.append(resource)
+    try:
+        created = run(["docker", "create", "--cidfile", resource["cidfile"], "--name", name,
+                       "--label", "hexalith.supported-reads=" + isolation, "-p",
+                       "127.0.0.1:" + str(private_container_port(run)) + ":6379", "redis:6"]).strip()
+    finally:
+        if Path(resource["cidfile"]).exists():
+            resource["id"] = Path(resource["cidfile"]).read_text().strip()
+    if len(created) != 64 or created != resource["id"]:
+        raise RuntimeError("The owned Redis creation identity is unproved.")
+    run(["docker", "start", created])
+    for attempt in range(30):
+        if run(["docker", "exec", created, "redis-cli", "--raw", "DBSIZE"]).strip() == "0":
+            break
+        if attempt == 29:
+            raise RuntimeError("The owned Redis backend could not prove empty initial state.")
+        time.sleep(.1)
+    return run(["docker", "port", created, "6379/tcp"]).strip(), created
+
+
+def write_discovery_configuration(private, isolation):
+    discovery = private / "discovery.json"
+    publish_once(discovery, {"apiVersion": "dapr.io/v1alpha1", "kind": "Configuration", "metadata": {"name": isolation},
+        "spec": {"accessControl": {"defaultAction": "deny", "trustDomain": "public"},
+            "nameResolution": {"component": "sqlite", "version": "v1", "configuration": {"connectionString": str(private / "discovery.sqlite")}}}})
+    return discovery
+
+
 def prepare_private_inputs(private, isolation, artifacts, owned, run, evidence):
     """Provision trust together with a genuinely new owned backend, never shared custody."""
     password = secrets.token_hex(32)
@@ -660,33 +781,16 @@ def prepare_private_inputs(private, isolation, artifacts, owned, run, evidence):
             "projects:link_memory", "projects:unlink_memory", "projects:confirm_resolution",
             "projects:link_conversation", "projects:move_conversation", "projects:unlink_conversation"))
     browser.update(Enabled=True, TokenEndpoint=browser["Authority"] + "/protocol/openid-connect/token")
-    resource = {"name": isolation + "-redishost", "id": None, "cidfile": str(private / "redis.cid")}
-    owned.append(resource)
-    try:
-        created = run(["docker", "create", "--cidfile", resource["cidfile"], "--name", resource["name"],
-                       "--label", "hexalith.supported-reads=" + isolation, "-p",
-                       "127.0.0.1:" + str(private_container_port(run)) + ":6379", "redis:6"]).strip()
-    finally:
-        if Path(resource["cidfile"]).exists():
-            resource["id"] = Path(resource["cidfile"]).read_text().strip()
-    if len(created) != 64 or created != resource["id"]:
-        raise RuntimeError("The owned Redis creation identity is unproved.")
-    run(["docker", "start", created])
-    dependencies = {"RedisHost": run(["docker", "port", created, "6379/tcp"]).strip(),
+    redis, _ = prepare_owned_redis(private, isolation, isolation + "-redishost", owned, run)
+    dependencies = {"RedisHost": redis,
                     "PlacementHostAddress": "127.0.0.1:" + str(support.free_port()),
                     "SchedulerHostAddress": "127.0.0.1:" + str(support.free_port())}
     (private / "catalog-invocations").mkdir(mode=0o700)
     source_reads = support.prepare_owner_source_read_directory(private)
     for name in APPS:
         (private / ("data-" + name)).mkdir(mode=0o700)
-    discovery = private / "discovery.json"
-    discovery.write_text(json.dumps({"apiVersion": "dapr.io/v1alpha1", "kind": "Configuration", "metadata": {"name": isolation},
-        "spec": {"accessControl": {"defaultAction": "deny", "trustDomain": "public"},
-            "nameResolution": {"component": "sqlite", "version": "v1", "configuration": {"connectionString": str(private / "discovery.sqlite")}}}}))
-    discovery.chmod(0o600)
+    discovery = write_discovery_configuration(private, isolation)
     encoded = lambda name: base64.b64encode((private / name).read_bytes()).decode()
-    manifest = support.source_manifest()
-    (evidence / "source-manifest.json").write_text(json.dumps(manifest, sort_keys=True, indent=2) + "\n")
     fixture = {"Enabled": True, "IsolationId": isolation, "Artifacts": str(artifacts), "UserIssuer": browser["Authority"],
         "UserKeyPath": str(private / "user.pem"), "CertificatePath": str(private / "certificate.pfx"), "CertificatePassword": password,
         "TrustBundle": str(private / "certificate.pem"), "BootstrapPassword": bootstrap_password,
@@ -701,10 +805,10 @@ def prepare_private_inputs(private, isolation, artifacts, owned, run, evidence):
     return fixture, dependencies
 
 
-def capture_infrastructure(private, isolation, graph):
-    """Use the generic infrastructure observer with the compatibility lane's exact four receivers."""
+def capture_infrastructure(private, isolation, graph, receivers=APPS):
+    """Bind infrastructure and receiver files to the selected private run."""
     receipts = support.read_infrastructure_receipts(private, isolation)
-    for app in APPS:
+    for app in receivers:
         path = Path(receipts["catalogDirectory"]) / (app + ".configuration.json")
         receipts["identities"][str(path)] = support.private_identity(path)
         specification = json.loads(path.read_text())["spec"]
@@ -721,9 +825,11 @@ def private_environment(inherited):
     """Select compatibility readiness/journeys independently of the caller's other live lane."""
     env = support.sanitized_environment(inherited)
     for key in list(env):
-        if key.startswith(("E2E_SUPPORTED_READ", "SUPPORTED_PROJECT_BROWSER_")) or key in (
+        if key.startswith(("E2E_SUPPORTED_READ", "SUPPORTED_PROJECT_BROWSER_", ENROLLMENT_PREFIX)) or key in (
                 "E2E_SHARED_APPHOST", "E2E_FIXTURE_RETRY_PROBE", "E2E_FIXTURE_RETRY_DIRECTORY"):
             env.pop(key)
+    if ENROLLMENT_PREFIX + "RECEIPT" in inherited:
+        env.pop("SSL_CERT_FILE", None)
     return env
 
 
@@ -806,6 +912,22 @@ def capture_session(session, graph):
     session["captureVerified"] = bool(session["applications"]) and not unresolved and not session["unresolvedApplications"]
 
 
+def ordinary_container_census(isolation):
+    output = support.execute(["docker", "ps", "--all", "--no-trunc", "--filter",
+        "label=hexalith.projects.ordinary=" + isolation, "--format", "{{.ID}}"], timeout=5)
+    identities = output.splitlines()
+    if any(not re.fullmatch(r"[0-9a-f]{64}", identity) for identity in identities):
+        raise RuntimeError("The ordinary container census lacks exact IDs.")
+    return {identity: {"id": identity, "name": "ordinary-container"} for identity in identities}
+
+
+def capture_ordinary_containers(session, isolation):
+    found = ordinary_container_census(isolation)
+    for identity, resource in found.items():
+        session["containers"].setdefault(identity, resource)
+    return [session["containers"][identity] for identity in found]
+
+
 def cleanup_session(session, isolation, run, report, *, seconds=10):
     """Capture partial startup before stopping, and bind all absence evidence to this session."""
     local = {"result": "passed", "cleanup": [], "ownedSidecarsAbsent": False}
@@ -821,11 +943,28 @@ def cleanup_session(session, isolation, run, report, *, seconds=10):
                 session["applications"].setdefault(pid, item)
         except BaseException:
             session["applicationObservationFailed"] = True
+    ordinary = session["name"] == "ordinary"
+    known = []
+    if ordinary:
+        try:
+            known = capture_ordinary_containers(session, isolation)
+        except (OSError, RuntimeError, subprocess.SubprocessError):
+            session["containerCensusBeforeStopFailed"] = True
     try:
         support.cleanup_resources(session["apphost"], [], isolation, run, local, sidecar_wait_seconds=seconds)
     except BaseException as failure:
         session["teardownFailure"] = type(failure).__name__
         local["result"] = "failed"
+    if ordinary:
+        try:
+            late = capture_ordinary_containers(session, isolation)
+        except (OSError, RuntimeError, subprocess.SubprocessError):
+            late = []
+            local["result"] = "failed"
+            session["containerCensusAfterStopFailed"] = True
+        candidates = {item["id"]: item for item in (*known, *late)}
+        if candidates:
+            support.cleanup_resources(None, list(candidates.values()), isolation, run, local, container_wait_seconds=seconds)
     session["ownedSidecarsAbsent"] = local["ownedSidecarsAbsent"]
     # Even a successful AppHost/sidecar stop cannot prove its application descendants exited.
     deadline = time.monotonic() + seconds
@@ -836,6 +975,8 @@ def cleanup_session(session, isolation, run, report, *, seconds=10):
             remaining.update(application_census(isolation))
             containers = support.container_listing()
             remaining_containers = sorted(set(session["containers"]) & set(containers))
+            if ordinary:
+                remaining_containers = sorted(set(remaining_containers) | set(ordinary_container_census(isolation)))
             if not remaining and not remaining_containers or time.monotonic() >= deadline:
                 break
             time.sleep(.1)
@@ -854,19 +995,148 @@ def cleanup_session(session, isolation, run, report, *, seconds=10):
         report["result"] = "failed"
 
 
-ORDINARY_CATALOG_CUSTODY_REFUSAL = "Projects:DevelopmentRouteCatalog requires owner custody for the selected Redis backend."
-
-
-def record_refused_ordinary_startup(failure, session, config_path, isolation, report):
-    """Accept only the named catalog-custody refusal, after proving the refused start left nothing owned."""
-    if ORDINARY_CATALOG_CUSTODY_REFUSAL not in getattr(failure, "command_output", ""):
-        raise failure
+def record_unstarted_ordinary_session(session, config_path, isolation, run, report):
+    """Record cleanup for a failed start only if the attempt left no owned session or descendants."""
     if (support.find_owned_apphost(config_path, isolation) is not None or support.owned_sidecar_census(isolation)
             or application_census(isolation)):
-        raise RuntimeError("The refused ordinary AppHost left owned processes.")
+        raise RuntimeError("The failed ordinary AppHost start left owned processes.")
+    containers = capture_ordinary_containers(session, isolation)
+    if containers:
+        local = {"result": "passed", "cleanup": []}
+        support.cleanup_resources(None, containers, isolation, run, local)
+        report["cleanup"].extend(dict(item, session=session["name"]) for item in local["cleanup"])
+        if local["result"] != "passed" or not all(item.get("absenceVerified") for item in local["cleanup"]):
+            raise RuntimeError("The failed ordinary AppHost start left container absence unproven.")
+    if ordinary_container_census(isolation):
+        raise RuntimeError("The failed ordinary AppHost start left owned containers.")
     session.update(captureVerified=True, ownedSidecarsAbsent=True, applicationsAbsent=True, absenceVerified=True)
-    report["cleanup"].append({"resource": "refused-ordinary-apphost", "session": session["name"], "absenceVerified": True})
-    report["normalStartupRefusedWithoutCatalogCustody"] = True
+    report["cleanup"].append({"resource": "unstarted-ordinary-apphost", "session": session["name"], "absenceVerified": True})
+
+
+def prepare_ordinary_inputs(directory, isolation, tenant, enrollment, owned, run, protected):
+    """Use only the verified disposable enrollment and a second freshly owned backend."""
+    enrollment.adopt(tenant)
+    protected.extend(enrollment.credentials.values())
+    redis, redis_id = prepare_owned_redis(directory, isolation, isolation + "-ordinary-redis", owned, run)
+    write_discovery_configuration(directory, isolation)
+    config_path = directory / "identity.json"
+    custody = str(directory / "catalog-custody")
+    publish_once(config_path, {"isolationId": isolation, "tenant": tenant, "redisHost": redis, "custodyDirectory": custody})
+    password = secrets.token_hex(32)
+    receipt_key = base64.b64encode(secrets.token_bytes(32)).decode()
+    digest_key = base64.b64encode(secrets.token_bytes(32)).decode()
+    protected.extend((password, receipt_key, digest_key))
+    options = dict(CustodyDirectory=custody, AuthorityComponentName="ordinarycatalog",
+        AuthorityStateKey=isolation + "-ordinary", ActiveDigestKeyGeneration="ordinary-v1", SecretMapGeneration="ordinary-v1")
+    workload = dict(Authority=enrollment.issuer, Issuer=enrollment.issuer, TokenEndpoint=enrollment.token_endpoint,
+        HumanAuthorityReceiptSigningKey=receipt_key)
+    for project, name in (("eventstore", "Gateway"), ("projects", "Projects"), ("tenants", "Tenants")):
+        workload[name + "ClientId"] = project
+        workload[name + "ClientSecret"] = enrollment.credentials[project]
+    prefix = "Projects__DevelopmentRouteCatalog__"
+    apphost = {prefix + key: value for key, value in options.items()}
+    apphost.update({prefix + "Workload__" + key: value for key, value in workload.items()})
+    apphost.update({prefix + "Qualification__" + key: value for key, value in dict(
+        Directory=str(directory), Tenant=tenant, Namespace=isolation, BootstrapPassword=password).items()})
+    apphost.update({prefix + "DigestKeys__ordinary-v1": digest_key})
+    apphost.update(Projects__SupportedReads__ConfigurationFile=str(config_path), EnableKeycloak="true",
+        Dapr__RedisHost=redis, SSL_CERT_FILE=str(enrollment.trust_file))
+    return config_path, apphost, password, redis_id
+
+
+def ordinary_human_token(security_endpoint, password, tenant, certificate=None):
+    endpoint = urllib.parse.urlsplit(security_endpoint)
+    if (endpoint.scheme not in ("http", "https") or endpoint.hostname not in ("localhost", "127.0.0.1")
+            or endpoint.path not in ("", "/") or endpoint.username is not None or endpoint.query or endpoint.fragment):
+        raise RuntimeError("The ordinary user's issuer must be the exact local Aspire security endpoint.")
+    issuer = security_endpoint.rstrip("/") + "/realms/hexalith"
+    request = urllib.request.Request(issuer + "/protocol/openid-connect/token", urllib.parse.urlencode(dict(
+        grant_type="password", client_id="hexalith-eventstore", username=ORDINARY_OWNER, password=password, scope="openid")).encode())
+    context = ssl.create_default_context()
+    if certificate is not None:
+        context.load_verify_locations(cafile=str(certificate))
+    opener = urllib.request.build_opener(urllib.request.ProxyHandler({}), urllib.request.HTTPSHandler(context=context), NoRedirect())
+    with opener.open(request, timeout=10) as response:
+        token = json.load(response)["access_token"]
+    payload = token.split(".")[1]
+    claims = json.loads(base64.urlsafe_b64decode(payload + "=" * (-len(payload) % 4)))
+    tenant_grants = claims.get("eventstore:tenant")
+    if (claims.get("iss") != issuer or claims.get("sub") != ORDINARY_OWNER or tenant_grants not in ([tenant], tenant)
+            or claims.get("eventstore:surface") != "ui"):
+        raise RuntimeError("The local human issuer did not issue the selected disposable tenant credential.")
+    return token
+
+
+def require_ordinary_native_result(xml, receipt, root_digest):
+    tests = ET.parse(xml).getroot().findall(".//test")
+    if len(tests) != 1 or tests[0].get("result") != "Pass" or tests[0].get("name") != ORDINARY_TEST:
+        raise RuntimeError("The exact ordinary native live test did not pass.")
+    value = json.loads(receipt.read_text())
+    if (set(value) != {"catalog", "persisted", "credentials", "source"}
+            or value["catalog"].get("rootDigest") != root_digest
+            or value["catalog"].get("servingReceivers") != ["eventstore", "projects", "tenants"]
+            or type(value["catalog"].get("epoch")) is not int or value["catalog"]["epoch"] <= 0
+            or not value["catalog"].get("generation")
+            or value["persisted"] != {"bootstrap": True, "tenantMembership": True, "projectHistory": True,
+                "projectProjection": True, "queryMatchedProjection": True, "refusalsUnchanged": True}
+            or value["source"] != {"bootstrapEvents": 1, "membershipEvents": 2, "projectEvents": 2, "projectHead": 2,
+                "projectGlobalPosition": value["source"].get("projectGlobalPosition"), "projectionDelivery": "named-sdk-callback"}
+            or type(value["source"]["projectGlobalPosition"]) is not int or value["source"]["projectGlobalPosition"] <= 0
+            or value["credentials"] != {"human": "allowed", "missingWorkload": "refused", "wrongWorkload": "refused",
+                "missingHuman": "refused", "wrongHuman": "refused"}):
+        raise RuntimeError("The ordinary native receipt is incomplete or mismatched.")
+    return value
+
+
+def ordinary_material_paths(directory, isolation):
+    """Read only the ordinary AppHost's private locators and resolve their exact ownership boundary."""
+    catalog, mtls = directory / "catalog-plane.json", directory / "mtls-plane.json"
+    support.private_identity(catalog)
+    support.private_identity(mtls)
+    catalog = json.loads(catalog.read_text())
+    mtls = json.loads(mtls.read_text())
+    run = Path(mtls["runDirectory"])
+    certificate = Path(mtls["certificateDirectory"])
+    root = Path(catalog["directory"])
+    private_temp = Path(tempfile.gettempdir())
+    expected_certificate = directory / "mtls" / ("dapr-credentials-" + hashlib.sha256(str(run).encode()).hexdigest().upper()[:32])
+    if (catalog["isolationId"] != isolation or mtls["isolationId"] != isolation
+            or catalog["custodyDirectory"] != str(directory / "catalog-custody")
+            or root.parent != private_temp or not root.name.startswith("hexalith-route-catalog-")
+            or run.parent != private_temp / "hexalith-dapr" or certificate != expected_certificate
+            or not re.fullmatch(r"[0-9a-f]{32}", run.name) or not re.fullmatch(r"[0-9a-f]{64}", catalog["rootDigest"])):
+        raise RuntimeError("The ordinary AppHost's private infrastructure locators differ from this run.")
+    return catalog["rootDigest"], (root, run, certificate)
+
+
+def capture_ordinary_material(directory, isolation):
+    digest, paths = ordinary_material_paths(directory, isolation)
+    root = paths[0]
+    retained = {path: support.private_identity(path, directory=True) for path in paths}
+    if support.private_identity(root / "catalog.json")["sha256"] != digest:
+        raise RuntimeError("The ordinary AppHost did not publish the exact SDK catalog root.")
+    return {"catalogDirectory": str(root), "rootDigest": digest, "paths": retained}
+
+
+def ordinary_material_absent(directory, isolation, session, retained):
+    """Remove only exact captured leftovers after AppHost and sidecar absence is proven."""
+    if not session["absenceVerified"]:
+        return False
+    if not ((directory / "catalog-plane.json").exists() or (directory / "mtls-plane.json").exists()):
+        return session["apphost"] is None
+    _, paths = ordinary_material_paths(directory, isolation)
+    for path in paths:
+        if os.path.lexists(path):
+            if retained is None or support.private_identity(path, directory=True) != retained["paths"].get(path):
+                return False
+            shutil.rmtree(path)
+    return all(not os.path.lexists(path) for path in paths)
+
+
+def preexisting_resources():
+    observed = support.preexisting_resources()
+    observed["containers"] = sorted(support.container_listing())
+    return observed
 
 
 def recover_infrastructure(private, isolation, owned, run, report):
@@ -888,7 +1158,7 @@ def recover_infrastructure(private, isolation, owned, run, report):
     return None
 
 
-def retain_recovery(evidence, private, config_path, isolation, sessions, owned, report, infrastructure=None):
+def retain_recovery(evidence, private, config_path, isolation, sessions, owned, report, infrastructure=None, ordinary=None):
     recovery = {"sessions": sessions, "containers": owned, "isolation": isolation,
         "originalPrivateDirectory": str(private)}
     try:
@@ -898,24 +1168,30 @@ def retain_recovery(evidence, private, config_path, isolation, sessions, owned, 
     if infrastructure:
         recovery["infrastructure"] = {key: infrastructure[key] for key in ("identities", "runDirectory", "certificateDirectory",
             "catalogDirectory", "custodyDirectory", "registryPath", "rootDigest") if key in infrastructure}
+    if ordinary:
+        recovery["ordinaryInfrastructure"] = {"catalogDirectory": ordinary["catalogDirectory"],
+            "rootDigest": ordinary["rootDigest"], "identities": {str(path): identity for path, identity in ordinary["paths"].items()}}
     # Partial receipts retain only closed path/digest metadata, explicitly without a custody claim.
     recovery["partialReceipts"] = []
-    for name in ("mtls-plane.json", "catalog-plane.json"):
-        try:
-            receipt = json.loads((private / name).read_text())
-            if receipt.get("isolationId") == isolation:
-                recovery["partialReceipts"].append({"name": name, "verified": False,
-                    **{key: value for key, value in receipt.items() if key in (
-                        "runDirectory", "certificateDirectory", "directory", "custodyDirectory", "rootDigest") and isinstance(value, str)}})
-        except (OSError, ValueError, AttributeError):
-            pass
+    for session, directory in (("private", private), ("ordinary", private / "ordinary")):
+        for name in ("mtls-plane.json", "catalog-plane.json"):
+            try:
+                path = directory / name
+                support.private_identity(path)
+                receipt = json.loads(path.read_text())
+                if receipt.get("isolationId") == isolation:
+                    recovery["partialReceipts"].append({"name": name, "session": session, "verified": False,
+                        **{key: value for key, value in receipt.items() if key in (
+                            "runDirectory", "certificateDirectory", "directory", "custodyDirectory", "rootDigest") and isinstance(value, str)}})
+            except (OSError, RuntimeError, ValueError, AttributeError):
+                pass
     path = evidence / "recovery-identity.json"
     path.write_text(json.dumps(recovery, indent=2) + "\n")
     path.chmod(0o600)
     report.update(result="failed", recoveryIdentity=str(path), recoveryMaterialRetained=True)
 
 
-def finalize_private_cleanup(private, config_path, isolation, infrastructure, sessions, owned, run, evidence, report):
+def finalize_private_cleanup(private, config_path, isolation, infrastructure, sessions, owned, run, evidence, report, ordinary=None):
     """Attempt every known teardown and persist recovery for every unverified deletion outcome."""
     for resource in owned:
         try:
@@ -928,31 +1204,37 @@ def finalize_private_cleanup(private, config_path, isolation, infrastructure, se
     verified = False
     try:
         verified = all(session["absenceVerified"] for session in sessions) and all(item.get("absenceVerified") for item in report["cleanup"])
-        if verified and (not sessions or infrastructure is not None):
+        private_started = any(session["name"] == "private" for session in sessions)
+        if verified and (not private_started or infrastructure is not None):
             if infrastructure:
-                support.cleanup_private_material(private, isolation, infrastructure, bool(sessions), report)
+                support.cleanup_private_material(private, isolation, infrastructure, private_started, report)
             else:
                 shutil.rmtree(private)
                 report["privateMaterialRemoved"] = True
     except BaseException as failure:
         report["privateCleanupFailure"] = type(failure).__name__
     if not report.get("privateMaterialRemoved") or report.get("recoveryMaterialRetained") or not verified:
-        retain_recovery(evidence, private, config_path, isolation, sessions, owned, report, infrastructure)
+        retain_recovery(evidence, private, config_path, isolation, sessions, owned, report, infrastructure, ordinary)
 
 
 def main():
+    global ROOT
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--evidence", type=Path, required=True, help="New destination for sanitized persistent results.")
     parser.add_argument("--timeout", type=int, default=600)
-    parser.add_argument("--disabled-only", action="store_true", help="Start the actual isolated AppHost without compatibility fixture roles.")
+    phase = parser.add_mutually_exclusive_group()
+    phase.add_argument("--disabled-only", action="store_true", help="Start the actual isolated AppHost without compatibility fixture roles, then qualify ordinary startup.")
+    phase.add_argument("--ordinary-only", action="store_true", help="Qualify only the ordinary local Debug AppHost.")
     parser.add_argument("--fail-fast", action="store_true", help="Stop the matrix after its first failure for diagnosis; interrupted cases cannot qualify.")
     args = parser.parse_args()
     if args.timeout <= 0:
         parser.error("--timeout must be positive")
+    os.umask(0o077)
     evidence = args.evidence.resolve()
     evidence.mkdir(mode=0o700, parents=True, exist_ok=False)
     private = Path(tempfile.mkdtemp(prefix="projects-live-fixtures-"))
     private.chmod(0o700)
+    ordinary = private / "ordinary"
     artifacts = private / "artifacts"
     isolation = "fixtures-" + secrets.token_hex(12)
     env = private_environment(os.environ)
@@ -960,20 +1242,19 @@ def main():
         EnableKeycloak="false", KeycloakPersistent="false", UseHexalithProjectReferences="true", UseNuGetDeps="false",
         Projects__SupportedReads__Enabled="false", Projects__E2E__LiveFixtures="false" if args.disabled_only else "true",
         Projects__IsolatedLiveFixtures__Enabled="true", EnablePrivateOwnerSourceReadProof="true")
-    for module in ("EventStore", "Tenants", "Folders", "Commons", "Conversations", "Memories", "FrontComposer", "Parties", "McpCli", "Builds", "Platform"):
-        env["Hexalith" + module + "Root"] = str(ROOT / "references" / ("Hexalith." + module))
-    env["HexalithTenantsBasePath"] = str(ROOT / "references/Hexalith.Tenants/src")
-    report = {"result": "failed", "commands": [], "cleanup": [], "matrixCompleted": False,
+    report = {"result": "failed", "commands": [], "cleanup": [], "matrixCompleted": False, "ordinaryOnly": args.ordinary_only,
               "profileDisabled": args.disabled_only, "sourceMode": "Debug", "sharedBackendChanged": False}
     owned, owned_apphost, infrastructure, started = [], None, None, False
     preexisting, fixture, config_path = None, None, private / "fixture.json"
     sessions, current_session = [], None
     protected = []
+    enrollment = None
+    ordinary_receipts = None
 
-    def run(command, *, timeout=None):
+    def run(command, *, timeout=None, environment=None):
         report["commands"].append(command_evidence(command))
         try:
-            output = support.execute(command, env=env, timeout=timeout or args.timeout)
+            output = support.execute(command, env=env if environment is None else environment, timeout=timeout or args.timeout)
         except RuntimeError as failure:
             (evidence / ("command-" + str(len(report["commands"])) + ".log")).write_text(sanitize_output(getattr(failure, "command_output", ""), protected))
             raise
@@ -984,13 +1265,25 @@ def main():
     def interrupted(signum, frame):
         raise KeyboardInterrupt
 
-    previous = {sig: signal.signal(sig, interrupted) for sig in (signal.SIGTERM, signal.SIGINT)}
+    previous = {sig: signal.signal(sig, interrupted) for sig in (signal.SIGTERM, signal.SIGINT, signal.SIGHUP, signal.SIGQUIT, signal.SIGABRT)}
     try:
+        enrollment = ProjectsEnrollment(os.environ)
         run_negative_controls(run, report, evidence)
         if support.exact_apphost_sessions():
             raise RuntimeError("The selected AppHost already runs; the compatibility runner cannot adopt it.")
-        preexisting = support.preexisting_resources()
-        report["preexistingResources"] = preexisting
+        source_manifest = source_inputs()
+        manifest_file = evidence / "source-manifest.json"
+        manifest_file.write_text(json.dumps(source_manifest, sort_keys=True, indent=2) + "\n")
+        checkout = private / "checkout"
+        prepare_source_checkout(checkout, source_manifest)
+        ROOT = support.ROOT = checkout
+        support.APPHOST = checkout / support.APPHOST.relative_to(SOURCE_ROOT)
+        support.TEST_PROJECT = checkout / support.TEST_PROJECT.relative_to(SOURCE_ROOT)
+        if source_inputs() != source_manifest:
+            raise RuntimeError("The disposable checkout does not contain the exact captured source inputs.")
+        for module in ("EventStore", "Tenants", "Folders", "Commons", "Conversations", "Memories", "FrontComposer", "Parties", "McpCli", "Builds", "Platform"):
+            env["Hexalith" + module + "Root"] = str(checkout / "references" / ("Hexalith." + module))
+        env["HexalithTenantsBasePath"] = str(checkout / "references/Hexalith.Tenants/src")
         print("[live-fixtures] preparing private Debug source mapping", flush=True)
         for key in ("CustomBeforeDirectoryBuildProps", "CustomAfterMicrosoftCommonProps", "CustomBeforeDirectoryBuildTargets",
                     "CustomAfterDirectoryBuildTargets", "AfterMicrosoftNETSdkTargets", "HEXALITH_SOURCE_MAPPING_HASH", "Configuration"):
@@ -1010,177 +1303,249 @@ def main():
         support.require_mapping_environment(selected)
         env.update(selected)
         report["sourceMappingHash"] = selected["HEXALITH_SOURCE_MAPPING_HASH"]
-        fixture, dependencies = prepare_private_inputs(private, isolation, artifacts, owned, run, evidence)
-        protected.extend(fixture["Browser"][key] for key in ("Password", "ClientSecret", "TenantToken", "ForeignToken"))
-        config_path.write_text(json.dumps({"Projects": {"IsolatedLiveFixtures": fixture}, "Dapr": dependencies,
-            "EnableKeycloak": False, "KeycloakPersistent": False}))
-        config_path.chmod(0o600)
-        env.update(Projects__IsolatedLiveFixtures__ConfigurationFile=str(config_path),
-            # Reuse the existing exact process-identity observer. This path does not enable its owner profile.
-            Projects__SupportedReads__ConfigurationFile=str(config_path), SUPPORTED_PROJECT_READ_CONFIG=str(config_path),
-            PROJECTS_ISOLATED_LIVE_FIXTURES="1", SUPPORTED_PROJECT_READ_EVIDENCE=str(evidence), SSL_CERT_FILE=fixture["TrustBundle"],
-            UseArtifactsOutput="true", ArtifactsPath=str(artifacts))
-        print("[live-fixtures] building isolated AppHost and native fixture tests", flush=True)
+        report["sourceRevisions"] = {name: run(["git", "-C", str(repository), "rev-parse", "HEAD"]).strip()
+            for name, repository in (("projects", SOURCE_ROOT), ("platform", PLATFORM),
+                ("eventstore", SOURCE_ROOT / "references/Hexalith.EventStore"), ("tenants", SOURCE_ROOT / "references/Hexalith.Tenants"))}
+        report["platformEnrollmentSources"] = {name: hashlib.sha256((PLATFORM_ENROLLMENT / name).read_bytes()).hexdigest()
+            for name in ("run_owned.py", "adopt_run_owned.py")}
+        env.update(UseArtifactsOutput="true", ArtifactsPath=str(artifacts))
+        print("[live-fixtures] building the Debug source AppHost and native integration tests", flush=True)
         run(["dotnet", "build", str(support.TEST_PROJECT), "-c", "Debug", "-m:1", "-p:SupportedProjectReadDistributed=true", "--artifacts-path", str(artifacts)])
         assembly = artifacts / "bin/Hexalith.Projects.Integration.Tests/debug/Hexalith.Projects.Integration.Tests.dll"
-        run(["dotnet", "build", "tests/Hexalith.Projects.Server.Tests/Hexalith.Projects.Server.Tests.csproj",
-            "-c", "Debug", "-m:1", "--artifacts-path", str(artifacts)])
-        server_tests = artifacts / "bin/Hexalith.Projects.Server.Tests/debug/Hexalith.Projects.Server.Tests.dll"
-        run(["dotnet", str(server_tests), "-class", "*ProjectsRuntimeCatalogTests", "-class", "*ProjectsWorkerCatalogTests",
-            "-xml", str(evidence / "catalog-guards.xml")])
-        print("[live-fixtures] starting exact isolated AppHost", flush=True)
-        started = True
-        current_session = new_session("private", ["live-fixture-authority", *APPS, "projects-ui",
-            *([] if args.disabled_only else ["conversations", "folders", "memories", "live-fixtures"])])
-        sessions.append(current_session)
-        owned_apphost = support.start_owned_apphost(run, config_path, isolation)
-        current_session["apphost"] = owned_apphost
-        capture_session(current_session, support.resource_graph(run))
-        resources = ["live-fixture-authority", *APPS, "projects-ui", *(app + "-dapr-cli" for app in APPS), *support.MTLS_RESOURCES]
-        if not args.disabled_only:
-            resources.extend(("conversations", "folders", "memories", "live-fixtures"))
-        for name in resources:
-            run(["aspire", "wait", name, "--apphost", str(support.APPHOST), "--timeout", str(args.timeout), "--non-interactive"])
-        graph = json.loads(run(["aspire", "describe", "--apphost", str(support.APPHOST), "--format", "Json", "--non-interactive"]))
-        capture_session(current_session, graph)
-        infrastructure = capture_infrastructure(private, isolation, graph)
-        owned.extend(infrastructure["containers"])
-        report["resources"] = [{"name": item.get("displayName"), "state": item.get("state"), "health": item.get("healthStatus")} for item in graph["resources"]]
-        report["runtimeProjectionConfiguration"] = runtime_projection_configuration(graph, owned_apphost)
-        report["runtimeWorkerConcurrency"] = runtime_worker_concurrency(owned_apphost)
-        if args.disabled_only:
-            names = {item.get("displayName") for item in graph["resources"]}
-            if names.intersection({"conversations", "folders", "memories", "live-fixtures"}):
-                raise RuntimeError("The disabled compatibility profile exposed fixture resources.")
-            report["disabledProjectsProcess"] = disabled_process_bindings(graph, owned_apphost)
-            report.update(profileDisabledRuntimeVerified=True, result="passed")
-        else:
-            endpoints = {name: support.resource_endpoint(graph, name) for name in ("eventstore", "projects", "eventstore-dapr-cli", "projects-dapr-cli")}
-            endpoints["redis-container-id"] = next(item["id"] for item in owned if item["name"].endswith("-redishost"))
-            (private / "endpoints.json").write_text(json.dumps(endpoints))
-            env["SUPPORTED_PROJECT_READ_ENDPOINTS"] = str(private / "endpoints.json")
-            print("[live-fixtures] seeding fresh source authority through authenticated contracts", flush=True)
-            try:
-                run(["dotnet", str(assembly), "-method", "Hexalith.Projects.Integration.Tests.IsolatedLiveFixtureSeedTests.SeedOwnedCompatibilityFixture",
-                     "-xml", str(evidence / "seed.xml")])
-            finally:
+        install_launch_outputs(artifacts)
+        build_environment = env.copy()
+        preexisting = preexisting_resources()
+        report["preexistingResources"] = preexisting
+        if not args.ordinary_only:
+            fixture, dependencies = prepare_private_inputs(private, isolation, artifacts, owned, run, evidence)
+            protected.extend(fixture["Browser"][key] for key in ("Password", "ClientSecret", "TenantToken", "ForeignToken"))
+            config_path.write_text(json.dumps({"Projects": {"IsolatedLiveFixtures": fixture}, "Dapr": dependencies,
+                "EnableKeycloak": False, "KeycloakPersistent": False}))
+            config_path.chmod(0o600)
+            env.update(Projects__IsolatedLiveFixtures__ConfigurationFile=str(config_path),
+                # Reuse the existing exact process-identity observer. This path does not enable its owner profile.
+                Projects__SupportedReads__ConfigurationFile=str(config_path), SUPPORTED_PROJECT_READ_CONFIG=str(config_path),
+                PROJECTS_ISOLATED_LIVE_FIXTURES="1", SUPPORTED_PROJECT_READ_EVIDENCE=str(evidence), SSL_CERT_FILE=fixture["TrustBundle"],
+                UseArtifactsOutput="true", ArtifactsPath=str(artifacts))
+            run(["dotnet", "build", "tests/Hexalith.Projects.Server.Tests/Hexalith.Projects.Server.Tests.csproj",
+                "-c", "Debug", "-m:1", "--artifacts-path", str(artifacts)])
+            server_tests = artifacts / "bin/Hexalith.Projects.Server.Tests/debug/Hexalith.Projects.Server.Tests.dll"
+            run(["dotnet", str(server_tests), "-class", "*ProjectsRuntimeCatalogTests", "-class", "*ProjectsWorkerCatalogTests",
+                "-result-xml", str(evidence / "catalog-guards.xml")], environment=private_environment(build_environment))
+            print("[live-fixtures] starting exact isolated AppHost", flush=True)
+            started = True
+            current_session = new_session("private", ["live-fixture-authority", *APPS, "projects-ui",
+                *([] if args.disabled_only else ["conversations", "folders", "memories", "live-fixtures"])])
+            sessions.append(current_session)
+            owned_apphost = support.start_owned_apphost(lambda command: run([*command, "--no-build"]), config_path, isolation)
+            current_session["apphost"] = owned_apphost
+            capture_session(current_session, support.resource_graph(run))
+            resources = ["live-fixture-authority", *APPS, "projects-ui", *(app + "-dapr-cli" for app in APPS), *support.MTLS_RESOURCES]
+            if not args.disabled_only:
+                resources.extend(("conversations", "folders", "memories", "live-fixtures"))
+            for name in resources:
+                run(["aspire", "wait", name, "--apphost", str(support.APPHOST), "--timeout", str(args.timeout), "--non-interactive"])
+            graph = json.loads(run(["aspire", "describe", "--apphost", str(support.APPHOST), "--format", "Json", "--non-interactive"]))
+            capture_session(current_session, graph)
+            infrastructure = capture_infrastructure(private, isolation, graph)
+            owned.extend(infrastructure["containers"])
+            report["resources"] = [{"name": item.get("displayName"), "state": item.get("state"), "health": item.get("healthStatus")} for item in graph["resources"]]
+            report["runtimeProjectionConfiguration"] = runtime_projection_configuration(graph, owned_apphost)
+            report["runtimeWorkerConcurrency"] = runtime_worker_concurrency(owned_apphost)
+            if args.disabled_only:
+                names = {item.get("displayName") for item in graph["resources"]}
+                if names.intersection({"conversations", "folders", "memories", "live-fixtures"}):
+                    raise RuntimeError("The disabled compatibility profile exposed fixture resources.")
+                report["disabledProjectsProcess"] = disabled_process_bindings(graph, owned_apphost)
+                report.update(profileDisabledRuntimeVerified=True, result="passed")
+            else:
+                endpoints = {name: support.resource_endpoint(graph, name) for name in ("eventstore", "projects", "eventstore-dapr-cli", "projects-dapr-cli")}
+                endpoints["redis-container-id"] = next(item["id"] for item in owned if item["name"].endswith("-redishost"))
+                (private / "endpoints.json").write_text(json.dumps(endpoints))
+                env["SUPPORTED_PROJECT_READ_ENDPOINTS"] = str(private / "endpoints.json")
+                print("[live-fixtures] seeding fresh source authority through authenticated contracts", flush=True)
                 try:
-                    (evidence / "seed-delivery-observation.json").write_text(json.dumps(delivery_observation(endpoints["redis-container-id"], run), indent=2) + "\n")
-                except Exception as observation_failure:
-                    report["seedDeliveryObservationFailure"] = str(observation_failure) if isinstance(observation_failure, RuntimeError) else type(observation_failure).__name__
-            tests = ET.parse(evidence / "seed.xml").getroot().findall(".//test")
-            if len(tests) != 1 or tests[0].get("result") != "Pass":
-                raise RuntimeError("The exact native compatibility seed did not pass.")
-            env.update(E2E_LIVE_APPHOST="1", E2E_RUN_ID=isolation, KEYCLOAK_CLIENT_ID="supported-read-bootstrap", KEYCLOAK_REALM="hexalith",
-                TEST_USER_USERNAME="actor-1", TEST_USER_PASSWORD=fixture["Browser"]["Password"],
-                BASE_URL=support.resource_endpoint(graph, "projects-ui"), API_URL=endpoints["projects"], EVENTSTORE_API_URL=endpoints["eventstore"],
-                KEYCLOAK_URL=fixture["Browser"]["Origin"], FIXTURE_API_URL=support.resource_endpoint(graph, "live-fixtures"),
-                E2E_BROWSER_SESSION_FILE=str(private / "browser-session.json"))
-            env.pop("TEST_TENANT_ID", None)
-            env.pop("TEST_PRINCIPAL_ID", None)
-            run(["npm", "--prefix", "tests/e2e", "run", "typecheck"])
-            for phase, selectors, extra in (
-                ("smoke", ["specs/live-apphost-startup.spec.ts", "specs/projects-authentication.spec.ts"], []),
-                ("full", [], []),
-                ("repeat", ["specs/live-fixtures-lifecycle.spec.ts"], ["--repeat-each", "2"]),
-                ("retry", ["specs/live-fixtures-retry.spec.ts"], ["--retries", "1", "--repeat-each", "2"]),
-            ):
-                env.update(E2E_RUN_ID=isolation + "-" + phase, PLAYWRIGHT_JUNIT_OUTPUT_FILE=str(private / (phase + ".xml")))
-                env["E2E_FIXTURE_RETRY_PROBE"] = "1" if phase == "retry" else "0"
-                env["E2E_FIXTURE_RETRY_DIRECTORY"] = str(private / "retry-probes")
-                proposal_path = private / (phase + "-proposal-observations.jsonl")
-                env["E2E_PROPOSAL_OBSERVATIONS_FILE"] = str(proposal_path)
-                print("[live-fixtures] collecting " + phase + " matrix with two workers", flush=True)
-                command = phase_command(selectors, extra, private / (phase + "-output"))
-                if args.fail_fast:
-                    command.append("--max-failures=1")
-                report["commands"].append(command)
-                try:
-                    result = support.run_test_process(command, env=env, timeout=args.timeout,
-                        cleanup=report.setdefault("testProcessCleanup", []))
-                except subprocess.TimeoutExpired as failure:
-                    output = failure.stdout or ""
-                    if isinstance(output, bytes):
-                        output = output.decode(errors="replace")
-                    (evidence / (phase + ".log")).write_text(sanitize_output(output, protected))
+                    run(["dotnet", str(assembly), "-method", "Hexalith.Projects.Integration.Tests.IsolatedLiveFixtureSeedTests.SeedOwnedCompatibilityFixture",
+                         "-xml", str(evidence / "seed.xml")])
+                finally:
+                    try:
+                        (evidence / "seed-delivery-observation.json").write_text(json.dumps(delivery_observation(endpoints["redis-container-id"], run), indent=2) + "\n")
+                    except Exception as observation_failure:
+                        report["seedDeliveryObservationFailure"] = str(observation_failure) if isinstance(observation_failure, RuntimeError) else type(observation_failure).__name__
+                tests = ET.parse(evidence / "seed.xml").getroot().findall(".//test")
+                if len(tests) != 1 or tests[0].get("result") != "Pass":
+                    raise RuntimeError("The exact native compatibility seed did not pass.")
+                env.update(E2E_LIVE_APPHOST="1", E2E_RUN_ID=isolation, KEYCLOAK_CLIENT_ID="supported-read-bootstrap", KEYCLOAK_REALM="hexalith",
+                    TEST_USER_USERNAME="actor-1", TEST_USER_PASSWORD=fixture["Browser"]["Password"],
+                    BASE_URL=support.resource_endpoint(graph, "projects-ui"), API_URL=endpoints["projects"], EVENTSTORE_API_URL=endpoints["eventstore"],
+                    KEYCLOAK_URL=fixture["Browser"]["Origin"], FIXTURE_API_URL=support.resource_endpoint(graph, "live-fixtures"),
+                    E2E_BROWSER_SESSION_FILE=str(private / "browser-session.json"))
+                env.pop("TEST_TENANT_ID", None)
+                env.pop("TEST_PRINCIPAL_ID", None)
+                run(["npm", "--prefix", "tests/e2e", "run", "typecheck"])
+                for phase, selectors, extra in (
+                    ("smoke", ["specs/live-apphost-startup.spec.ts", "specs/projects-authentication.spec.ts"], []),
+                    ("full", [], []),
+                    ("repeat", ["specs/live-fixtures-lifecycle.spec.ts"], ["--repeat-each", "2"]),
+                    ("retry", ["specs/live-fixtures-retry.spec.ts"], ["--retries", "1", "--repeat-each", "2"]),
+                ):
+                    env.update(E2E_RUN_ID=isolation + "-" + phase, PLAYWRIGHT_JUNIT_OUTPUT_FILE=str(private / (phase + ".xml")))
+                    env["E2E_FIXTURE_RETRY_PROBE"] = "1" if phase == "retry" else "0"
+                    env["E2E_FIXTURE_RETRY_DIRECTORY"] = str(private / "retry-probes")
+                    proposal_path = private / (phase + "-proposal-observations.jsonl")
+                    env["E2E_PROPOSAL_OBSERVATIONS_FILE"] = str(proposal_path)
+                    print("[live-fixtures] collecting " + phase + " matrix with two workers", flush=True)
+                    command = phase_command(selectors, extra, private / (phase + "-output"))
+                    if args.fail_fast:
+                        command.append("--max-failures=1")
+                    report["commands"].append(command)
+                    try:
+                        result = support.run_test_process(command, env=env, timeout=args.timeout, cwd=ROOT,
+                            cleanup=report.setdefault("testProcessCleanup", []))
+                    except subprocess.TimeoutExpired as failure:
+                        output = failure.stdout or ""
+                        if isinstance(output, bytes):
+                            output = output.decode(errors="replace")
+                        (evidence / (phase + ".log")).write_text(sanitize_output(output, protected))
+                        xml = private / (phase + ".xml")
+                        if xml.exists():
+                            (evidence / (phase + ".xml")).write_text(sanitize_output(xml.read_text(), protected))
+                        raise RuntimeError("The " + phase + " matrix exceeded its bounded process-group deadline.") from failure
+                    text = result.stdout
+                    report.setdefault("phaseProcessResults", []).append({"name": phase, "exitCode": result.returncode})
+                    (evidence / (phase + ".log")).write_text(sanitize_output(text, protected))
                     xml = private / (phase + ".xml")
                     if xml.exists():
                         (evidence / (phase + ".xml")).write_text(sanitize_output(xml.read_text(), protected))
-                    raise RuntimeError("The " + phase + " matrix exceeded its bounded process-group deadline.") from failure
-                text = result.stdout
-                report.setdefault("phaseProcessResults", []).append({"name": phase, "exitCode": result.returncode})
-                (evidence / (phase + ".log")).write_text(sanitize_output(text, protected))
-                xml = private / (phase + ".xml")
-                if xml.exists():
-                    (evidence / (phase + ".xml")).write_text(sanitize_output(xml.read_text(), protected))
-                if proposal_path.exists():
-                    try:
-                        (evidence / (phase + "-proposal-observations.json")).write_text(json.dumps(
-                            proposal_observations(proposal_path, fixture, endpoints, run), indent=2) + "\n")
-                    except Exception as observation_failure:
-                        report.setdefault("proposalObservationFailures", {})[phase] = type(observation_failure).__name__
-                verdict = verify_phase_result(result.returncode, text, xml)
-                report.setdefault("phases", []).append(dict(name=phase, **verdict))
-                if phase == "smoke":
-                    # Smoke creates one API/UI Project beside the native warmup. Validate the real
-                    # provider serialization early; the complete end-state check below still runs
-                    # after the full, repeat and actual retry phases.
-                    report["persistedSmokeProjectCleanup"] = persisted_cleanup(endpoints["redis-container-id"], fixture["Tenant"], run)
-            probes = list((private / "retry-probes").glob("*.verified.json"))
-            if len(probes) != 2:
-                raise RuntimeError("Both actual retry/repeat attempts must prove prior Project archival and sibling removal.")
-            report["retryIsolation"] = [json.loads(path.read_text()) for path in probes]
-            report["persistedProjectCleanup"] = persisted_cleanup(endpoints["redis-container-id"], fixture["Tenant"], run)
-            report["siblingCleanup"] = []
-            for phase in ("smoke", "full", "repeat", "retry"):
-                for role in ("live-fixtures", "conversations", "folders", "memories"):
-                    address = support.resource_endpoint(graph, role) + "/_fixtures/runs/" + isolation + "-" + phase + "/observation"
-                    with urllib.request.urlopen(address, timeout=10) as response:
-                        observation = json.load(response)
-                    if observation != {"graphCount": 0}:
-                        raise RuntimeError("Sibling fixture metadata remains after the " + phase + " phase.")
-                    report["siblingCleanup"].append({"phase": phase, "role": role, "graphCount": 0, "httpStatus": 200})
-            report.update(result="passed", matrixCompleted=True)
-        # Exercise the ordinary AppHost separately after stopping every private fixture process.
-        # Private Redis remains owned until final teardown; normal startup performs no API writes.
-        print("[live-fixtures] verifying ordinary startup with every fixture profile disabled", flush=True)
-        cleanup_session(current_session, isolation, run, report)
-        owned_apphost = None
-        if not current_session["absenceVerified"] or report["result"] != "passed":
-            raise RuntimeError("Private fixture teardown did not prove absence before ordinary startup.")
+                    if proposal_path.exists():
+                        try:
+                            (evidence / (phase + "-proposal-observations.json")).write_text(json.dumps(
+                                proposal_observations(proposal_path, fixture, endpoints, run), indent=2) + "\n")
+                        except Exception as observation_failure:
+                            report.setdefault("proposalObservationFailures", {})[phase] = type(observation_failure).__name__
+                    verdict = verify_phase_result(result.returncode, text, xml)
+                    report.setdefault("phases", []).append(dict(name=phase, **verdict))
+                    if phase == "smoke":
+                        # Smoke creates one API/UI Project beside the native warmup. Validate the real
+                        # provider serialization early; the complete end-state check below still runs
+                        # after the full, repeat and actual retry phases.
+                        report["persistedSmokeProjectCleanup"] = persisted_cleanup(endpoints["redis-container-id"], fixture["Tenant"], run)
+                probes = list((private / "retry-probes").glob("*.verified.json"))
+                if len(probes) != 2:
+                    raise RuntimeError("Both actual retry/repeat attempts must prove prior Project archival and sibling removal.")
+                report["retryIsolation"] = [json.loads(path.read_text()) for path in probes]
+                report["persistedProjectCleanup"] = persisted_cleanup(endpoints["redis-container-id"], fixture["Tenant"], run)
+                report["siblingCleanup"] = []
+                for phase in ("smoke", "full", "repeat", "retry"):
+                    for role in ("live-fixtures", "conversations", "folders", "memories"):
+                        address = support.resource_endpoint(graph, role) + "/_fixtures/runs/" + isolation + "-" + phase + "/observation"
+                        with urllib.request.urlopen(address, timeout=10) as response:
+                            observation = json.load(response)
+                        if observation != {"graphCount": 0}:
+                            raise RuntimeError("Sibling fixture metadata remains after the " + phase + " phase.")
+                        report["siblingCleanup"].append({"phase": phase, "role": role, "graphCount": 0, "httpStatus": 200})
+                report.update(result="passed", matrixCompleted=True)
+            cleanup_session(current_session, isolation, run, report)
+            owned_apphost = None
+            if not current_session["absenceVerified"] or report["result"] != "passed":
+                raise RuntimeError("Private fixture teardown did not prove absence before ordinary startup.")
+        print("[live-fixtures] adopting the Platform lease for the ordinary Debug AppHost", flush=True)
+        ordinary.mkdir(mode=0o700)
+        tenant = isolation + "-ordinary"
+        config_path, ordinary_env, password, redis_id = prepare_ordinary_inputs(ordinary, isolation, tenant, enrollment, owned, run, protected)
+        # The private fixture result never stands in for ordinary qualification.
+        report.update(result="failed", ordinaryEnrollment=enrollment.evidence, ordinaryRedisInitiallyEmpty=True, ordinaryRedisId=redis_id)
+        env = build_environment
+        for key in ("PROJECTS_ISOLATED_LIVE_FIXTURES", "SUPPORTED_PROJECT_READ_CONFIG", "SUPPORTED_PROJECT_READ_ENDPOINTS",
+                "SSL_CERT_FILE", "EnablePrivateOwnerSourceReadProof"):
+            env.pop(key, None)
         env.update(Projects__IsolatedLiveFixtures__Enabled="false", Projects__SupportedReads__Enabled="false",
-            Projects__E2E__LiveFixtures="false", EnableKeycloak="true", Dapr__RedisHost=dependencies["RedisHost"])
+            Projects__E2E__LiveFixtures="false", Projects__E2E__SupportedReads="false", EnableKeycloak="true")
         current_session = new_session("ordinary", [*APPS, "projects-ui"])
         sessions.append(current_session)
         report["ownedSidecarsAbsent"] = False
         report["ownedApplicationsAbsent"] = False
+        owned_apphost = support.start_owned_apphost(
+            lambda command: run([*command, "--no-build"], environment=dict(env, **ordinary_env)), config_path, isolation)
+        current_session["apphost"] = owned_apphost
+        report["ordinaryAppHostAssemblySha256"] = require_apphost_binary(owned_apphost, artifacts)
         try:
-            owned_apphost = support.start_owned_apphost(run, config_path, isolation)
-        except RuntimeError as failure:
-            # A source build without ordinary catalog custody refuses before any resource starts.
-            record_refused_ordinary_startup(failure, current_session, config_path, isolation, report)
-        else:
-            current_session["apphost"] = owned_apphost
-            capture_session(current_session, support.resource_graph(run))
-            for name in ("security", *APPS, "projects-ui", *(app + "-dapr-cli" for app in APPS)):
-                run(["aspire", "wait", name, "--apphost", str(support.APPHOST), "--timeout", str(args.timeout), "--non-interactive"])
-            normal = json.loads(run(["aspire", "describe", "--apphost", str(support.APPHOST), "--format", "Json", "--non-interactive"]))
-            capture_session(current_session, normal)
-            report["normalOwnedContainers"] = list(current_session["containers"].values())
-            names = {item.get("displayName") for item in normal["resources"]}
-            if names.intersection({"conversations", "folders", "memories", "live-fixtures", "live-fixture-authority", "supported-read-authority"}):
-                raise RuntimeError("Ordinary AppHost startup exposed a fixture ingress or sibling host.")
-            report["normalDisabledProjectsProcess"] = disabled_process_bindings(normal, owned_apphost)
-            if not report["normalOwnedContainers"] or any(not isinstance(item["id"], str) or len(item["id"]) != 64 for item in report["normalOwnedContainers"]):
-                raise RuntimeError("The exact ordinary AppHost container identities are missing.")
-            report["normalDisabledResources"] = [{"name": item.get("displayName"), "state": item.get("state"), "health": item.get("healthStatus")}
-                for item in normal["resources"]]
-            report["normalProfileDisabledRuntimeVerified"] = True
-        if support.source_manifest() != json.loads((evidence / "source-manifest.json").read_text()):
+            ordinary_receipts = capture_ordinary_material(ordinary, isolation)
+        except FileNotFoundError:
+            # Startup may still be publishing the locators. Readiness still requires them.
+            pass
+        capture_session(current_session, support.resource_graph(run))
+        for name in ("projects-ui", "projects-workers"):
+            run(["aspire", "wait", name, "--apphost", str(support.APPHOST), "--timeout", str(args.timeout), "--non-interactive"])
+        normal = support.resource_graph(run)
+        capture_session(current_session, normal)
+        report["normalOwnedContainers"] = list(current_session["containers"].values())
+        names = {item.get("displayName") for item in normal["resources"]}
+        if names.intersection({"conversations", "folders", "memories", "live-fixtures", "live-fixture-authority", "supported-read-authority"}):
+            raise RuntimeError("Ordinary AppHost startup exposed a fixture ingress or sibling host.")
+        report["normalDisabledProjectsProcess"] = disabled_process_bindings(normal, owned_apphost)
+        if not report["normalOwnedContainers"] or not current_session["captureVerified"]:
+            raise RuntimeError("The exact ordinary AppHost resource identities are missing.")
+        report["normalDisabledResources"] = [{"name": item.get("displayName"), "state": item.get("state"), "health": item.get("healthStatus")}
+            for item in normal["resources"]]
+        required = {"security", *APPS, "projects-ui", *(app + "-dapr-cli" for app in APPS), *support.MTLS_RESOURCES}
+        ready = {item["name"] for item in report["normalDisabledResources"] if item["state"] == "Running" and item["health"] == "Healthy"}
+        if not required.issubset(ready):
+            raise RuntimeError("Ordinary AppHost readiness is missing for: " + ", ".join(sorted(required - ready)))
+        report["normalProfileDisabledRuntimeVerified"] = True
+        receipts = capture_ordinary_material(ordinary, isolation)
+        if ordinary_receipts is not None and ordinary_receipts != receipts:
+            raise RuntimeError("The ordinary AppHost's private infrastructure identities changed during startup.")
+        ordinary_receipts = receipts
+        endpoints = {name: support.resource_endpoint(normal, name) for name in
+            ("eventstore", "projects", "tenants", "eventstore-dapr-cli", "projects-dapr-cli", "tenants-dapr-cli")}
+        security_endpoint = support.resource_endpoint(normal, "security")
+        public_certificate = None
+        if urllib.parse.urlsplit(security_endpoint).scheme == "https":
+            public_certificate = ordinary / "aspire-development.pem"
+            run(["dotnet", "dev-certs", "https", "--export-path", str(public_certificate), "--format", "PEM"])
+        human = ordinary_human_token(security_endpoint, password, tenant, public_certificate)
+        gateway, _, tenants = projects_inventory(tenant)["clients"]
+        metadata = next(probe for probe in gateway["probes"] if probe["audience"] == "projects" and probe["operation"] == "domain-service:metadata")
+        projection = next(probe for probe in gateway["probes"] if probe["audience"] == "projects" and probe["operation"] == "domain-service:project")
+        bootstrap_scope = next(probe for probe in tenants["probes"] if probe["bindings"])
+        bootstrap_source = enrollment.issue(enrollment.token_endpoint, "tenants", enrollment.credentials["tenants"], bootstrap_scope)
+        wrong_workload = enrollment.issue(enrollment.token_endpoint, "eventstore", enrollment.credentials["eventstore"], metadata)
+        projection_workload = enrollment.issue(enrollment.token_endpoint, "eventstore", enrollment.credentials["eventstore"], projection)
+        protected.extend((human, bootstrap_source, wrong_workload, projection_workload))
+        native_input, native_receipt, native_xml = (ordinary / name for name in ("probe.json", "result.json", "native.xml"))
+        publish_once(native_input, dict(tenant=tenant, endpoints=endpoints, actor=ORDINARY_OWNER, human=human,
+            wrongWorkload=wrong_workload, bootstrapSource=bootstrap_source, projectionWorkload=projection_workload,
+            catalogDirectory=receipts["catalogDirectory"], catalogRoot=receipts["rootDigest"],
+            resultPath=str(native_receipt)))
+        print("[live-fixtures] verifying committed catalog and persisted ordinary delivery", flush=True)
+        run(["dotnet", str(assembly), "-method", ORDINARY_TEST, "-result-xml", str(native_xml)],
+            environment=dict(env, PROJECTS_ORDINARY_RUN_CONFIG=str(native_input)))
+        report["ordinaryNativeResult"] = require_ordinary_native_result(native_xml, native_receipt, receipts["rootDigest"])
+        (evidence / "ordinary-native.json").write_text(json.dumps(report["ordinaryNativeResult"], indent=2) + "\n")
+        (evidence / "ordinary-native.xml").write_text(sanitize_output(native_xml.read_text(), protected))
+        enrollment.check()
+        report["result"] = "passed"
+        checkout_inputs = source_inputs()
+        try:
+            support.ROOT = SOURCE_ROOT
+            current_inputs = source_inputs()
+        finally:
+            support.ROOT = checkout
+        source_changes = changed_source_inputs(source_manifest, current_inputs)
+        source_changes.extend(sorted(current_inputs.keys() - source_manifest.keys()))
+        checkout_changes = changed_source_inputs(source_manifest, checkout_inputs)
+        platform_changes = [name for name, digest in report["platformEnrollmentSources"].items()
+            if hashlib.sha256((PLATFORM_ENROLLMENT / name).read_bytes()).hexdigest() != digest]
+        report["generatedCheckoutPaths"] = sorted(checkout_inputs.keys() - source_manifest.keys())
+        if source_changes or checkout_changes or platform_changes:
+            report["changedSourcePaths"] = {"original": source_changes, "checkout": checkout_changes, "platform": platform_changes}
             raise RuntimeError("Source inputs changed during verification; repeat the matrix against stable sources.")
     except BaseException as failure:
         report["result"] = "failed"
         report["failure"] = str(failure) if isinstance(failure, RuntimeError) else type(failure).__name__
+        report["failureLocations"] = [{"file": Path(frame.filename).name, "function": frame.name, "line": frame.lineno}
+            for frame in traceback.extract_tb(failure.__traceback__) if Path(frame.filename).is_relative_to(SOURCE_ROOT)]
         if hasattr(failure, "cleanup_observation"):
             report["persistedCleanupFailure"] = failure.cleanup_observation
         if current_session and owned_apphost is None:
@@ -1189,8 +1554,9 @@ def main():
                 current_session["apphost"] = owned_apphost
             except BaseException as ownership_failure:
                 current_session["ownershipFailure"] = type(ownership_failure).__name__
-        if owned_apphost is not None and support.owns_current_apphost(owned_apphost):
-            for resource in (*APPS, "live-fixture-authority", *(app + "-dapr-cli" for app in APPS)):
+        if not isinstance(failure, KeyboardInterrupt) and owned_apphost is not None and support.owns_current_apphost(owned_apphost):
+            authority = "security" if current_session["name"] == "ordinary" else "live-fixture-authority"
+            for resource in (*APPS, authority, *(app + "-dapr-cli" for app in APPS)):
                 try:
                     output = run(["aspire", "logs", resource, "--apphost", str(support.APPHOST), "--tail", "100", "--format", "Json", "--non-interactive"], timeout=15)
                     (private / (resource + ".log")).write_text(output)
@@ -1198,20 +1564,51 @@ def main():
                     import re
                     report.setdefault("bootstrapFailures", {})[resource] = sorted(set(re.findall(
                         r'Bootstrap failed: Reason=([a-z-]+), Phase=([a-z-]+), ExceptionType=([A-Za-z]+)', output)))
-                except BaseException:
+                except KeyboardInterrupt:
+                    break
+                except Exception:
                     pass
     finally:
         try:
             if started and infrastructure is None:
                 infrastructure = recover_infrastructure(private, isolation, owned, run, report)
+            ordinary_session = current_session and current_session["name"] == "ordinary"
+            if ordinary_session and ordinary_receipts is None:
+                try:
+                    ordinary_receipts = capture_ordinary_material(ordinary, isolation)
+                except (OSError, RuntimeError, KeyError, ValueError) as failure:
+                    current_session["ordinaryLocatorObservationFailure"] = type(failure).__name__
+            if ordinary_session and current_session["apphost"] is None:
+                try:
+                    record_unstarted_ordinary_session(current_session, config_path, isolation, run, report)
+                except (OSError, RuntimeError, subprocess.SubprocessError) as failure:
+                    current_session["unstartedObservationFailure"] = type(failure).__name__
             if current_session and not current_session["absenceVerified"]:
                 cleanup_session(current_session, isolation, run, report)
             report["sessions"] = sessions
-            if current_session and current_session["name"] == "ordinary":
+            if ordinary_session:
                 report["normalOwnedContainers"] = list(current_session["containers"].values())
-            finalize_private_cleanup(private, config_path, isolation, infrastructure, sessions, owned, run, evidence, report)
+                try:
+                    ordinary_absent = ordinary_material_absent(ordinary, isolation, current_session, ordinary_receipts)
+                except (OSError, RuntimeError, KeyError, ValueError):
+                    ordinary_absent = False
+                report["cleanup"].append({"resource": "ordinary-catalog-and-mtls-material", "absenceVerified": ordinary_absent})
+                if not ordinary_absent:
+                    report["result"] = "failed"
+            if enrollment is not None:
+                try:
+                    enrollment.release()
+                    issuer_absent = not os.path.lexists(enrollment.directory)
+                except (OSError, RuntimeError):
+                    issuer_absent = False
+                report["cleanup"].append({"resource": "platform-owned-workload-enrollment", "absenceVerified": issuer_absent})
+                if not issuer_absent:
+                    report["result"] = "failed"
+                    report["platformEnrollmentRecoveryDirectory"] = str(enrollment.directory)
+            finalize_private_cleanup(private, config_path, isolation, infrastructure, sessions, owned, run, evidence, report, ordinary_receipts)
             if preexisting is not None:
-                after = support.preexisting_resources()
+                support.ROOT = SOURCE_ROOT
+                after = preexisting_resources()
                 report["preexistingResourcesPreserved"] = (all(after["apphosts"].get(pid) == path for pid, path in preexisting["apphosts"].items())
                     and set(preexisting["containers"]).issubset(after["containers"])
                     and all(after["sidecars"].get(pid) == value for pid, value in preexisting["sidecars"].items()))
@@ -1221,9 +1618,8 @@ def main():
                         "containers": sorted(set(preexisting["containers"]) - set(after["containers"])),
                         "sidecars": sorted(pid for pid, value in preexisting["sidecars"].items() if after["sidecars"].get(pid) != value),
                     }
-                    # Other independently owned jobs can end during this run. Retain their raw
-                    # disappearance verdict without treating it as a lifecycle action by this runner.
                     report["externalObservationChanged"] = True
+                    report["result"] = "failed"
         finally:
             for sig, handler in previous.items():
                 signal.signal(sig, handler)

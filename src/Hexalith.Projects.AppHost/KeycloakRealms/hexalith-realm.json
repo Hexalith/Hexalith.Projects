@@ -919,6 +919,43 @@
   ],
   "users": [
     {
+      "id": "projects-disposable-owner",
+      "username": "projects-disposable-owner",
+      "firstName": "Projects",
+      "lastName": "Qualification",
+      "email": "projects-disposable-owner@example.invalid",
+      "emailVerified": true,
+      "enabled": false,
+      "requiredActions": [],
+      "credentials": [
+        {
+          "type": "password",
+          "value": "${HEXALITH_PROJECTS_QUALIFICATION_PASSWORD}",
+          "temporary": false
+        }
+      ],
+      "attributes": {
+        "domains": ["global-administrators", "tenants", "projects"],
+        "permissions": [
+          "command:submit",
+          "query:read",
+          "replay:read",
+          "read_metadata",
+          "global-administrators:bootstrap",
+          "global-administrators:read",
+          "tenants:create",
+          "tenants:add-user",
+          "tenants:read",
+          "projects:create",
+          "projects:list",
+          "projects:read",
+          "projects:inspect_descriptive_metadata"
+        ],
+        "global_admin": ["true"],
+        "projects_role": ["TenantProjectAdministrator"]
+      }
+    },
+    {
       "id": "admin-user",
       "username": "admin-user",
       "firstName": "Admin",

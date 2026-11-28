@@ -1252,13 +1252,14 @@ class SupportedReadRestartDeadlineControls(unittest.TestCase):
             self.assertFalse(missing_grpc_path.exists())
 
 
-    def test_regressions_do_not_reseed_an_already_initialized_store(self):
+    def test_regressions_exclude_dedicated_live_classes(self):
         assembly, evidence = Path("/owned/Integration.dll"), Path("/owned/evidence")
         command = LAUNCHER.regression_test_command("Integration", assembly, evidence)
         self.assertEqual(command[:4], ["dotnet", str(assembly), "-xml", str(evidence / "integration.xml")])
         self.assertEqual(command[4:], ["-class-", "*SupportedProjectReadDistributedTests",
                                        "-class-", "*SupportedProjectBrowserSeedTests",
-                                       "-class-", "*IsolatedLiveFixtureSeedTests"])
+                                       "-class-", "*IsolatedLiveFixtureSeedTests",
+                                       "-class-", "*OrdinaryRunModeLiveTests"])
         server = LAUNCHER.regression_test_command("Server", Path("/owned/Server.dll"), evidence)
         self.assertEqual(server, ["dotnet", "/owned/Server.dll", "-xml", "/owned/evidence/server.xml"])
         with self.assertRaises(ValueError):

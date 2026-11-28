@@ -33,7 +33,44 @@ Set `Projects:DevelopmentRouteCatalog` in AppHost user secrets. Supply the owner
 
 Supply `Projects:DevelopmentRouteCatalog:Workload` settings `Authority`, `Issuer` and `TokenEndpoint` for the bound workload issuer, and its client credentials `GatewayClientId`, `GatewayClientSecret`, `ProjectsClientId`, `ProjectsClientSecret`, `TenantsClientId` and `TenantsClientSecret`. Supply `HumanAuthorityReceiptSigningKey` in the same section for the shared human command receipt configuration. The workload issuer grants EventStore the exact operation and audience required by each callback and signs the authenticated originating caller binding for Projects queries. It grants Projects `eventstore:stream-read` and `eventstore:owner-authority-query`, and Tenants `eventstore:stream-read`, for the `eventstore` audience. The AppHost generates run-scoped owner proof keys for Projects and Tenants. EventStore trusts their public keys for the `projects` domain and for the `tenants` and `global-administrators` domains respectively, and admits both as internal callers. Keycloak supplies the separate local human bearer contract. The private read and isolated live profiles continue to use their own custody and issuer.
 
-A run-mode model test pins this composition's receiver grants, workload binding and proof trust. The composition has not yet run with owner custody and a bound issuer, including in the live runner's ordinary phase (DW-114). Whether `projects-workers` must be enrolled is unsettled (DW-93), and the reconcile and staged rebuild callbacks are granted but not qualified (DW-97).
+### Disposable ordinary Debug qualification
+
+Build the Platform Keycloak provider with `mvn -B -ntp package` in
+`references/Hexalith.Platform/infrastructure/keycloak-workload-binding`. Install
+the locked Playwright dependencies with `CI=1 npm ci --ignore-scripts` in `tests/e2e`.
+The launcher runs a Playwright focus check even for `--ordinary-only`. From the
+Projects root, launch the runner as the direct child of Platform's
+[run-owned enrollment launcher](../references/Hexalith.Platform/docs/security/workload-binding-enrollment.md#disposable-run-owned-enrollment).
+Choose a new evidence directory outside the temporary workspace.
+
+```bash
+run-with-temp python3 -B references/Hexalith.Platform/infrastructure/keycloak-workload-binding/run_owned.py \
+  --owner disposable-projects-acceptance --lifetime-seconds 1200 -- \
+  python3 -B tools/qualification/run_live_project_fixtures.py --ordinary-only \
+  --evidence '<new-absolute-evidence-directory>'
+```
+
+If the Aspire dashboard container tunnel times out, add
+`env ASPIRE_ENABLE_CONTAINER_TUNNEL=false` immediately after `run-with-temp` for
+that invocation. The native checks and cleanup still run against the owned topology.
+[Aspire container networking](https://aspire.dev/fundamentals/container-networking/#disable-the-container-tunnel)
+
+The runner builds Debug sources and verifies a single-use lease for EventStore,
+Projects, and Tenants over HTTPS with process-scoped trust. It creates a fresh
+Redis backend and private catalog custody for the ordinary phase. The ordinary
+local Keycloak realm supplies its scoped human account and Tenants bootstrap.
+The native probe records the SDK's shared committed generation and persisted
+command history. It dispatches that history through the enrolled named
+projection callback and compares the resulting projection with the Project
+query. It also checks that credential refusals leave persisted state unchanged.
+The runner reports cleanup and verifies preservation of preexisting processes
+and containers. Omit `--ordinary-only` to run the compatibility matrix first
+and choose a lease long enough for both phases.
+
+Use the owner-held configuration above for shared or persistent installations.
+Projects workers continue to receive tenant and project events through the
+ordinary pub/sub configuration. DW-93 tracks their workload enrollment scope.
+DW-97 tracks reconcile and staged rebuild qualification.
 
 ## Remaining runtime prerequisites
 

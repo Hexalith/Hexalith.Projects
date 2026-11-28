@@ -4,6 +4,7 @@ import base64
 import json
 import os
 from pathlib import Path
+import re
 import sys
 import subprocess
 import tempfile
@@ -242,8 +243,9 @@ class PersistedCleanupObservationTests(unittest.TestCase):
 
     def test_concrete_event_catalog_matches_owning_contract_interfaces(self):
         for interface, catalog in (("IProjectEvent", LAUNCHER.PROJECT_STATE_EVENTS), ("IRejectionEvent", LAUNCHER.PROJECT_REJECTION_EVENTS)):
+            implements_interface = re.compile(rf":\s*{interface}\s*[;{{]")
             actual = {LAUNCHER.PROJECT_EVENT_PREFIX + path.stem for path in (LAUNCHER.ROOT / "src/Hexalith.Projects.Contracts/Events").glob("*.cs")
-                if ": " + interface + ";" in path.read_text()}
+                if implements_interface.search(path.read_text())}
             self.assertEqual(catalog, actual)
         self.assertFalse(LAUNCHER.PROJECT_STATE_EVENTS & LAUNCHER.PROJECT_REJECTION_EVENTS)
 
@@ -382,24 +384,43 @@ class PrivateBoundaryTests(unittest.TestCase):
             self.assertNotEqual(result.returncode, 0)
             self.assertIn("test.only", result.stdout)
 
-    def test_local_default_is_private_and_ci_default_keeps_package_runner(self):
+    def test_local_default_uses_platform_enrollment_and_explicit_selectors_keep_their_paths(self):
         script = LAUNCHER.ROOT / "tests/e2e/run-live-apphost.sh"
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
             spy = root / "python3"
-            spy.write_text("#!/bin/sh\nprintf '%s\n' \"$@\"\n")
+            spy.write_text("#!/bin/sh\npwd\nprintf '%s\n' \"$@\"\n")
             spy.chmod(0o700)
-            env = dict(os.environ, PATH=str(root) + os.pathsep + os.environ["PATH"], CI="false")
+            evidence = "retained evidence"
+            supported_evidence = root / "supported evidence"
+            env = dict(os.environ, PATH=str(root) + os.pathsep + os.environ["PATH"], CI="false",
+                E2E_RESOURCE_TIMEOUT_SECONDS="90", E2E_LIVE_FIXTURE_EVIDENCE=evidence,
+                E2E_SUPPORTED_EVIDENCE=str(supported_evidence))
             for key in ("E2E_SHARED_APPHOST", "E2E_SUPPORTED_READS_ONLY", "KEYCLOAK_CLIENT_ID"):
                 env.pop(key, None)
-            local = subprocess.run(["bash", str(script)], env=env, capture_output=True, text=True, timeout=10)
-            self.assertEqual(local.returncode, 0)
-            self.assertIn("run_live_project_fixtures.py", local.stdout)
-            env["CI"] = "true"
-            ci = subprocess.run(["bash", str(script)], env=env, capture_output=True, text=True, timeout=10)
-            self.assertNotEqual(ci.returncode, 0)
-            self.assertIn("KEYCLOAK_CLIENT_ID", ci.stderr)
-            self.assertNotIn("run_live_project_fixtures.py", ci.stdout)
+            local = subprocess.run(["bash", str(script)], cwd=root, env=env, capture_output=True, text=True, timeout=10)
+            self.assertEqual(local.returncode, 0, local.stderr)
+            self.assertEqual(local.stdout.splitlines(), [
+                str(root),
+                "-B", str(LAUNCHER.PLATFORM_ENROLLMENT / "run_owned.py"),
+                "--owner", "disposable-projects-acceptance", "--lifetime-seconds", "7200", "--",
+                "python3", "-B", str(LAUNCHER.ROOT / "tools/qualification/run_live_project_fixtures.py"),
+                "--timeout", "90", "--evidence", evidence,
+            ])
+            for selector in ({"CI": "true"}, {"E2E_SHARED_APPHOST": "1"}):
+                with self.subTest(selector=selector):
+                    selected = subprocess.run(["bash", str(script)], env=dict(env, **selector), capture_output=True, text=True, timeout=10)
+                    self.assertNotEqual(selected.returncode, 0)
+                    self.assertIn("KEYCLOAK_CLIENT_ID", selected.stderr)
+                    self.assertEqual("", selected.stdout)
+            supported = subprocess.run(["bash", str(script)], env=dict(env, E2E_SUPPORTED_READS_ONLY="1"),
+                capture_output=True, text=True, timeout=10)
+            self.assertEqual(0, supported.returncode, supported.stderr)
+            self.assertEqual(supported.stdout.splitlines(), [
+                str(LAUNCHER.ROOT),
+                "tools/qualification/run_supported_project_reads.py", "--browser",
+                "--timeout", "90", "--evidence", str(supported_evidence),
+            ])
 
 
 class ApplicationCensusTests(unittest.TestCase):
@@ -461,6 +482,7 @@ class SessionCleanupTests(unittest.TestCase):
         second = LAUNCHER.new_session("ordinary")
         report = self.report(); report["ownedSidecarsAbsent"] = True
         with patch.object(LAUNCHER, "application_census", return_value={}), \
+                patch.object(LAUNCHER, "ordinary_container_census", return_value={}), \
                 patch.object(LAUNCHER.support, "container_listing", return_value={}), \
                 patch.object(LAUNCHER.support, "cleanup_resources"):
             LAUNCHER.cleanup_session(second, "owned", None, report, seconds=0)
@@ -490,6 +512,7 @@ class SessionCleanupTests(unittest.TestCase):
                 patch.object(LAUNCHER.support, "helper_descendants", return_value=[]), \
                 patch.object(LAUNCHER.support, "process_start", side_effect=lambda _: None if stopped[0] else "original-start"), \
                 patch.object(LAUNCHER, "application_census", return_value={}), \
+                patch.object(LAUNCHER, "ordinary_container_census", return_value={}), \
                 patch.object(LAUNCHER.support, "container_listing", return_value={}), \
                 patch.object(LAUNCHER.support, "cleanup_resources", side_effect=cleanup):
             LAUNCHER.cleanup_session(session, "owned", None, report, seconds=0)
@@ -547,38 +570,121 @@ class SessionCleanupTests(unittest.TestCase):
                 self.assertTrue(private.exists())
 
 class RefusedOrdinaryStartupTests(unittest.TestCase):
-    def refusal(self, output):
-        failure = RuntimeError("Command failed (2): aspire start --apphost")
-        failure.command_output = output
-        return failure
-
-    def test_named_custody_refusal_with_nothing_owned_verifies_the_ordinary_session(self):
-        session, report = LAUNCHER.new_session("ordinary"), {"cleanup": []}
-        failure = self.refusal("Unhandled exception. System.InvalidOperationException: " + LAUNCHER.ORDINARY_CATALOG_CUSTODY_REFUSAL)
+    def test_failed_start_can_prove_cleanup_without_qualifying_the_session(self):
+        session, report = LAUNCHER.new_session("ordinary"), {"cleanup": [], "result": "failed"}
         with patch.object(LAUNCHER.support, "find_owned_apphost", return_value=None), \
                 patch.object(LAUNCHER.support, "owned_sidecar_census", return_value={}), \
-                patch.object(LAUNCHER, "application_census", return_value={}):
-            LAUNCHER.record_refused_ordinary_startup(failure, session, Path("config.json"), "fixtures-owned", report)
+                patch.object(LAUNCHER, "application_census", return_value={}), \
+                patch.object(LAUNCHER, "ordinary_container_census", return_value={}):
+            LAUNCHER.record_unstarted_ordinary_session(session, Path("config.json"), "fixtures-owned", None, report)
         self.assertTrue(session["absenceVerified"])
-        self.assertTrue(report["normalStartupRefusedWithoutCatalogCustody"])
-        self.assertEqual(report["cleanup"][-1]["resource"], "refused-ordinary-apphost")
-
-    def test_any_other_start_failure_is_not_accepted(self):
-        failure = self.refusal("AppHost process exited with code 134.")
-        with self.assertRaises(RuntimeError) as raised:
-            LAUNCHER.record_refused_ordinary_startup(failure, LAUNCHER.new_session("ordinary"), Path("config.json"), "fixtures-owned", {"cleanup": []})
-        self.assertIs(raised.exception, failure)
+        self.assertEqual("failed", report["result"])
+        self.assertEqual(report["cleanup"][-1]["resource"], "unstarted-ordinary-apphost")
 
     def test_refusal_that_leaves_an_owned_process_fails(self):
         session, report = LAUNCHER.new_session("ordinary"), {"cleanup": []}
-        failure = self.refusal(LAUNCHER.ORDINARY_CATALOG_CUSTODY_REFUSAL)
         with patch.object(LAUNCHER.support, "find_owned_apphost", return_value=None), \
                 patch.object(LAUNCHER.support, "owned_sidecar_census", return_value={"1": {"appId": "projects"}}), \
                 patch.object(LAUNCHER, "application_census", return_value={}):
             with self.assertRaisesRegex(RuntimeError, "left owned processes"):
-                LAUNCHER.record_refused_ordinary_startup(failure, session, Path("config.json"), "fixtures-owned", report)
+                LAUNCHER.record_unstarted_ordinary_session(session, Path("config.json"), "fixtures-owned", None, report)
         self.assertFalse(session["absenceVerified"])
-        self.assertNotIn("normalStartupRefusedWithoutCatalogCustody", report)
+
+    def test_start_without_graph_cleans_only_the_exact_labeled_container(self):
+        session, report = LAUNCHER.new_session("ordinary"), {"cleanup": [], "result": "failed"}
+        identity = "c" * 64
+        def remove(apphost, containers, isolation, run, outcome):
+            self.assertIsNone(apphost)
+            self.assertEqual("fixtures-owned", isolation)
+            self.assertEqual([{"name": "ordinary-container", "id": identity}], containers)
+            outcome["cleanup"].append({"resource": containers[0]["name"], "containerId": identity, "absenceVerified": True})
+        with patch.object(LAUNCHER.support, "find_owned_apphost", return_value=None), \
+                patch.object(LAUNCHER.support, "owned_sidecar_census", return_value={}), \
+                patch.object(LAUNCHER, "application_census", return_value={}), \
+                patch.object(LAUNCHER.support, "execute", side_effect=[identity + "\n", ""]) as observe, \
+                patch.object(LAUNCHER.support, "cleanup_resources", side_effect=remove) as cleanup:
+            LAUNCHER.record_unstarted_ordinary_session(session, Path("config.json"), "fixtures-owned", None, report)
+        cleanup.assert_called_once()
+        self.assertEqual(2, observe.call_count)
+        self.assertIn("label=hexalith.projects.ordinary=fixtures-owned", observe.call_args.args[0])
+        self.assertIn(identity, session["containers"])
+        self.assertTrue(session["absenceVerified"])
+        self.assertEqual("failed", report["result"])
+
+    def test_ordinary_locator_recovery_preserves_only_path_and_digest_fields(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            private, evidence = root / "private", root / "evidence"
+            ordinary = private / "ordinary"
+            ordinary.mkdir(parents=True)
+            evidence.mkdir()
+            locator = ordinary / "catalog-plane.json"
+            locator.write_text(json.dumps({"isolationId": "fixtures-owned", "directory": str(root / "catalog"),
+                "custodyDirectory": str(ordinary / "catalog-custody"), "rootDigest": "d" * 64, "secret": "do-not-retain"}))
+            locator.chmod(0o600)
+            report = {}
+            LAUNCHER.retain_recovery(evidence, private, ordinary / "identity.json", "fixtures-owned", [], [], report)
+            recovery = json.loads(Path(report["recoveryIdentity"]).read_text())
+            self.assertEqual([{"name": "catalog-plane.json", "session": "ordinary", "verified": False,
+                "directory": str(root / "catalog"), "custodyDirectory": str(ordinary / "catalog-custody"),
+                "rootDigest": "d" * 64}], recovery["partialReceipts"])
+
+
+class OrdinaryEnrollmentInputsTests(unittest.TestCase):
+    def test_source_inventory_omits_archived_artifacts_and_still_requires_exact_input_bytes(self):
+        source = {"src/Program.cs": "before", "references/Platform/src/Program.cs": "required",
+            "_bmad-output/retained/Old.props": "archived", "references/Platform/_bmad-output/Old.targets": "archived"}
+        with patch.object(LAUNCHER.support, "source_manifest", return_value=source):
+            expected = LAUNCHER.source_inputs()
+        self.assertEqual({"src/Program.cs": "before", "references/Platform/src/Program.cs": "required"}, expected)
+        self.assertEqual(["references/Platform/src/Program.cs", "src/Program.cs"],
+            LAUNCHER.changed_source_inputs(expected, {"src/Program.cs": "after", "obj/New.props": "generated"}))
+
+    def test_private_phase_strips_platform_lease_and_trust(self):
+        prefix = LAUNCHER.ENROLLMENT_PREFIX
+        environment = {prefix + "RECEIPT": "/private/receipt.json", prefix + "CAPABILITY": "private",
+            "SSL_CERT_FILE": "/private/trust.pem", "Projects__DevelopmentRouteCatalog__CustodyDirectory": "/shared"}
+        private = LAUNCHER.private_environment(environment)
+        self.assertEqual({}, private)
+        self.assertEqual({"SSL_CERT_FILE": "/owner/ca.pem"}, LAUNCHER.private_environment({"SSL_CERT_FILE": "/owner/ca.pem"}))
+
+    def test_ordinary_custody_is_allocated_only_after_verified_adoption(self):
+        with tempfile.TemporaryDirectory() as name:
+            directory = Path(name)
+            protected = []
+            class Enrollment:
+                credentials = {"projects": "project-secret", "tenants": "tenant-secret", "eventstore": "gateway-secret"}
+                issuer = "https://localhost:9999/realms/run-owned"
+                token_endpoint = issuer + "/protocol/openid-connect/token"
+                trust_file = directory / "platform-trust.pem"
+                def adopt(self, tenant):
+                    stages.append(("adopt", tenant))
+            stages = []
+            def redis(*args):
+                stages.append(("redis", args[2]))
+                return "127.0.0.1:24680", "owned-id"
+            with patch.object(LAUNCHER, "prepare_owned_redis", side_effect=redis):
+                config, environment, password, actual = LAUNCHER.prepare_ordinary_inputs(directory, "owned", "tenant-selected",
+                    Enrollment(), [], None, protected)
+            self.assertEqual([("adopt", "tenant-selected"), ("redis", "owned-ordinary-redis")], stages)
+            self.assertEqual("owned-id", actual)
+            self.assertEqual({"isolationId": "owned", "tenant": "tenant-selected", "redisHost": "127.0.0.1:24680",
+                "custodyDirectory": str(directory / "catalog-custody")}, json.loads(config.read_text()))
+            self.assertEqual(0o600, config.stat().st_mode & 0o777)
+            self.assertEqual("127.0.0.1:24680", environment["Dapr__RedisHost"])
+            self.assertIn(password, protected)
+            self.assertEqual("gateway-secret", environment["Projects__DevelopmentRouteCatalog__Workload__GatewayClientSecret"])
+            self.assertEqual(str(directory / "catalog-custody"), environment["Projects__DevelopmentRouteCatalog__CustodyDirectory"])
+
+    def test_unverified_adoption_never_reaches_redis_or_writes_custody(self):
+        with tempfile.TemporaryDirectory() as name, patch.object(LAUNCHER, "prepare_owned_redis") as redis:
+            class Enrollment:
+                def adopt(self, tenant):
+                    raise RuntimeError("changed lease")
+            with self.assertRaisesRegex(RuntimeError, "changed lease"):
+                LAUNCHER.prepare_ordinary_inputs(Path(name), "owned", "tenant-selected", Enrollment(), [], None, [])
+            redis.assert_not_called()
+            self.assertEqual([], list(Path(name).iterdir()))
 
 
 if __name__ == "__main__":

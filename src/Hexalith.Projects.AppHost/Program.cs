@@ -1,9 +1,14 @@
 using Aspire.Hosting.ApplicationModel;
 using Aspire.Hosting.Dotnet;
 
+using System.Text.Json;
+using System.Text.Json.Nodes;
+
 using Hexalith.EventStore.Aspire;
 using Hexalith.Projects.AppHost;
 using Hexalith.Projects.Aspire;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Hosting;
 
 IDistributedApplicationBuilder builder = DistributedApplication.CreateBuilder(args);
 IsolatedLiveE2EFixtureProfile.Configure(builder);
@@ -26,7 +31,49 @@ string redisHost = builder.Configuration["Dapr:RedisHost"] ?? ProjectsAspireModu
 (string? daprPlacementHostAddress, string? daprSchedulerHostAddress) = AspireDaprLocalServiceEndpoints.Resolve(
     builder.Configuration[AspireDaprLocalServiceEndpoints.PlacementHostAddressKey],
     builder.Configuration[AspireDaprLocalServiceEndpoints.SchedulerHostAddressKey]);
-HexalithEventStoreSecurityResources? security = builder.AddHexalithEventStoreSecurity();
+const string qualification = "Projects:DevelopmentRouteCatalog:Qualification:";
+const string owner = "projects-disposable-owner";
+string? qualificationDirectory = builder.Configuration[qualification + "Directory"];
+string? qualificationPassword = null;
+string daprNamespace = "default";
+HexalithEventStoreSecurityOptions? securityOptions = null;
+if (qualificationDirectory is not null)
+{
+    string selectedTenant = builder.Configuration[qualification + "Tenant"] ?? string.Empty;
+    qualificationPassword = builder.Configuration[qualification + "BootstrapPassword"];
+    daprNamespace = builder.Configuration[qualification + "Namespace"] ?? string.Empty;
+    if (!OperatingSystem.IsLinux() || !builder.Environment.IsDevelopment() || !builder.ExecutionContext.IsRunMode
+        || builder.Configuration.GetValue<bool>("KeycloakPersistent") || !builder.Configuration.GetValue<bool>("EnableKeycloak")
+        || IsolatedLiveE2EFixtureProfile.IsEnabled(builder.Configuration) || SupportedProjectReadFixtureProfile.IsEnabled(builder.Configuration)
+        || ProjectsLiveE2EFixtureProfile.IsEnabled(builder.Configuration)
+        || !Path.IsPathFullyQualified(qualificationDirectory) || new DirectoryInfo(qualificationDirectory).LinkTarget is not null
+        || (File.GetUnixFileMode(qualificationDirectory) & (UnixFileMode.GroupRead | UnixFileMode.GroupWrite | UnixFileMode.GroupExecute
+            | UnixFileMode.OtherRead | UnixFileMode.OtherWrite | UnixFileMode.OtherExecute)) != 0
+        || string.IsNullOrWhiteSpace(selectedTenant) || string.IsNullOrWhiteSpace(daprNamespace)
+        || qualificationPassword is not { Length: >= 32 })
+    {
+        throw new InvalidOperationException("Ordinary qualification requires private Development custody, local security, and the selected tenant.");
+    }
+    if (!MatchesQualificationIdentity(builder.Configuration, qualificationDirectory, daprNamespace, selectedTenant, redisHost))
+    {
+        throw new InvalidOperationException("Ordinary qualification requires its protected identity and exact disposable Redis and catalog custody.");
+    }
+
+    string realmDirectory = Path.Combine(qualificationDirectory, "realm");
+    Directory.CreateDirectory(realmDirectory);
+    string realmFile = "hexalith-realm.json";
+    var realm = JsonNode.Parse(File.ReadAllBytes(Path.Combine(builder.AppHostDirectory, "KeycloakRealms", realmFile)))!;
+    JsonNode user = realm["users"]!.AsArray().Single(user => user!["id"]!.GetValue<string>() == owner)!;
+    user["enabled"] = true;
+    user["attributes"]!["tenants"] = new JsonArray(JsonValue.Create(selectedTenant));
+    user["attributes"]!["current_tenant"] = new JsonArray(JsonValue.Create(selectedTenant));
+    File.WriteAllBytes(Path.Combine(realmDirectory, realmFile), JsonSerializer.SerializeToUtf8Bytes(realm));
+    securityOptions = new() { RealmImportPath = realmDirectory };
+
+    accessControlConfigPath = Path.Combine(qualificationDirectory, "discovery.json");
+    builder.Configuration["Dapr:Mtls:CertificateDirectory"] = Path.Combine(qualificationDirectory, "mtls");
+}
+HexalithEventStoreSecurityResources? security = builder.AddHexalithEventStoreSecurity(securityOptions);
 
 IResourceBuilder<DotnetProjectResource> eventStore = builder.AddDotnetProject(ProjectsAspireModule.EventStoreAppId, new Projects.Hexalith_EventStore().ProjectPath);
 ConfigureProjectsEventStoreDomainRegistrations(eventStore);
@@ -93,7 +140,30 @@ else
     if (builder.ExecutionContext.IsRunMode)
     {
         (supportedReadCatalog, daprRunDirectory, daprCertificateDirectory) = ProjectsLocalDevelopmentCatalog.Add(
-            builder, eventStore, tenants, projects, redisHost, daprComponentsPath);
+            builder, eventStore, tenants, projects, redisHost, daprComponentsPath, daprNamespace, qualificationDirectory);
+        if (qualificationDirectory is not null)
+        {
+            builder.AddEventStoreDevelopmentSqliteStartupOrdering(tenants, eventStore, projects, projectsWorkers);
+            // Retain only locators in the private runner workspace. The SDK owns the commit receipts.
+            File.WriteAllBytes(Path.Combine(qualificationDirectory, "catalog-plane.json"), JsonSerializer.SerializeToUtf8Bytes(new
+            {
+                isolationId = daprNamespace,
+                directory = supportedReadCatalog.Directory,
+                rootDigest = supportedReadCatalog.RootDigest,
+                custodyDirectory = builder.Configuration["Projects:DevelopmentRouteCatalog:CustodyDirectory"],
+            }));
+            File.WriteAllBytes(Path.Combine(qualificationDirectory, "mtls-plane.json"), JsonSerializer.SerializeToUtf8Bytes(new
+            {
+                isolationId = daprNamespace,
+                runDirectory = daprRunDirectory,
+                certificateDirectory = daprCertificateDirectory,
+            }));
+            foreach (ContainerResource resource in builder.Resources.OfType<ContainerResource>()
+                .Where(resource => resource.Name is "dapr-sentry" or "dapr-placement-mtls" or "dapr-scheduler-mtls"))
+            {
+                LabelQualificationContainer(builder.CreateResourceBuilder(resource), daprNamespace);
+            }
+        }
     }
 }
 
@@ -121,6 +191,25 @@ if (security is not null)
         secret: true,
         persist: persistWorkloadSecret);
     _ = security.Keycloak.WithEnvironment("HEXALITH_EVENTSTORE_WORKLOAD_CLIENT_SECRET", workloadClientSecret);
+    if (qualificationPassword is not null)
+    {
+        LabelQualificationContainer(security.Keycloak, daprNamespace);
+        string password = qualificationPassword;
+        var bootstrapPassword = builder.AddParameter("projects-catalog-bootstrap-password", () => password, secret: true);
+        _ = security.Keycloak.WithEnvironment("HEXALITH_PROJECTS_QUALIFICATION_PASSWORD", bootstrapPassword);
+        _ = tenants.WithEnvironment("Tenants__BootstrapGlobalAdminEnabled", "true")
+            .WithEnvironment("Tenants__BootstrapGlobalAdminUserId", owner)
+            .WithEnvironment("Tenants__BootstrapBoundWorkloadEnabled", "true")
+            .WithEnvironment("Tenants__BootstrapBoundWorkloadReceiptPath", Path.Combine(supportedReadCatalog!.Directory, "tenants.bootstrap.json"))
+            .WithEnvironment("EventStore__Authentication__Authority", security.RealmUrl)
+            .WithEnvironment("EventStore__Authentication__TokenEndpoint", ReferenceExpression.Create($"{security.RealmUrl}/protocol/openid-connect/token"))
+            .WithEnvironment("EventStore__Authentication__ClientId", HexalithEventStoreSecurityOptions.DefaultEventStoreClientId)
+            .WithEnvironment("EventStore__Authentication__Username", owner)
+            .WithEnvironment("EventStore__Authentication__Password", bootstrapPassword);
+        _ = eventStore.WithEnvironment("Authentication__BoundCommand__AllowedDomains__tenants", "global-administrators")
+            .WithEnvironment("EventStore__DomainServices__Registrations__system|global-administrators|v1__AppId", "tenants")
+            .WithEnvironment("EventStore__DomainServices__Registrations__system|global-administrators|v1__Domain", "global-administrators");
+    }
     if (daprRunDirectory is null)
     {
         _ = eventStore.WithEventStoreWorkloadClientCredentials("eventstore", workloadClientSecret);
@@ -175,6 +264,47 @@ finally
         }
     }
 }
+
+static bool MatchesQualificationIdentity(IConfiguration configuration, string directory, string isolation, string tenant, string redisHost)
+{
+    const string loopback = "127.0.0.1:";
+    string marker = Path.Combine(directory, "identity.json");
+    string custody = Path.Combine(directory, "catalog-custody");
+    if (!OperatingSystem.IsLinux() || Path.GetFullPath(directory) != directory
+        || configuration["Projects:SupportedReads:ConfigurationFile"] != marker
+        || configuration["Projects:DevelopmentRouteCatalog:CustodyDirectory"] != custody
+        || Directory.Exists(custody) || File.Exists(custody) || new DirectoryInfo(custody).LinkTarget is not null
+        || !redisHost.StartsWith(loopback, StringComparison.Ordinal)
+        || !ushort.TryParse(redisHost.AsSpan(loopback.Length), System.Globalization.NumberStyles.None,
+            System.Globalization.CultureInfo.InvariantCulture, out ushort port) || port is 0 or 6379)
+    {
+        return false;
+    }
+
+    try
+    {
+        var file = new FileInfo(marker);
+        if (!file.Exists || file.LinkTarget is not null || file.Length is 0 or > 4096
+            || (File.GetUnixFileMode(marker) & ~(UnixFileMode.UserRead | UnixFileMode.UserWrite)) != 0)
+        {
+            return false;
+        }
+
+        var identity = JsonSerializer.Deserialize<Dictionary<string, string>>(File.ReadAllBytes(marker));
+        return identity is { Count: 4 } && identity.GetValueOrDefault("isolationId") == isolation
+            && identity.GetValueOrDefault("tenant") == tenant && identity.GetValueOrDefault("redisHost") == redisHost
+            && identity.GetValueOrDefault("custodyDirectory") == custody;
+    }
+    catch (Exception error) when (error is IOException or UnauthorizedAccessException or JsonException)
+    {
+        return false;
+    }
+}
+
+static void LabelQualificationContainer<T>(IResourceBuilder<T> resource, string isolation)
+    where T : ContainerResource
+    => resource.WithContainerRuntimeArgs("--label", "hexalith.supported-reads=" + isolation,
+        "--label", "hexalith.projects.ordinary=" + isolation);
 
 static void ConfigureProjectsEventStoreDomainRegistrations(IResourceBuilder<DotnetProjectResource> eventStore)
 {

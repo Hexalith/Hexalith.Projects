@@ -148,15 +148,10 @@ public sealed class OrdinaryRunModeCompositionTests : IDisposable
             .ShouldContain(static reference => reference.Component.Name == "projects-conversation-start-setup");
     }
 
-    /// <summary>Refuses an ordinary run without owner custody with the exact message the live runner accepts.</summary>
+    /// <summary>Names the missing Redis catalog custody when ordinary AppHost composition refuses.</summary>
     [Fact]
-    public async Task OrdinaryRunWithoutCustodyRefusesWithTheLiveRunnerMessageAsync()
+    public async Task OrdinaryRunWithoutCustodyRefusesAsync()
     {
-        string runner = File.ReadAllText(Path.Combine(TestRepositoryRoot.Find(), "tools", "qualification", "run_live_project_fixtures.py"));
-        string expected = System.Text.RegularExpressions.Regex.Match(runner,
-            @"^ORDINARY_CATALOG_CUSTODY_REFUSAL = ""(?<message>[^""]+)""\r?$", System.Text.RegularExpressions.RegexOptions.Multiline)
-            .Groups["message"].Value;
-        expected.ShouldNotBeNullOrWhiteSpace();
         Dictionary<string, string?> inputs = Inputs(persistent: false);
         foreach (string key in inputs.Keys.Where(static key => key.StartsWith(Prefix, StringComparison.OrdinalIgnoreCase)).ToArray())
         {
@@ -164,7 +159,7 @@ public sealed class OrdinaryRunModeCompositionTests : IDisposable
         }
 
         Exception failure = await Should.ThrowAsync<Exception>(() => CreateAsync(inputs)).ConfigureAwait(true);
-        Messages(failure).ShouldContain(message => message == expected);
+        Messages(failure).ShouldContain("Projects:DevelopmentRouteCatalog requires owner custody for the selected Redis backend.");
     }
 
     /// <summary>Refuses an incomplete workload binding before the private catalog inputs are created.</summary>
@@ -180,6 +175,53 @@ public sealed class OrdinaryRunModeCompositionTests : IDisposable
         _ = inputs.Remove(Prefix + "Workload:" + key);
         Exception failure = await Should.ThrowAsync<Exception>(() => CreateAsync(inputs)).ConfigureAwait(true);
         Messages(failure).ShouldContain(message => message.Contains(Prefix + "Workload:" + key, StringComparison.Ordinal));
+    }
+
+    /// <summary>Refuses an unrelated backend before writing the private bootstrap realm.</summary>
+    [Theory]
+    [InlineData("persistent")]
+    [InlineData("redis")]
+    [InlineData("default-redis")]
+    [InlineData("custody")]
+    [InlineData("identity")]
+    public async Task OrdinaryQualificationRefusesMismatchedCustodyBeforeWritingRealmAsync(string mismatch)
+    {
+        if (!OperatingSystem.IsLinux()) return;
+
+        const string isolation = "fixtures-model";
+        const string tenant = "fixtures-model-ordinary";
+        const string redis = "127.0.0.1:24680";
+        string marker = Path.Combine(_directory, "identity.json");
+        string custody = Path.Combine(_directory, "catalog-custody");
+        var inputs = Inputs(persistent: mismatch == "persistent");
+        inputs[Prefix + "Qualification:Directory"] = _directory;
+        inputs[Prefix + "Qualification:Namespace"] = isolation;
+        inputs[Prefix + "Qualification:Tenant"] = tenant;
+        inputs[Prefix + "Qualification:BootstrapPassword"] = new string('x', 32);
+        inputs["Projects:SupportedReads:ConfigurationFile"] = marker;
+        inputs[Prefix + "CustodyDirectory"] = mismatch == "custody" ? Path.Combine(_directory, "existing-owner-custody") : custody;
+        inputs["Dapr:RedisHost"] = mismatch switch
+        {
+            "redis" => "127.0.0.1:24681",
+            "default-redis" => null,
+            _ => redis,
+        };
+        File.WriteAllBytes(marker, JsonSerializer.SerializeToUtf8Bytes(new
+        {
+            isolationId = mismatch == "identity" ? "other-run" : isolation,
+            tenant,
+            redisHost = redis,
+            custodyDirectory = custody,
+        }));
+        File.SetUnixFileMode(marker, UnixFileMode.UserRead | UnixFileMode.UserWrite);
+
+        Exception failure = await Should.ThrowAsync<Exception>(() => CreateAsync(inputs)).ConfigureAwait(true);
+        string reason = mismatch == "persistent"
+            ? "Ordinary qualification requires private Development custody, local security, and the selected tenant."
+            : "Ordinary qualification requires its protected identity and exact disposable Redis and catalog custody.";
+        Messages(failure).ShouldContain(reason);
+        Directory.Exists(Path.Combine(_directory, "realm")).ShouldBeFalse();
+        Directory.Exists(custody).ShouldBeFalse();
     }
 #else
     /// <summary>Pins the recorded package-mode decision: the ordinary run refuses and names the source-build requirement.</summary>

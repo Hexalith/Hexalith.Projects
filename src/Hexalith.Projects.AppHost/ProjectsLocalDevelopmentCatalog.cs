@@ -21,7 +21,9 @@ internal static class ProjectsLocalDevelopmentCatalog
         IResourceBuilder<DotnetProjectResource> tenants,
         IResourceBuilder<DotnetProjectResource> projects,
         string redisHost,
-        string resourcesPath)
+        string resourcesPath,
+        string daprNamespace = "default",
+        string? qualificationDirectory = null)
     {
 #if SUPPORTED_PROJECT_READ_SOURCE
         var custody = builder.Configuration.GetSection("Projects:DevelopmentRouteCatalog")
@@ -50,15 +52,20 @@ internal static class ProjectsLocalDevelopmentCatalog
         }
         DevelopmentRouteCatalogInvocation<DotnetProjectResource>[] Calls(params string[] methods)
             => methods.Select(method => new DevelopmentRouteCatalogInvocation<DotnetProjectResource>(gateway, method, ["POST"])).ToArray();
+        List<DevelopmentRouteCatalogInvocation<DotnetProjectResource>> gatewayCalls =
+        [
+            new(projects, "api/v1/commands", ["POST"]),
+            new(projects, "api/v1/queries/owner-authority/workload", ["POST"]),
+            new(projects, "api/v1/streams/read/workload", ["POST"]),
+            new(tenants, "api/v1/streams/read/workload", ["POST"]),
+        ];
+        if (qualificationDirectory is not null)
+        {
+            gatewayCalls.Add(new(tenants, "api/v1/commands/bound/workload", ["POST"]));
+        }
         DevelopmentRouteCatalogReceiver<DotnetProjectResource>[] receivers =
         [
-            new(gateway,
-            [
-                new(projects, "api/v1/commands", ["POST"]),
-                new(projects, "api/v1/queries/owner-authority/workload", ["POST"]),
-                new(projects, "api/v1/streams/read/workload", ["POST"]),
-                new(tenants, "api/v1/streams/read/workload", ["POST"]),
-            ]) { TechnicalHttp = true },
+            new(gateway, gatewayCalls) { TechnicalHttp = true },
             new(tenants, Calls("process", "replay-state", "query", "project", "admin/operational-index-metadata")),
             new(projects, Calls("process", "replay-state", "query", "project", "project/v2", "project/v2/reconcile", "project/rebuild/v1", "project/rebuild/part/v1", "admin/operational-index-metadata")),
         ];
@@ -79,9 +86,9 @@ internal static class ProjectsLocalDevelopmentCatalog
             }));
             catalog = builder.AddEventStoreDevelopmentRouteCatalog(gateway,
                 [new(projects, projectOwner, projectAdapters), new(tenants, tenantOwner, tenantAdapters)],
-                receivers, componentPath, custody);
+                receivers, componentPath, custody, daprNamespace);
             var infrastructure = DaprSelfHostedMtls.AddLocalApplicationInfrastructure(builder,
-                Path.GetFullPath(Path.Combine(builder.AppHostDirectory, "../..")), Path.Combine(resourcesPath, "sentry.yaml"));
+                Path.GetFullPath(Path.Combine(builder.AppHostDirectory, "../..")), Path.Combine(resourcesPath, "sentry.yaml"), daprNamespace);
             return (catalog, infrastructure.RunDirectory, infrastructure.CertificateDirectory);
         }
         catch
