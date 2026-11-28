@@ -79,7 +79,12 @@ internal sealed class SupportedProjectReadFixture
     }
 
     public QueryEnvelope Query(object input, string projectId = "projects", string correlation = "read-request")
-        => new("tenant-a", "projects", projectId, input is ListProjectsQuery ? ListProjectsQuery.QueryType : GetProjectQuery.QueryType,
+        => new("tenant-a", "projects", projectId, input switch
+        {
+            ListProjectsQuery => ListProjectsQuery.QueryType,
+            ListProjectsV2Query => ListProjectsV2Query.QueryType,
+            _ => GetProjectQuery.QueryType,
+        },
             JsonSerializer.SerializeToUtf8Bytes(input, Json), correlation, "actor-1")
         {
             OriginalActorId = "actor-1", AuthenticatedWorkloadId = Workload, IsDelegated = true, DelegationId = "delegation-1",

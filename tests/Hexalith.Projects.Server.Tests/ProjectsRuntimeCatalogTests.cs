@@ -9,6 +9,7 @@ using System.Text.Json;
 using Hexalith.EventStore.Client.Handlers;
 using Hexalith.EventStore.Client.Aggregates;
 using Hexalith.EventStore.Client.Routing;
+using Hexalith.EventStore.Contracts.Queries;
 using Hexalith.EventStore.Contracts.Routing;
 using Hexalith.EventStore.DomainService;
 using Hexalith.EventStore.Server.Extensions;
@@ -21,6 +22,7 @@ using Hexalith.Projects.EventStoreExtensions;
 using Hexalith.Projects.Server;
 
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -45,7 +47,7 @@ public sealed class ProjectsRuntimeCatalogTests
         app.MapProjectsHumanEndpoints();
 
         var declarations = CompiledRouteCatalogDeclarations.Read([typeof(ProjectsRuntimeCatalogDeclarations).Assembly]);
-        declarations.Count.ShouldBe(25);
+        declarations.Count.ShouldBe(26);
         var processor = app.Services.GetRequiredKeyedService<IDomainProcessor>("projects")
             .ShouldBeAssignableTo<IDomainCommandPayloadInventory>();
         processor.CommandPayloadTypes.Select(type => type.FullName).Order(StringComparer.Ordinal)
@@ -59,8 +61,8 @@ public sealed class ProjectsRuntimeCatalogTests
             .Execution!.HandlerType.ShouldBe(legacyHandler.GetType().FullName);
         app.Services.GetKeyedServices<IAsyncAggregateReplay>("projects").ShouldHaveSingleItem().ShouldBeOfType<ProjectsDomainProcessor>();
         var routes = ((IEndpointRouteBuilder)app).DataSources.SelectMany(source => source.Endpoints).ToArray();
-        DevelopmentDomainRouteCatalog.Targets(app.Services, routes, declarations).Count.ShouldBe(25);
-        CompiledRouteCatalogDeclarations.ReadOperations([typeof(ProjectsRuntimeCatalogDeclarations).Assembly]).Count.ShouldBe(25);
+        DevelopmentDomainRouteCatalog.Targets(app.Services, routes, declarations).Count.ShouldBe(26);
+        CompiledRouteCatalogDeclarations.ReadOperations([typeof(ProjectsRuntimeCatalogDeclarations).Assembly]).Count.ShouldBe(26);
         EventStoreDomainServiceEndpointInventory.Validate(routes, fallbackPolicy: null).ShouldBeEmpty();
         var canonicalReceivers = routes.OfType<RouteEndpoint>()
             .Where(endpoint => EventStoreDomainServiceRoutes.TryGet(endpoint.RoutePattern.RawText, out _)).ToArray();
@@ -70,6 +72,40 @@ public sealed class ProjectsRuntimeCatalogTests
         foreach (RouteEndpoint endpoint in canonicalReceivers)
         {
             endpoint.Metadata.ShouldContain(metadata => metadata.GetType().Name == "DomainRouteCatalogGuardMetadata");
+        }
+    }
+
+    /// <summary>Checks the AD-19 invalid-input response for every installed query.</summary>
+    [Fact]
+    public void OnlyEstablishedCompatibilityQueriesRetainTheInvalidInput404()
+    {
+        WebApplicationBuilder builder = WebApplication.CreateBuilder();
+        builder.AddProjectsDomainService();
+        using WebApplication app = builder.Build();
+
+        string[] compatibility =
+        [
+            ProjectsServerModule.GetProjectContextQueryType,
+            ProjectsServerModule.GetConversationStartSetupQueryType,
+            ProjectsServerModule.ExplainContextSelectionQueryType,
+            ResolveProjectChatBotAuthority.QueryType,
+        ];
+        string[] registered = app.Services.GetServices<IDomainQueryHandler>().Select(handler => handler.QueryType).ToArray();
+        registered.ShouldContain(ListProjectsV2Query.QueryType);
+        compatibility.ShouldAllBe(queryType => registered.Contains(queryType));
+        IDomainQueryResponsePolicy policy = app.Services.GetRequiredService<IDomainQueryResponsePolicy>();
+        foreach (string queryType in registered)
+        {
+            QueryEnvelope query = new("tenant-a", "projects", "projects", queryType, [], "correlation", "actor");
+            int expected = compatibility.Contains(queryType) ? StatusCodes.Status404NotFound : StatusCodes.Status400BadRequest;
+            foreach (string reason in new[] { QueryAdapterFailureReason.InvalidEnvelope, QueryAdapterFailureReason.InvalidCursor })
+            {
+                IResult response = policy.CreateResponse(query, QueryResult.Failure(reason));
+                response.ShouldBeAssignableTo<IStatusCodeHttpResult>().StatusCode.ShouldBe(expected);
+            }
+
+            IResult denied = policy.CreateResponse(query, QueryResult.Failure("safe-denial"));
+            denied.ShouldBeAssignableTo<IStatusCodeHttpResult>().StatusCode.ShouldBe(StatusCodes.Status404NotFound);
         }
     }
 
@@ -207,7 +243,7 @@ public sealed class ProjectsRuntimeCatalogTests
         var input = new RouteCatalogGenerationInput(1, "Development", declarations, operations, bindings, policies);
         RouteCatalogEnvelope catalog = VersionedRouteCatalogBuilder.Build(input);
         RouteCatalogValidator.Validate(catalog);
-        RouteCatalogCodec.Decode(RouteCatalogCodec.Encode(catalog), RouteCatalogCodec.ComputeRootDigest(catalog)).Routes.Count.ShouldBe(25);
+        RouteCatalogCodec.Decode(RouteCatalogCodec.Encode(catalog), RouteCatalogCodec.ComputeRootDigest(catalog)).Routes.Count.ShouldBe(26);
         var incorrectlyInternal = declarations.Select(route => route.MessageType == ListProjectsQuery.QueryType
             ? route with { Execution = route.Execution! with { RequiresDelegatedContext = true } } : route).ToArray();
         Should.Throw<RouteCatalogValidationException>(() => VersionedRouteCatalogBuilder.Build(input with { Declarations = incorrectlyInternal }));

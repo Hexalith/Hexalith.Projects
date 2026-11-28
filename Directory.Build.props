@@ -11,11 +11,21 @@
        drop-in rename away (copy Module.Directory.Build.props -> a project/Directory.Build.props). -->
 
   <PropertyGroup>
+    <UseHexalithProjectReferences Condition="'$(UseHexalithProjectReferences)' == '' and '$(CI)' == 'true'">false</UseHexalithProjectReferences>
+    <!-- Directory.Build.props is imported before the SDK defaults an unset Configuration to Debug. -->
+    <UseHexalithProjectReferences Condition="'$(UseHexalithProjectReferences)' == '' and ('$(Configuration)' == '' or '$(Configuration)' == 'Debug')">true</UseHexalithProjectReferences>
+    <UseHexalithProjectReferences Condition="'$(UseHexalithProjectReferences)' == ''">false</UseHexalithProjectReferences>
+  </PropertyGroup>
+
+  <PropertyGroup>
     <!-- Detect root-declared sibling modules without requiring nested submodule initialization.
          Each sibling is probed in two locations: under this directory's references folder (umbrella-root
          layout) and one level up (module-as-submodule layout). Never hard-code relative paths. -->
-    <HexalithEventStoreRoot Condition="'$(HexalithEventStoreRoot)' == '' and Exists('$(MSBuildThisFileDirectory)references\Hexalith.EventStore\src\Hexalith.EventStore.Contracts')">$(MSBuildThisFileDirectory)references\Hexalith.EventStore</HexalithEventStoreRoot>
-    <HexalithEventStoreRoot Condition="'$(HexalithEventStoreRoot)' == '' and Exists('$(MSBuildThisFileDirectory)..\Hexalith.EventStore\src\Hexalith.EventStore.Contracts')">$(MSBuildThisFileDirectory)..\Hexalith.EventStore</HexalithEventStoreRoot>
+    <HexalithEventStoreRoot Condition="'$(HexalithEventStoreRoot)' == '' and '$(UseHexalithProjectReferences)' == 'true' and Exists('$(MSBuildThisFileDirectory)references\Hexalith.EventStore\src\Hexalith.EventStore.Contracts')">$(MSBuildThisFileDirectory)references\Hexalith.EventStore</HexalithEventStoreRoot>
+    <HexalithEventStoreRoot Condition="'$(HexalithEventStoreRoot)' == '' and '$(UseHexalithProjectReferences)' == 'true' and Exists('$(MSBuildThisFileDirectory)..\Hexalith.EventStore\src\Hexalith.EventStore.Contracts')">$(MSBuildThisFileDirectory)..\Hexalith.EventStore</HexalithEventStoreRoot>
+    <!-- The package-mode Gateway checkout matches the released SDK used by this build. -->
+    <HexalithEventStoreRoot Condition="'$(HexalithEventStoreRoot)' == '' and '$(UseHexalithProjectReferences)' != 'true' and Exists('$(MSBuildThisFileDirectory)references\Hexalith.EventStore.PackageMode\src\Hexalith.EventStore.Contracts')">$(MSBuildThisFileDirectory)references\Hexalith.EventStore.PackageMode</HexalithEventStoreRoot>
+    <HexalithEventStoreRoot Condition="'$(HexalithEventStoreRoot)' == '' and '$(UseHexalithProjectReferences)' != 'true' and Exists('$(MSBuildThisFileDirectory)..\Hexalith.EventStore.PackageMode\src\Hexalith.EventStore.Contracts')">$(MSBuildThisFileDirectory)..\Hexalith.EventStore.PackageMode</HexalithEventStoreRoot>
     <HexalithTenantsRoot Condition="'$(HexalithTenantsRoot)' == '' and Exists('$(MSBuildThisFileDirectory)references\Hexalith.Tenants\src\Hexalith.Tenants.Contracts')">$(MSBuildThisFileDirectory)references\Hexalith.Tenants</HexalithTenantsRoot>
     <HexalithTenantsRoot Condition="'$(HexalithTenantsRoot)' == '' and Exists('$(MSBuildThisFileDirectory)..\Hexalith.Tenants\src\Hexalith.Tenants.Contracts')">$(MSBuildThisFileDirectory)..\Hexalith.Tenants</HexalithTenantsRoot>
     <HexalithCommonsRoot Condition="'$(HexalithCommonsRoot)' == '' and Exists('$(MSBuildThisFileDirectory)references\Hexalith.Commons\src')">$(MSBuildThisFileDirectory)references\Hexalith.Commons</HexalithCommonsRoot>
@@ -32,13 +42,6 @@
     <HexalithAiToolsRoot Condition="'$(HexalithAiToolsRoot)' == '' and Exists('$(MSBuildThisFileDirectory)..\Hexalith.AI.Tools\src')">$(MSBuildThisFileDirectory)..\Hexalith.AI.Tools</HexalithAiToolsRoot>
     <HexalithMcpCliRoot Condition="'$(HexalithMcpCliRoot)' == '' and Exists('$(MSBuildThisFileDirectory)references\Hexalith.McpCli\src\Hexalith.McpCli.Abstractions')">$(MSBuildThisFileDirectory)references\Hexalith.McpCli</HexalithMcpCliRoot>
     <HexalithMcpCliRoot Condition="'$(HexalithMcpCliRoot)' == '' and Exists('$(MSBuildThisFileDirectory)..\Hexalith.McpCli\src\Hexalith.McpCli.Abstractions')">$(MSBuildThisFileDirectory)..\Hexalith.McpCli</HexalithMcpCliRoot>
-  </PropertyGroup>
-
-  <PropertyGroup>
-    <UseHexalithProjectReferences Condition="'$(UseHexalithProjectReferences)' == '' and '$(CI)' == 'true'">false</UseHexalithProjectReferences>
-    <!-- Directory.Build.props is imported before the SDK defaults an unset Configuration to Debug. -->
-    <UseHexalithProjectReferences Condition="'$(UseHexalithProjectReferences)' == '' and ('$(Configuration)' == '' or '$(Configuration)' == 'Debug')">true</UseHexalithProjectReferences>
-    <UseHexalithProjectReferences Condition="'$(UseHexalithProjectReferences)' == ''">false</UseHexalithProjectReferences>
   </PropertyGroup>
 
   <Target Name="RejectUnsafeHexalithProjectReferenceMode"

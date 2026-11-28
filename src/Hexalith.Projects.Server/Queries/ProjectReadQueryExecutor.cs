@@ -35,18 +35,40 @@ public sealed class ProjectReadQueryExecutor(
     public const string InspectionPermission = "projects:inspect_descriptive_metadata";
 
     /// <summary>Executes an authenticated list, filtering Folder authority before pagination.</summary>
-    public async Task<QueryResult> ListAsync(QueryEnvelope query, CancellationToken cancellationToken)
+    public Task<QueryResult> ListAsync(QueryEnvelope query, CancellationToken cancellationToken)
+        => ListCoreAsync(query, ListProjectsQuery.QueryType, cancellationToken);
+
+    /// <summary>Executes the same authorized list with pagination in the EventStore envelope.</summary>
+    internal Task<QueryResult> ListV2Async(QueryEnvelope query, CancellationToken cancellationToken)
+        => ListCoreAsync(query, ListProjectsV2Query.QueryType, cancellationToken);
+
+    private async Task<QueryResult> ListCoreAsync(QueryEnvelope query, string queryType, CancellationToken cancellationToken)
     {
         ArgumentNullException.ThrowIfNull(query);
-        ProjectAuthorizationResult? scope = await AuthorizeScopeAsync(query, true, cancellationToken).ConfigureAwait(false);
+        ProjectAuthorizationResult? scope = await AuthorizeScopeAsync(query, queryType, true, cancellationToken).ConfigureAwait(false);
         if (scope is null) { return await DenyAsync(query, cancellationToken).ConfigureAwait(false); }
-        if (!TryPayload(query, ["lifecycleState", "cursor", "pageSize", "inspectDescriptiveMetadata", "includeQuarantined"], out ListProjectsQuery? input)
-            || input is null || input.PageSize is < 1 or > ListProjectsQuery.MaximumPageSize
-            || input.LifecycleState is not (null or "Active" or "Archived") || query.Paging is not null
+        bool envelopePaging = queryType == ListProjectsV2Query.QueryType;
+        ListProjectsQuery? input = ParseListInput(query, envelopePaging);
+        if (input is null || input.PageSize is < 1 or > ListProjectsQuery.MaximumPageSize
+            || input.LifecycleState is not (null or "Active" or "Archived")
             || query.EntityId is not null && query.EntityId != query.AggregateId || query.AggregateId != "projects"
-            || input.Cursor is { Length: > 4096 } || input.Cursor is not null && string.IsNullOrWhiteSpace(input.Cursor))
+            || input.Cursor is { Length: > QueryPolicyLimits.MaxCursorLength } || input.Cursor is not null && string.IsNullOrWhiteSpace(input.Cursor))
         {
             return Invalid();
+        }
+
+        QueryResult ListResult(ProjectListPage page)
+        {
+            if (!envelopePaging)
+            {
+                return Success(page);
+            }
+
+            QueryResponseMetadata metadata = new(Paging: new QueryPagingMetadata(input.PageSize,
+                NextCursor: page.Cursor,
+                HasMore: page.Snapshot.ResponseState == AdmissionResponseState.Complete ? page.HasMore : null));
+            return QueryResult.FromPayload(JsonSerializer.SerializeToElement(new ProjectListDocument(page.Items, page.Snapshot), JsonOptions),
+                projectionType: null, metadata: metadata);
         }
 
         bool chatbot = IsChatbot(query);
@@ -66,7 +88,7 @@ public sealed class ProjectReadQueryExecutor(
                 || index.LastVerifiedAt == default || index.UnavailableProjectIds.Count > 0
                 || !index.ProjectIds.SequenceEqual(index.ProjectIds.Distinct(StringComparer.Ordinal).Order(StringComparer.Ordinal)))
             {
-                return Success(new ProjectListPage([], null, false, Unavailable(index?.LastVerifiedAt ?? default)));
+                return ListResult(new([], null, false, Unavailable(index?.LastVerifiedAt ?? default)));
             }
 
             // Observe the whole filtered view before decoding a continuation, including identities before its boundary.
@@ -76,20 +98,20 @@ public sealed class ProjectReadQueryExecutor(
             QueryCursorScope visibility = QueryCursorScope.Create();
             foreach (string projectId in index.ProjectIds)
             {
-                if (!SafeIdentity(query.TenantId, projectId)) { return Success(new ProjectListPage([], null, false, Unavailable(index.LastVerifiedAt))); }
+                if (!SafeIdentity(query.TenantId, projectId)) { return ListResult(new([], null, false, Unavailable(index.LastVerifiedAt))); }
                 ProjectReadModel? model = await ReadAsync(query.TenantId, projectId, cancellationToken).ConfigureAwait(false);
                 if (model?.Detail is not { } detail || model.TenantId != query.TenantId || model.ProjectId != projectId
                     || detail.TenantId != query.TenantId || detail.ProjectId != projectId || !Enum.IsDefined(detail.Lifecycle)
                     || !ValidObservation(model))
                 {
-                    return Success(new ProjectListPage([], null, false, Unavailable(index.LastVerifiedAt)));
+                    return ListResult(new([], null, false, Unavailable(index.LastVerifiedAt)));
                 }
 
                 if (input.LifecycleState is not null && detail.Lifecycle.ToString() != input.LifecycleState) { continue; }
                 ProjectAuthorizationResult? projectAuthorization = await AuthorizeProjectAsync(query, model, cancellationToken).ConfigureAwait(false);
                 if (projectAuthorization is { IsAllowed: false } denied && (denied.Retryable || denied.Reason is ReferenceState.Stale or ReferenceState.Unavailable))
                 {
-                    return Success(new ProjectListPage([], null, false, Unavailable(index.LastVerifiedAt, "Authorization")));
+                    return ListResult(new([], null, false, Unavailable(index.LastVerifiedAt, "Authorization")));
                 }
                 visibility.Add("project", projectId).Add("allowed", (projectAuthorization?.IsAllowed == true).ToString())
                     .Add("authorization", projectAuthorization?.EventStoreValidationResult?.FreshnessWatermark);
@@ -100,7 +122,7 @@ public sealed class ProjectReadQueryExecutor(
                 visibility.Add("quarantined", quarantined.ToString());
                 if (chatbot && folderState is ReferenceState.Stale or ReferenceState.Unavailable)
                 {
-                    return Success(new ProjectListPage([], null, false, Unavailable(index.LastVerifiedAt, "FolderVisibility",
+                    return ListResult(new([], null, false, Unavailable(index.LastVerifiedAt, "FolderVisibility",
                         folderState == ReferenceState.Stale ? EvidenceFreshnessState.Stale : EvidenceFreshnessState.Unavailable)));
                 }
                 if (chatbot && folderState != ReferenceState.Included) { continue; }
@@ -129,9 +151,9 @@ public sealed class ProjectReadQueryExecutor(
             // The SDK ETag changes for every index update, including delayed positions below the tenant maximum.
             ReadModelEntry<ProjectReadIndex> after = await store.GetAsync<ProjectReadIndex>(ProjectReadModelKeys.StoreName,
                 ProjectReadModelKeys.Index(query.TenantId), cancellationToken).ConfigureAwait(false);
-            ProjectAuthorizationResult? finalScope = await AuthorizeScopeAsync(query, true, cancellationToken).ConfigureAwait(false);
+            ProjectAuthorizationResult? finalScope = await AuthorizeScopeAsync(query, queryType, true, cancellationToken).ConfigureAwait(false);
             if (!StableScope(scope, finalScope)) { return await DenyAsync(query, cancellationToken).ConfigureAwait(false); }
-            if (!SameIndex(indexEntry, after)) { return Success(new ProjectListPage([], null, false, Unavailable(index.LastVerifiedAt))); }
+            if (!SameIndex(indexEntry, after)) { return ListResult(new([], null, false, Unavailable(index.LastVerifiedAt))); }
 
             ProjectListRow[] remaining = visible.Where(row => continuation is null || string.CompareOrdinal(row.ProjectId, continuation.ProjectId) > 0)
                 .Take(input.PageSize + 1).ToArray();
@@ -157,19 +179,39 @@ public sealed class ProjectReadQueryExecutor(
                 return await DenyAsync(query, cancellationToken).ConfigureAwait(false);
             }
 
-            return Success(new ProjectListPage(rows, next, hasMore, PageSnapshot(index)));
+            return ListResult(new(rows, next, hasMore, PageSnapshot(index)));
         }
         catch (Exception) when (!cancellationToken.IsCancellationRequested)
         {
-            return Success(new ProjectListPage([], null, false, Unavailable(default)));
+            return ListResult(new([], null, false, Unavailable(default)));
         }
+    }
+
+    private static ListProjectsQuery? ParseListInput(QueryEnvelope query, bool envelopePaging)
+    {
+        if (!envelopePaging)
+        {
+            return query.Paging is null
+                && TryPayload(query, ["lifecycleState", "cursor", "pageSize", "inspectDescriptiveMetadata", "includeQuarantined"], out ListProjectsQuery? input)
+                ? input : null;
+        }
+
+        if (query.Paging?.Offset is not null
+            || !TryPayload(query, ["lifecycleState", "inspectDescriptiveMetadata", "includeQuarantined"], out ListProjectsV2Query? filters)
+            || filters is null)
+        {
+            return null;
+        }
+
+        return new(filters.LifecycleState, query.Paging?.Cursor, query.Paging?.PageSize ?? QueryPolicyLimits.DefaultPageSize,
+            filters.InspectDescriptiveMetadata, filters.IncludeQuarantined);
     }
 
     /// <summary>Executes an authenticated singleton read without context resolution or domain writes.</summary>
     public async Task<QueryResult> GetAsync(QueryEnvelope query, CancellationToken cancellationToken)
     {
         ArgumentNullException.ThrowIfNull(query);
-        ProjectAuthorizationResult? scope = await AuthorizeScopeAsync(query, false, cancellationToken).ConfigureAwait(false);
+        ProjectAuthorizationResult? scope = await AuthorizeScopeAsync(query, GetProjectQuery.QueryType, false, cancellationToken).ConfigureAwait(false);
         if (scope is null) { return await DenyAsync(query, cancellationToken).ConfigureAwait(false); }
         if (!TryPayload(query, ["inspectDescriptiveMetadata", "inspectQuarantined"], out GetProjectQuery? input) || input is null
             || !SafeIdentity(query.TenantId, query.AggregateId) || query.EntityId is not null && query.EntityId != query.AggregateId
@@ -205,7 +247,7 @@ public sealed class ProjectReadQueryExecutor(
         {
             ProjectReadModel? after = await ReadAsync(query.TenantId, query.AggregateId, cancellationToken).ConfigureAwait(false);
             if (!SameModel(model, after)
-                || !StableScope(scope, await AuthorizeScopeAsync(query, false, cancellationToken).ConfigureAwait(false)))
+                || !StableScope(scope, await AuthorizeScopeAsync(query, GetProjectQuery.QueryType, false, cancellationToken).ConfigureAwait(false)))
             {
                 return await DenyAsync(query, cancellationToken).ConfigureAwait(false);
             }
@@ -231,10 +273,10 @@ public sealed class ProjectReadQueryExecutor(
         return Success(response);
     }
 
-    private async Task<ProjectAuthorizationResult?> AuthorizeScopeAsync(QueryEnvelope query, bool list, CancellationToken cancellationToken)
+    private async Task<ProjectAuthorizationResult?> AuthorizeScopeAsync(QueryEnvelope query, string queryType, bool list, CancellationToken cancellationToken)
     {
-        ProjectAuthorizationResult? result = await ProjectReadQueryAdmission.AuthorizeAsync(query,
-            list ? ListProjectsQuery.QueryType : GetProjectQuery.QueryType, list, gate, binding, cancellationToken).ConfigureAwait(false);
+        ProjectAuthorizationResult? result = await ProjectReadQueryAdmission.AuthorizeAsync(query, queryType,
+            list, gate, binding, cancellationToken).ConfigureAwait(false);
         return result?.IsAllowed == true ? result : null;
     }
 

@@ -17,7 +17,14 @@ IResourceBuilder<DotnetProjectResource> Add<T>(string name, string health = "/al
         .WithHttpHealthCheck(health).WithEnvironment("DOTNET_WATCH", "false");
 var gateway = Add<Projects.Hexalith_EventStore>("eventstore");
 var tenants = Add<Projects.Hexalith_Tenants>("tenants");
-var projects = Add<Projects.Hexalith_Projects_Server>("projects");
+// Keep the seeded authority current throughout a bounded package phase. The recovery
+// scenario deliberately uses a short budget to prove denial and authoritative refresh.
+string tenantAccessBudget = builder.Configuration["Projects:PackageFixtures:Scenario"] == "tenant-access-recovery"
+    ? PackageActualOwnerComposition.TenantAccessRecoveryFreshnessBudget
+    : PackageActualOwnerComposition.OrdinaryTenantAccessFreshnessBudget;
+var projects = Add<Projects.Hexalith_Projects_Server>("projects")
+    .WithEnvironment("Projects__TenantAccess__MutationFreshnessBudget", tenantAccessBudget)
+    .WithEnvironment("Projects__TenantAccess__DiagnosticStalenessBudget", tenantAccessBudget);
 var workers = Add<Projects.Hexalith_Projects_PackageFixtures>("projects-workers")
     .WithArgs("--projects-worker").WithEnvironment("Projects__PackageFixtures__Enabled", "true");
 var ui = Add<Projects.Hexalith_Projects_UI>("projects-ui", "/_framework/blazor.web.js");

@@ -1,4 +1,4 @@
-import type { ApiRequest, ProjectDetail, ProjectResolution } from '../helpers/projects-api-client.js';
+import type { ApiRequest, ProjectDetail, ProjectResolution, SetProjectFolderInput } from '../helpers/projects-api-client.js';
 import {
   archiveProject,
   createProject,
@@ -59,6 +59,7 @@ export async function seedActiveProject(
   ledger: CleanupLedger,
   role: string,
   input: CreateProjectInput,
+  folder: Pick<SetProjectFolderInput, 'folderId' | 'displayName'>,
 ): Promise<ProjectDetail> {
   const { apiRequest, recurse, tenantContext } = deps;
   const projectId = input.projectId?.trim();
@@ -84,7 +85,14 @@ export async function seedActiveProject(
     );
   }
 
-  return waitForProject(recurse, apiRequest, tenantContext.tenantId, projectId, requestOptions(deps, `${role}:convergence`), { lifecycle: 'active' });
+  // Create persists a quarantined Project until the supported Folder binding commits.
+  await waitForProject(recurse, apiRequest, tenantContext.tenantId, projectId, {
+    ...requestOptions(deps, `${role}:pending-folder`), inspectQuarantined: true,
+  }, { lifecycle: 'active' });
+  expectAccepted(`${role} folder binding`, await setProjectFolder(apiRequest, tenantContext.tenantId,
+    { projectId, ...folder }, requestOptions(deps, `${role}:folder`)));
+  return waitForProject(recurse, apiRequest, tenantContext.tenantId, projectId,
+    requestOptions(deps, `${role}:convergence`), { lifecycle: 'active' });
 }
 
 /**
@@ -106,7 +114,13 @@ export function projectArchiveStep(deps: SeedProjectDeps, projectId: string, rol
             lastObservedStatus = null;
             const response = await getProject(deps.apiRequest, tenantId, projectId, requestOptions(deps, `${role}:before-archive`));
             lastObservedStatus = response.status;
-            return response;
+            if (response.status !== 404) return response;
+            lastObservedStatus = null;
+            const quarantined = await getProject(deps.apiRequest, tenantId, projectId, {
+              ...requestOptions(deps, `${role}:before-archive-quarantine`), inspectQuarantined: true,
+            });
+            lastObservedStatus = quarantined.status;
+            return quarantined;
           },
           (response) => response.status === 200,
           { timeout: ARCHIVE_CONVERGENCE_TIMEOUT, interval: 1_000, log: `Waiting for ${role} before archive cleanup` },
@@ -133,11 +147,7 @@ export function projectArchiveStep(deps: SeedProjectDeps, projectId: string, rol
   };
 }
 
-/**
- * Creates a caller-owned Project directly from a test. The archive-to-convergence cleanup is
- * registered before the creation status is asserted, so a partially accepted create cannot leak an
- * Active Project.
- */
+/** Creates a caller-owned Project with its initial Pending Folder and registers archive cleanup before submission. */
 export async function createTrackedProject(
   deps: SeedProjectDeps,
   liveCleanup: { trackProject(projectId: string, label: string): void },
@@ -154,7 +164,9 @@ export async function createTrackedProject(
   if (creation.status !== 202) {
     throw new Error(`[projects-fixtures] ${label} Project creation was not accepted (status ${creation.status}).`);
   }
-  return waitForProject(deps.recurse, deps.apiRequest, deps.tenantContext.tenantId, projectId, requestOptions(deps, `${label}:convergence`), { lifecycle: 'active' });
+  return waitForProject(deps.recurse, deps.apiRequest, deps.tenantContext.tenantId, projectId, {
+    ...requestOptions(deps, `${label}:convergence`), inspectQuarantined: true,
+  }, { lifecycle: 'active' });
 }
 
 /** Seeds one Project with the full profile-owned metadata graph through supported APIs only. */
@@ -168,17 +180,9 @@ export async function seedReferencedProject(
     ledger,
     'projects:referenced',
     createProjectInput({ projectId: graph.projectId, name: `Fixture conversation ${graph.scenario}` }),
+    { folderId: graph.folderId, displayName: `Fixture folder ${graph.scenario}` },
   );
 
-  expectAccepted(
-    'folder seed',
-    await setProjectFolder(
-      deps.apiRequest,
-      deps.tenantContext.tenantId,
-      { projectId: project.projectId, folderId: graph.folderId, displayName: `Fixture folder ${graph.scenario}` },
-      requestOptions(deps, 'projects:referenced:folder'),
-    ),
-  );
   expectAccepted(
     'file seed',
     await linkProjectFileReference(
@@ -250,23 +254,16 @@ export async function seedResolutionProjects(
     ledger,
     'projects:resolution-primary',
     createProjectInput({ projectId: graph.projectId, name: displayName }),
+    { folderId: graph.folderId, displayName: `Fixture folder ${graph.scenario}` },
   );
   const secondary = await seedActiveProject(
     deps,
     ledger,
     'projects:resolution-secondary',
     createProjectInput({ projectId: graph.secondaryProjectId, name: displayName }),
+    { folderId: graph.secondaryFolderId, displayName: `Fixture secondary folder ${graph.scenario}` },
   );
 
-  expectAccepted(
-    'resolution folder seed',
-    await setProjectFolder(
-      deps.apiRequest,
-      deps.tenantContext.tenantId,
-      { projectId: primary.projectId, folderId: graph.folderId, displayName: `Fixture folder ${graph.scenario}` },
-      requestOptions(deps, 'projects:resolution-primary:folder'),
-    ),
-  );
   expectAccepted(
     'resolution file seed',
     await linkProjectFileReference(

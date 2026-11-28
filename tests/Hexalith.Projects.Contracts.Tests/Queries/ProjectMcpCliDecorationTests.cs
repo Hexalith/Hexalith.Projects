@@ -22,9 +22,7 @@ public sealed class ProjectMcpCliDecorationTests
         module.FixedTenant.ShouldBeNull();
         var expected = new Dictionary<Type, (string Name, string WireType, string? AggregateId)>
         {
-            [typeof(ListProjectsQuery)] = ("list", ListProjectsQuery.QueryType, "projects"),
-            [typeof(GetProjectAuditQuery)] = ("audit", GetProjectAuditQuery.QueryType, null),
-            [typeof(GetProjectTaskStatusQuery)] = ("task-status", GetProjectTaskStatusQuery.QueryType, null),
+            [typeof(ListProjectsV2Query)] = ("list", ListProjectsV2Query.QueryType, "projects"),
             [typeof(GetProjectQuery)] = ("describe", GetProjectQuery.QueryType, null),
             [typeof(ResolveProjectFromConversationQuery)] = ("trace-conversation", ResolveProjectFromConversationQuery.QueryType, "projects"),
             [typeof(ResolveProjectFromAttachmentsQuery)] = ("trace-attachments", ResolveProjectFromAttachmentsQuery.QueryType, "projects"),
@@ -61,6 +59,7 @@ public sealed class ProjectMcpCliDecorationTests
     public void PayloadKeysExactlyMatchTheServerAllowlistsWithDefaultAndWebSerialization()
     {
         AssertKeys(new ListProjectsQuery(), ["lifecycleState", "cursor", "pageSize", "inspectDescriptiveMetadata", "includeQuarantined"]);
+        AssertKeys(new ListProjectsV2Query(), ["lifecycleState", "inspectDescriptiveMetadata", "includeQuarantined"]);
         AssertKeys(new GetProjectAuditQuery(), ["cursor", "pageSize"]);
         AssertKeys(new GetProjectTaskStatusQuery(), []);
         AssertKeys(new GetProjectQuery(), ["inspectDescriptiveMetadata", "inspectQuarantined"]);

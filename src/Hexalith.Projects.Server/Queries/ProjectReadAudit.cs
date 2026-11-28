@@ -5,6 +5,7 @@ using System.Security.Cryptography;
 using System.Text.Json;
 using Hexalith.EventStore.Client.Projections;
 using Hexalith.EventStore.Contracts.Queries;
+using Hexalith.Projects.Contracts.Queries;
 using Hexalith.Projects.Server.Projections.ProjectReads;
 
 /// <summary>Thin Projects audit adapter over platform persistence; an audit failure prevents disclosure.</summary>
@@ -26,7 +27,8 @@ public sealed class ProjectReadAudit(IReadModelStore store, TimeProvider clock)
     {
         ArgumentNullException.ThrowIfNull(query);
         string outcome = inspection ? "Inspection" : "SafeDenial";
-        string fieldClass = inspection ? quarantined || query.QueryType == ListProjectsQueryType ? "ProjectName" : "ProjectNameDescriptionSetupReferenceLabels" : "None";
+        bool list = query.QueryType is ListProjectsQuery.QueryType or ListProjectsV2Query.QueryType;
+        string fieldClass = inspection ? quarantined || list ? "ProjectName" : "ProjectNameDescriptionSetupReferenceLabels" : "None";
         string surrogate = CreateRequestSurrogate(query, inspection, observedRevision);
         ProjectReadAuditRecord proposed = new(surrogate, outcome, count, fieldClass, clock.GetUtcNow());
         try
@@ -125,13 +127,17 @@ public sealed class ProjectReadAudit(IReadModelStore store, TimeProvider clock)
     internal static string CreateRequestSurrogate(QueryEnvelope query, bool inspection, string? observedRevision = null)
     {
         ArgumentNullException.ThrowIfNull(query);
+        string payloadHash = Convert.ToHexString(SHA256.HashData(query.Payload));
+        if (query.QueryType == ListProjectsV2Query.QueryType)
+        {
+            payloadHash = Convert.ToHexString(SHA256.HashData(JsonSerializer.SerializeToUtf8Bytes(new { payloadHash, query.Paging })));
+        }
+
         return Convert.ToHexString(SHA256.HashData(JsonSerializer.SerializeToUtf8Bytes(new
         {
             query.TenantId, query.OriginalActorId, query.AuthenticatedWorkloadId, query.DelegationId,
             query.IsDelegated, query.Scopes, query.Audience, query.CorrelationId, query.QueryType,
-            ObservedRevision = observedRevision, query.AggregateId, query.EntityId, PayloadHash = Convert.ToHexString(SHA256.HashData(query.Payload)), Outcome = inspection ? "Inspection" : "SafeDenial",
+            ObservedRevision = observedRevision, query.AggregateId, query.EntityId, PayloadHash = payloadHash, Outcome = inspection ? "Inspection" : "SafeDenial",
         })));
     }
-
-    private const string ListProjectsQueryType = Hexalith.Projects.Contracts.Queries.ListProjectsQuery.QueryType;
 }

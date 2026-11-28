@@ -1,4 +1,4 @@
-import { getProject, type ApiRequest, type ProjectDetail, type ProjectLifecycle } from './projects-api-client.js';
+import { getProject, type ApiRequest, type ProjectDetail, type ProjectDetailRequestOptions, type ProjectLifecycle } from './projects-api-client.js';
 import type { AuthHeaderOptions } from './correlation.js';
 
 /**
@@ -22,7 +22,7 @@ export async function waitForProject(
   apiRequest: ApiRequest,
   tenantId: string,
   projectId: string,
-  headerOptions: AuthHeaderOptions,
+  headerOptions: ProjectDetailRequestOptions,
   expected?: { lifecycle?: ProjectLifecycle },
 ): Promise<ProjectDetail> {
   const result = await recurse(

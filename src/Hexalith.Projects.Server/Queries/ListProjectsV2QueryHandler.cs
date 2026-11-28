@@ -1,0 +1,21 @@
+namespace Hexalith.Projects.Server.Queries;
+
+using Hexalith.EventStore.Client.Attributes;
+using Hexalith.EventStore.Contracts.Queries;
+using Hexalith.EventStore.DomainService;
+using Hexalith.Projects.Contracts.Queries;
+
+/// <summary>Routes envelope-paged authorized Project enumeration.</summary>
+[EventStoreDomain(ProjectsServerModule.DomainName)]
+public sealed class ListProjectsV2QueryHandler(ProjectReadQueryExecutor executor) : IDomainQueryHandler
+{
+    /// <inheritdoc/>
+    public string Domain => ProjectsServerModule.DomainName;
+
+    /// <inheritdoc/>
+    public string QueryType => ListProjectsV2Query.QueryType;
+
+    /// <inheritdoc/>
+    public Task<QueryResult> ExecuteAsync(QueryEnvelope query, CancellationToken cancellationToken)
+        => executor.ListV2Async(query, cancellationToken);
+}

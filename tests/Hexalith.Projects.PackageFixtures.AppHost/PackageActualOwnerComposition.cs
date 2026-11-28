@@ -29,6 +29,9 @@ public static class PackageActualOwnerComposition
     public const string ConfigurationFileKey = "Projects:PackageFixtures:ConfigurationFile";
     /// <summary>The recovery scenario's bounded tenant-access freshness policy, with cold-seed headroom.</summary>
     public const string TenantAccessRecoveryFreshnessBudget = "00:01:30";
+
+    /// <summary>Keeps seeded authority current during an isolated phase with a 45-minute lifetime.</summary>
+    internal const string OrdinaryTenantAccessFreshnessBudget = "01:00:00";
     private const string Prefix = "Projects:PackageFixtures:";
 
     /// <summary>Returns whether the profile was explicitly selected.</summary>
@@ -213,6 +216,7 @@ public static class PackageActualOwnerComposition
             .WithEnvironment("Authentication__QueryAuthority__RequiredQueries__projects__3", "Hexalith.Projects.Queries.GetConversationStartSetup.v1")
             .WithEnvironment("Authentication__QueryAuthority__RequiredQueries__projects__4", "Hexalith.Projects.Queries.ResolveProjectFromConversation.v1")
             .WithEnvironment("Authentication__QueryAuthority__RequiredQueries__projects__5", "Hexalith.Projects.Queries.ResolveProjectFromAttachments.v1")
+            .WithEnvironment("Authentication__QueryAuthority__RequiredQueries__projects__6", "Hexalith.Projects.Queries.ListProjects.v2")
             .WithEnvironment("Authentication__DaprInternal__AllowedCallers__0", "projects")
             .WithEnvironment("EventStore__DomainServices__Registrations__system|global-administrators|v1__AppId", "tenants")
             .WithEnvironment("EventStore__DomainServices__Registrations__system|global-administrators|v1__Domain", "global-administrators")
@@ -222,15 +226,12 @@ public static class PackageActualOwnerComposition
         _ = folders.WithEnvironment("Folders__Authentication__Authority", Required(configuration, Prefix + "UserIssuer"))
             .WithEnvironment("Folders__Authentication__ValidIssuer", Required(configuration, Prefix + "UserIssuer"))
             .WithEnvironment("Folders__Authentication__Audience", "supported-read-users")
-            .WithEnvironment("Folders__Authentication__RequireHttpsMetadata", "true");
+            .WithEnvironment("Folders__Authentication__RequireHttpsMetadata", "true")
+            .WithEnvironment("Folders__TenantAccess__MutationFreshnessBudget", OrdinaryTenantAccessFreshnessBudget)
+            .WithEnvironment("Folders__TenantAccess__DiagnosticStalenessBudget", OrdinaryTenantAccessFreshnessBudget);
         _ = eventStore.WithEnvironment("Authentication__HumanAuthorityReceipt__SigningKey", receipt);
         _ = projects.WithEnvironment("Authentication__BoundStreamRead__PrivateKey", ownerKey)
             .WithEnvironment("EventStore__OwnerQueries__OperationTimeout", "00:00:03");
-        if (configuration[Prefix + "Scenario"] == "tenant-access-recovery")
-        {
-            _ = projects.WithEnvironment("Projects__TenantAccess__MutationFreshnessBudget", TenantAccessRecoveryFreshnessBudget)
-                .WithEnvironment("Projects__TenantAccess__DiagnosticStalenessBudget", TenantAccessRecoveryFreshnessBudget);
-        }
         ConfigureClient(eventStore, "eventstore", eventStoreSecret);
         ConfigureClient(projects, "projects", projectsSecret);
         int ordinal = 0;

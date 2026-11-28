@@ -19,16 +19,21 @@ test.describe('Projects lifecycle', () => {
     if (status === 202) liveCleanup.trackProject(liveFixtureGraph.projectId, 'lifecycle');
     expect(status).toBe(202); // AcceptedCommand — command-async
 
-    // No read-after-write guarantee: poll until the projection converges (TC-3, no sleeps).
+    // Name-only creation persists Active with a Pending Folder. The authorized
+    // quarantine view can observe it while ordinary reads must still deny it.
     const project = await waitForProject(
       recurse,
       apiRequest,
       tenantContext.tenantId,
       liveFixtureGraph.projectId,
-      { authToken },
+      { authToken, inspectQuarantined: true },
       { lifecycle: 'active' },
     );
     expect(project.name).toBe(input.name);
+    expect(project.references).toEqual(expect.arrayContaining([
+      expect.objectContaining({ referenceKind: 'folder', referenceState: 'pending' }),
+    ]));
+    expect((await getProject(apiRequest, tenantContext.tenantId, project.projectId, { authToken })).status).toBe(404);
     expect((await archiveProject(apiRequest, tenantContext.tenantId, project.projectId, { authToken, ...requestIdentity('lifecycle-archive') })).status).toBe(202);
     await waitForProject(recurse, apiRequest, tenantContext.tenantId, project.projectId, { authToken }, { lifecycle: 'archived' });
   });

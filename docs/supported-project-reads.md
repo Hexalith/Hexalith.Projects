@@ -172,7 +172,7 @@ Tenant-role responses omit Project name, description, Setup and reference displa
 
 The approved local EventStore dependency changes add a platform-owned query authority seam:
 
-1. `QueriesController` captures standard authenticated roles, the query domain's explicit `<domain>:role` claims, and distinct `eventstore:permission` claims only after the normal authenticated gateway authorization. `Authentication:QueryAuthority:RequiredQueries:<domain>` explicitly lists query types needing this new contract. Existing unconfigured queries keep their original unbound behavior. Configure both Projects ListProjects.v1 and GetProject.v1 entries for the local path. Foreign-domain role namespaces are not promoted. OAuth scopes never become permission claims.
+1. `QueriesController` captures standard authenticated roles, the query domain's explicit `<domain>:role` claims, and distinct `eventstore:permission` claims only after the normal authenticated gateway authorization. `Authentication:QueryAuthority:RequiredQueries:<domain>` explicitly lists query types needing this new contract. Existing unconfigured queries keep their original unbound behavior. Configure Projects ListProjects.v1, ListProjects.v2 and GetProject.v1 entries for the local path. Foreign-domain role namespaces are not promoted. OAuth scopes never become permission claims.
 2. `HandlerAwareQueryRouter` carries this observed authority in `QueryEnvelope.CallerAuthority`. `DaprDomainQueryInvoker` hashes the exact serialized envelope via `QueryCallerAuthorityBinding`; `DomainServiceWorkloadAssertionHandler` passes that digest through existing `WorkloadAssertionRequest.Bindings`. The original human bearer is not forwarded. A missing bound assertion fails closed. Domain 400 InvalidEnvelope/InvalidCursor and safe 404 errors survive gateway routing without exposing raw remote errors.
 3. `DomainQueryDispatcher` validates the exact signed digest, unique gateway workload and query operation, then exposes `VerifiedQueryCaller` separately from the minimal transport workload principal. The canonical SDK query route keeps the original signed envelope distinct from its locally revalidated administrator flag. Projects consumes this verified actor/roles/permissions and still checks current Tenant authority. The request feature is not a public claims-minting API.
 4. `DelegatedOwnerQueryClient` uses the existing `/api/v1/queries/owner-authority/workload` route and `BoundOwnerQueryProof`. It includes the original verified query and its original workload assertion. The gateway validates the requesting workload and exact allow-list, then validates the nested assertion using the registered issuer/signature/lifetime policy, audience equal to the authenticated requester, caller equal to EventStore, query operation and original exact digest/tenant/actor. Only verified original permissions are forwarded on the narrow delegated query, with no roles. Optional provenance fields are omitted when null, preserving existing two-field owner proof signatures.
@@ -181,6 +181,23 @@ The approved local EventStore dependency changes add a platform-owned query auth
 EventStore now supplies an opt-in asymmetric resource-binding authority through the existing `JwtWorkloadAssertionIssuer` client-credentials path. The [platform authority contract](../references/Hexalith.EventStore/docs/security/workload-binding-authority.md) defines the broker, exact grant checks, RSA signer, dedicated workload trust and bounded token lifetime. `EnableResourceBindingRequests=true` selects the `https://hexalith.com/security/workload-binding/v1` authorization-details profile; `AllowQueryAuthorityDigest=true` permits exact tenant/domain plus the complete query-envelope digest for `domain-service:query`. Ordinary OIDC token acquisition still cannot add these bindings when the profile is disabled. Required bound reads fail closed without an enrolled matching grant; no retry strips bindings or forwards a human bearer. The Development shared-key fixture remains separate. Source capability and controlled local proof do not establish production enrollment, usable P1R or accepted deployed gateway/owner equivalence.
 
 The local source fixture exercises real JWT validation, `QueriesController`, `SubmitQueryHandler`, catalog routing, the real invoker/issuer/validator, Projects' protected query route, nested owner gateway proof, and Folders' exact action authorization over Dapr-persisted permission models. Loopback transport substitutes for distributed service discovery, and deterministic owner stream heads provide external current-head evidence. The test does not claim accepted full gateway/owner environment or production equivalence. Its source-only Folders.Server test reference leaves package/Release and gated CI configuration unchanged.
+
+## Projects list pagination
+
+The Projects list exposed by McpCli uses the Gateway discriminator
+`Hexalith.Projects.Queries.ListProjects.v2`. Send page size and continuation
+through the EventStore query envelope. The response returns the effective
+page size, opaque next cursor and continuation flag in `metadata.paging`.
+Keep the authorization, filters and page size fixed between pages. The
+default page size is 50 and the maximum is 200. Requests with an offset or
+with paging fields in the payload are refused.
+
+The v2 payload accepts the existing lifecycle and authorized inspection
+filters, and the response document contains `items` and `snapshot`. An
+unavailable enumeration returns an empty items array and the unavailable
+snapshot with no continuation. Existing v1 Gateway and REST callers retain
+their payload pagination and established response fields. Both versions use
+the same persisted view and current Tenant authority checks.
 
 ## Asymmetric local proof and configuration boundary — 2026-10-25
 

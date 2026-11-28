@@ -18,15 +18,17 @@ internal sealed class ProjectsQueryResponsePolicy : IDomainQueryResponsePolicy
             return Results.Ok(result);
         }
 
-        if (query.QueryType is not (ListProjectsQuery.QueryType or GetProjectQuery.QueryType
-            or GetProjectAuditQuery.QueryType or GetProjectTaskStatusQuery.QueryType
-            or ResolveProjectFromConversationQuery.QueryType or ResolveProjectFromAttachmentsQuery.QueryType))
+        // These established query types keep the AD-19 compatibility mapping for invalid input.
+        bool compatibility = query.QueryType == ResolveProjectChatBotAuthority.QueryType
+            || query.QueryType is ProjectsServerModule.GetProjectContextQueryType
+            or ProjectsServerModule.GetConversationStartSetupQueryType
+            or ProjectsServerModule.ExplainContextSelectionQueryType;
+        if (!compatibility && result.ErrorMessage is (QueryAdapterFailureReason.InvalidEnvelope or QueryAdapterFailureReason.InvalidCursor))
         {
-            return Results.NotFound(result);
+            return Results.BadRequest(result);
         }
 
-        return result.ErrorMessage is QueryAdapterFailureReason.InvalidEnvelope or QueryAdapterFailureReason.InvalidCursor
-            ? Results.BadRequest(result)
-            : Results.NotFound(QueryResult.Failure("safe-denial"));
+        // Keep the SDK's missing-handler diagnostic and the handler's coarse denial reason.
+        return Results.NotFound(result with { PayloadBytes = null, Metadata = null, ProjectionType = null });
     }
 }

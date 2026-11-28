@@ -1,8 +1,11 @@
+extern alias PackageFixtureHost;
+
 namespace Hexalith.Projects.Integration.Tests;
 
 using System.Diagnostics;
 using global::Aspire.Hosting;
 using global::Aspire.Hosting.ApplicationModel;
+using global::Aspire.Hosting.Dotnet;
 using Hexalith.Projects.PackageFixtures;
 using System.Text.Json.Nodes;
 using System.IdentityModel.Tokens.Jwt;
@@ -30,9 +33,11 @@ using Hexalith.Projects.Contracts.Queries;
 using Hexalith.Tenants.Contracts.Identity;
 using Hexalith.EventStore.Contracts.Identity;
 using Hexalith.Projects.Server.Projections.ProjectReads;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using Shouldly;
 using Xunit;
+using PackageHost = PackageFixtureHost::Hexalith.Projects.PackageFixtures.AppHost;
 
 /// <summary>Calls only the launched topology; missing resources are qualification failures.</summary>
 internal sealed partial class PackageReadFixture : IDisposable
@@ -94,7 +99,11 @@ internal sealed partial class PackageReadFixture : IDisposable
         }
         configuration["Scenario"] = scenario; configuration["InvocationDirectory"] = scratch.File("invocation");
         configuration["OwnerSourceReadDirectory"] = scratch.File("owner-source"); configuration["UserKeyPath"] = scratch.File("native-user.pem");
-        string sdk = Path.Combine(configuration["Root"]!.GetValue<string>(), "references/Hexalith.EventStore/src/Hexalith.EventStore.Server/bin/Release/net11.0/Hexalith.EventStore.Server.dll");
+        DotnetProjectResource gateway = application.Services.GetRequiredService<DistributedApplicationModel>()
+            .Resources.OfType<DotnetProjectResource>().Single(resource => resource.Name == "eventstore");
+        if (gateway.GetProjectMetadata() is not PackageHost.PrebuiltMetadata gatewayMetadata)
+            throw new InvalidOperationException("The package fixture Gateway must use its prebuilt Release metadata.");
+        string sdk = Path.Combine(Path.GetDirectoryName(gatewayMetadata.ResolveReleaseAssembly())!, "Hexalith.EventStore.Server.dll");
         string version = FileVersionInfo.GetVersionInfo(sdk).ProductVersion ?? string.Empty;
         Match commit = Regex.Match(version, @"\+([0-9a-f]{40})(?:\.|$)");
         if (!commit.Success) throw new InvalidOperationException("The actual prebuilt SDK lacks its recorded source commit for authenticated writer activation.");
@@ -191,6 +200,7 @@ internal sealed partial class PackageReadFixture : IDisposable
         _seedAttempted = true;
         StreamReadPage bootstrap = await AwaitHostedBootstrapAsync().ConfigureAwait(false);
         await PrepareFreshWriterProtocolAsync(bootstrap).ConfigureAwait(false);
+        bool tenantAccessRecovery = Setting("Scenario") == "tenant-access-recovery";
         foreach (string tenant in new[] { ForeignTenant, Tenant })
         {
             string actor = ActorFor(tenant);
@@ -203,6 +213,10 @@ internal sealed partial class PackageReadFixture : IDisposable
             StreamReadPage tenantEvents = await StreamAsync(TenantPlatformScopes.Tenants, "tenants", tenant, tenant).ConfigureAwait(false);
             await WaitForTenantAuthorityAsync("projects:tenant-access:" + tenant, tenant, actor, tenantEvents,
                 projectReadiness).ConfigureAwait(false);
+            // Recovery needs the foreign identity for its denial and an initialized primary list.
+            // Keep the primary seed inside the deliberate freshness window.
+            if (tenantAccessRecovery && tenant == ForeignTenant)
+                continue;
             // The owners intentionally subscribe to different existing tenant topics. Replay the exact
             // command-persisted events through the real Folder worker callback without changing defaults.
             foreach (StreamReadEvent item in tenantEvents.Events)
@@ -231,8 +245,9 @@ internal sealed partial class PackageReadFixture : IDisposable
             }, tenant).ConfigureAwait(false);
             await WaitForOrganizationAclReadinessAsync(tenant, actor, aclCommand).ConfigureAwait(false);
             await ProbeAbsentFolderMetadataAsync(tenant).ConfigureAwait(false);
-            string[] projects = _configuration.TryGetProperty("Browser", out _) && tenant == ForeignTenant
-                ? ["foreign-project-a", "foreign-project-b"] : ["project-a", "project-b"];
+            string[] projects = tenantAccessRecovery ? ["project-a"]
+                : _configuration.TryGetProperty("Browser", out _) && tenant == ForeignTenant
+                    ? ["foreign-project-a", "foreign-project-b"] : ["project-a", "project-b"];
             foreach (string project in projects)
             {
                 string folder = "folder-" + project;
@@ -288,8 +303,7 @@ internal sealed partial class PackageReadFixture : IDisposable
             // Wait for the platform's metadata publisher, never substitute the gateway registry.
             await WaitForStateAsync("admin:query-types:" + domain).ConfigureAwait(false);
         }
-        if (_configuration.TryGetProperty("Browser", out JsonElement browser)
-            && Setting("Scenario") != "tenant-access-recovery")
+        if (_configuration.TryGetProperty("Browser", out JsonElement browser) && !tenantAccessRecovery)
         {
             _browserReadToken = await FreshBrowserReadCredentialAsync(browser).ConfigureAwait(false);
             await WaitForBrowserAdvisoryReadinessAsync(_browserReadToken).ConfigureAwait(false);

@@ -721,9 +721,24 @@ class ReleasePackageToolTests(unittest.TestCase):
         self.assertIn('Include="Hexalith.EventStore.Server" Version="[5.6.0]"', (host / "Consumer.csproj").read_text())
         assets.assert_called_once_with(host / "obj/project.assets.json", EXTENSION_PACKAGE_ID, VERSION, extension_only=False)
         self.assertEqual(3, run.call_count)
-        runtime_command = run.call_args.args[0]
-        self.assertEqual(["dotnet", str(host / "bin/Release/net11.0/Consumer.dll"),
-                          str(host / ".packages" / EXTENSION_PACKAGE_ID.lower() / VERSION / PACKAGED_MODULE_MANIFEST)], runtime_command)
+        manifest = f".packages/{EXTENSION_PACKAGE_ID.lower()}/{VERSION}/{PACKAGED_MODULE_MANIFEST}"
+        run.assert_called_with(
+            [
+                "dotnet", "msbuild", str(host / "Consumer.csproj"), "-target:Run", "-noAutoResponse",
+                "-p:Configuration=Release", "-p:UseHexalithProjectReferences=false", "-p:ArtifactsPath=",
+                "-p:UseAppHost=false", "-p:StartWorkingDirectory=.", "-p:RunCommand=dotnet",
+                f"-p:RunArguments=exec bin/Release/net11.0/Consumer.dll {manifest}", "-nr:false",
+            ],
+            check=True,
+        )
+
+    def test_packed_extension_consumer_rejects_invalid_probe_version_before_restore(self) -> None:
+        module = load_consumer_module()
+        package = next(package for package in load_manifest().packages if package.package_id == EXTENSION_PACKAGE_ID)
+        with mock.patch.object(module.subprocess, "run") as run:
+            with self.assertRaisesRegex(ValueError, "requires its canonical package ID and an exact package version"):
+                module.run_consumer(package, "1.0.0 invalid", self.directory, self.directory, eventstore_host=True)
+        run.assert_not_called()
 
     def test_consumer_restore_failure_propagates(self) -> None:
         module = load_consumer_module()

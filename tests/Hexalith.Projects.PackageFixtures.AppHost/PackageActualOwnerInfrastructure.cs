@@ -62,8 +62,8 @@ internal static class PackageActualOwnerInfrastructure
             .Single(resource => resource.Name == "folders-workers"));
         Assembly projectOwner = Load(projects.Resource, "Hexalith.Projects.Contracts.dll");
         Assembly projectAdapters = Load(projects.Resource, "Hexalith.Projects.EventStoreExtensions.dll");
-        Assembly folderOwner = Load(folders.Resource, "Hexalith.Folders.Server.dll");
-        Assembly folderAdapters = folderOwner;
+        Assembly folderOwner = Load(folders.Resource, "Hexalith.Folders.Contracts.dll");
+        Assembly folderAdapters = Load(folders.Resource, "Hexalith.Folders.EventStoreExtensions.dll");
         Assembly tenantOwner = Load(tenants.Resource, "Hexalith.Tenants.Contracts.dll");
         Assembly tenantAdapters = Load(tenants.Resource, "Hexalith.Tenants.Server.dll");
         string digestKey = builder.Configuration["Projects:PackageFixtures:CatalogDigestKey"]
